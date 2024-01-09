@@ -1,0 +1,6 @@
+numpy
+pandas
+openpyxl
+scipy
+matplotlib
+ruamel.yaml

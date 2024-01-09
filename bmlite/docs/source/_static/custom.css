@@ -1,0 +1,72 @@
+@import "../basic.css";
+
+:root {
+	/* --pst-color-primary: #150458 !important; 
+	--pst-color-secondary: #150458 !important; */
+
+  --pst-sidebar-font-size-mobile: 0.9rem !important;
+}
+
+/* Remove caption text on main page, but keep in toc */
+section span.caption-text {
+  display: none;
+}
+
+/* Fix transparent background in images */
+.transparent {
+  background: transparent;
+  background-color: transparent;
+}
+
+/* Dark theme tweaking */
+html[data-theme=dark] .sd-card img[src*='.svg'] {
+  filter: invert(0.82) brightness(0.8) contrast(1.2);
+}
+
+/* Main index page overview cards */
+/* html[data-theme=dark] .sd-card {
+  background-color:var(--pst-color-background);
+}
+
+html[data-theme=dark] .sd-shadow-sm {
+    box-shadow: 0 .1rem 1rem rgba(250, 250, 250, .6) !important
+}
+
+html[data-theme=dark] .sd-card .sd-card-header {
+  background-color: var(--pst-color-background);
+  color: #150458 !important;
+}
+
+html[data-theme=dark] .sd-card .sd-card-footer {
+  background-color: var(--pst-color-background);
+}
+
+html[data-theme=dark] h1 {
+  color: var(--pst-color-primary);
+}
+
+html[data-theme=dark] h3 {
+  color: #0a6774;
+}
+
+@media screen and (min-width: 959px) {
+  .bd-sidebar-secondary {display: none;}
+  .hide-md {display: none;}
+}
+
+@media screen and (max-width: 959px) {
+  .bd-sidebar-primary {display: none;}
+  .bd-sidebar-secondary {height: calc(100vh - 65px); margin-top: 65px;}
+  .sidebar-secondary-items {margin-top: -15px;}
+} */
+
+@media screen and (max-width: 540px) {
+  h1 {font-size: 30px;}
+  h2 {font-size: 24px;}
+  h3 {font-size: 21px;}
+  h4 {font-size: 18px;}
+  h5 {font-size: 18px;}
+  h6 {font-size: 18px;}
+}
+
+
