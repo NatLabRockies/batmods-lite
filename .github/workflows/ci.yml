@@ -2,7 +2,7 @@ name: BATMODS-LITE-CI
 
 on:
    push:
-     branches: [main, addci_new]
+     branches: [main]
      paths-ignore:
         - '*.md'
         - 'README*'
