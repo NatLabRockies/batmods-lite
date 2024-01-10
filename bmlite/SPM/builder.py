@@ -12,7 +12,6 @@ from numpy import ndarray as _ndarray
 
 
 class Battery(object):
-
     def __init__(self, **kwargs) -> None:
         """
         A class for battery-level attributes.
@@ -32,9 +31,9 @@ class Battery(object):
             ====== =====================================================
         """
 
-        self.cap = kwargs.get('cap')
-        self.temp = kwargs.get('temp')
-        self.area = kwargs.get('area')
+        self.cap = kwargs.get("cap")
+        self.temp = kwargs.get("temp")
+        self.area = kwargs.get("area")
 
         self.update()
 
@@ -51,7 +50,6 @@ class Battery(object):
 
 
 class Electrolyte(object):
-
     def __init__(self, **kwargs) -> None:
         """
         A class for the electrolyte attributes and methods.
@@ -69,7 +67,7 @@ class Electrolyte(object):
             ======== ==============================================
         """
 
-        self.Li_0 = kwargs.get('Li_0', 1.2)
+        self.Li_0 = kwargs.get("Li_0", 1.2)
 
     def update(self) -> None:
         """
@@ -86,9 +84,9 @@ class Electrolyte(object):
         # [[ptr_an], [ptr_ca], phi_el]
 
         self.ptr = {}
-        self.ptr['phi_el'] = 0
+        self.ptr["phi_el"] = 0
 
-        self.ptr['shift'] = 1
+        self.ptr["shift"] = 1
 
     def sv_0(self) -> _ndarray:
         import numpy as np
@@ -98,11 +96,10 @@ class Electrolyte(object):
     def algidx(self) -> _ndarray:
         import numpy as np
 
-        return np.hstack([self.ptr['phi_el']])
+        return np.hstack([self.ptr["phi_el"]])
 
 
 class Electrode(object):
-
     def __init__(self, **kwargs):
         """
         A class for the electrode-specific attributes and methods.
@@ -134,18 +131,18 @@ class Electrode(object):
             ========= =========================================================
         """
 
-        self.Nr = kwargs.get('Nr')
-        self.thick = kwargs.get('thick')
-        self.R_s = kwargs.get('R_s')
-        self.eps_el = kwargs.get('eps_el')
-        self.eps_CBD = kwargs.get('eps_CBD')
-        self.alpha_a = kwargs.get('alpha_a')
-        self.alpha_c = kwargs.get('alpha_c')
-        self.Li_max = kwargs.get('Li_max')
-        self.x_0 = kwargs.get('x_0')
-        self.i0_deg = kwargs.get('i0_deg')
-        self.Ds_deg = kwargs.get('Ds_deg')
-        self.material = kwargs.get('material')
+        self.Nr = kwargs.get("Nr")
+        self.thick = kwargs.get("thick")
+        self.R_s = kwargs.get("R_s")
+        self.eps_el = kwargs.get("eps_el")
+        self.eps_CBD = kwargs.get("eps_CBD")
+        self.alpha_a = kwargs.get("alpha_a")
+        self.alpha_c = kwargs.get("alpha_c")
+        self.Li_max = kwargs.get("Li_max")
+        self.x_0 = kwargs.get("x_0")
+        self.i0_deg = kwargs.get("i0_deg")
+        self.Ds_deg = kwargs.get("Ds_deg")
+        self.material = kwargs.get("material")
 
         self.update()
 
@@ -170,10 +167,12 @@ class Electrode(object):
 
         self.eps_s = 1 - self.eps_el
         self.eps_AM = 1 - self.eps_el - self.eps_CBD
-        self.A_s = 3*self.eps_AM / self.R_s
+        self.A_s = 3 * self.eps_AM / self.R_s
 
         ActiveMaterial = getattr(materials, self.material)
-        self._material = ActiveMaterial(self.alpha_a, self.alpha_c, self.Li_max)
+        self._material = ActiveMaterial(
+            self.alpha_a, self.alpha_c, self.Li_max
+        )
 
     def get_Ds(self, x: float | _ndarray, T: float) -> float | _ndarray:
         """
@@ -194,7 +193,7 @@ class Electrode(object):
             Lithium diffusivity in the solid phase [m^2/s].
         """
 
-        return self.Ds_deg*self._material.get_Ds(x, T)
+        return self.Ds_deg * self._material.get_Ds(x, T)
 
     def get_i0(self, x: float, C_Li: float, T: float) -> float:
         """
@@ -219,7 +218,7 @@ class Electrode(object):
             Exchange current density [A/m^2].
         """
 
-        return self.i0_deg*self._material.get_i0(x, C_Li, T)
+        return self.i0_deg * self._material.get_i0(x, C_Li, T)
 
     def get_Eeq(self, x: float, T: float) -> float:
         """
@@ -262,10 +261,11 @@ class Electrode(object):
 
         import numpy as np
 
-        self.r = np.linspace(self.R_s/self.Nr/2,
-                             self.R_s*(1 - 1/self.Nr/2), self.Nr)
+        self.r = np.linspace(
+            self.R_s / self.Nr / 2, self.R_s * (1 - 1 / self.Nr / 2), self.Nr
+        )
 
-        self.rm = np.hstack([0, 0.5*(self.r[:-1] + self.r[1:])])
+        self.rm = np.hstack([0, 0.5 * (self.r[:-1] + self.r[1:])])
         self.rp = np.hstack([self.rm[1:], self.R_s])
 
     def make_ptr(self):
@@ -273,22 +273,22 @@ class Electrode(object):
         # ptr_an and ptr_ca -> [[Li_ed(0->R_s)], phi_ed]
 
         self.ptr = {}
-        self.ptr['Li_ed'] = 0
-        self.ptr['r_off'] = 1
+        self.ptr["Li_ed"] = 0
+        self.ptr["r_off"] = 1
 
-        self.ptr['phi_ed'] = self.Nr
+        self.ptr["phi_ed"] = self.Nr
 
-        self.ptr['shift'] = self.Nr + 1
+        self.ptr["shift"] = self.Nr + 1
 
     def sv_0(self):
         import numpy as np
 
-        return np.hstack([self.x_0*np.ones(self.Nr), self.phi_0])
+        return np.hstack([self.x_0 * np.ones(self.Nr), self.phi_0])
 
     def algidx(self):
         import numpy as np
 
-        return np.array([self.ptr['phi_ed']])
+        return np.array([self.ptr["phi_ed"]])
 
     def r_ptr(self, key):
-        return [self.ptr[key] + i*self.ptr['r_off'] for i in range(self.Nr)]
+        return [self.ptr[key] + i * self.ptr["r_off"] for i in range(self.Nr)]

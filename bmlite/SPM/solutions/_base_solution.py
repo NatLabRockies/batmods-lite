@@ -6,8 +6,17 @@ class BaseSolution(object):
     Base methods for all P2D Solution classes.
     """
 
-    __slots__ = ['_sim', '_exp', '_t', '_y', '_ydot', '_success', '_onroot',
-                 '_message', '_solvetime']
+    __slots__ = [
+        "_sim",
+        "_exp",
+        "_t",
+        "_y",
+        "_ydot",
+        "_success",
+        "_onroot",
+        "_message",
+        "_solvetime",
+    ]
 
     def __init__(self, sim: object, exp: dict) -> None:
         """
@@ -46,7 +55,7 @@ class BaseSolution(object):
         classname : str
             Name of current class.
         """
-        return 'BaseSolution'
+        return "BaseSolution"
 
     @property
     def t(self) -> _ndarray:
@@ -120,7 +129,7 @@ class BaseSolution(object):
         """
         return self._message
 
-    def solvetime(self, units: str = 's') -> str:
+    def solvetime(self, units: str = "s") -> str:
         """
         Print solve time (not including pre/post processing).
 
@@ -136,14 +145,15 @@ class BaseSolution(object):
             Time for Sundials IDA to solve problem in [units].
         """
 
-        converter = {'s': lambda t: t,
-                     'min': lambda t: t / 60.,
-                     'h': lambda t: t / 3600.
-                     }
+        converter = {
+            "s": lambda t: t,
+            "min": lambda t: t / 60.0,
+            "h": lambda t: t / 3600.0,
+        }
 
         time = converter[units](self._solvetime)
 
-        return f'Solve time: {time:.3f} ' + units
+        return f"Solve time: {time:.3f} " + units
 
     def ida_fill(self, sol: object, solvetime: float) -> None:
         """
@@ -216,13 +226,13 @@ class BaseSolution(object):
         None.
         """
 
-        self._t = sol['t']
-        self._y = sol['y']
-        self._ydot = sol['ydot']
-        self._success = sol['success']
-        self._onroot = sol['onroot']
-        self._message = sol['message']
-        self._solvetime = sol['solvetime']
+        self._t = sol["t"]
+        self._y = sol["y"]
+        self._ydot = sol["ydot"]
+        self._success = sol["success"]
+        self._onroot = sol["onroot"]
+        self._message = sol["message"]
+        self._solvetime = sol["solvetime"]
 
     def report(self) -> None:
         """
@@ -233,34 +243,32 @@ class BaseSolution(object):
         None.
         """
 
-        spacer = {True: '',
-                  False: ' ' * 11
-                  }
+        spacer = {True: "", False: " " * 11}
 
-        endline = {True: ')',
-                   False: ',\n'
-                   }
+        endline = {True: ")", False: ",\n"}
 
         last = len(self._exp)
 
-        experiment = 'Experiment('
+        experiment = "Experiment("
         for i, (k, v) in enumerate(self._exp.items()):
-            experiment += spacer[i == 0] + f'{k} = {v}' + endline[i == last]
+            experiment += spacer[i == 0] + f"{k} = {v}" + endline[i == last]
 
-        print(experiment + '\n')
+        print(experiment + "\n")
 
-        converter = {True: lambda t: None,
-                     False: lambda t: str(round(t, 3)) + ' s'
-                     }
+        converter = {
+            True: lambda t: None,
+            False: lambda t: str(round(t, 3)) + " s",
+        }
 
         solvetime = converter[self._solvetime == None](self._solvetime)
 
-        print(f'Solution(classname = {self.classname},\n'
-              f'         success = {self._success},\n'
-              f'         onroot = {self._onroot},\n'
-              f'         message = {self._message},\n'
-              f'         solvetime = {solvetime})'
-              )
+        print(
+            f"Solution(classname = {self.classname},\n"
+            f"         success = {self._success},\n"
+            f"         onroot = {self._onroot},\n"
+            f"         message = {self._message},\n"
+            f"         solvetime = {solvetime})"
+        )
 
     def to_dict(self) -> dict:
         """
@@ -286,13 +294,13 @@ class BaseSolution(object):
         """
 
         sol = {}
-        sol['t'] = self._t
-        sol['y'] = self._y
-        sol['ydot'] = self._ydot
-        sol['success'] = self._success
-        sol['onroot'] = self._onroot
-        sol['message'] = self._message
-        sol['solvetime'] = self._solvetime
+        sol["t"] = self._t
+        sol["y"] = self._y
+        sol["ydot"] = self._ydot
+        sol["success"] = self._success
+        sol["onroot"] = self._onroot
+        sol["message"] = self._message
+        sol["solvetime"] = self._solvetime
 
         return sol
 
@@ -391,15 +399,26 @@ class BaseSolution(object):
 
         t = self.t
 
-        phis_a = self.y[:, sim.an.ptr['phi_ed']]
-        phis_c = self.y[:, sim.ca.ptr['phi_ed']]
-        phie = self.y[:, sim.el.ptr['phi_el']]
+        phis_a = self.y[:, sim.an.ptr["phi_ed"]]
+        phis_c = self.y[:, sim.ca.ptr["phi_ed"]]
+        phie = self.y[:, sim.el.ptr["phi_el"]]
 
-        cs_a = self.y[:, sim.an.r_ptr('Li_ed')]*sim.an.Li_max
-        cs_c = self.y[:, sim.ca.r_ptr('Li_ed')]*sim.ca.Li_max
+        cs_a = self.y[:, sim.an.r_ptr("Li_ed")] * sim.an.Li_max
+        cs_c = self.y[:, sim.ca.r_ptr("Li_ed")] * sim.ca.Li_max
 
-        j_a = self.postvars['sdot_an']
-        j_c = self.postvars['sdot_ca']
+        j_a = self.postvars["sdot_an"]
+        j_c = self.postvars["sdot_ca"]
 
-        np.savez(savename, r_a=r_a, r_c=r_c, t=t, phis_a=phis_a, phie=phie,
-                 phis_c=phis_c, cs_a=cs_a, cs_c=cs_c, j_a=j_a, j_c=j_c)
+        np.savez(
+            savename,
+            r_a=r_a,
+            r_c=r_c,
+            t=t,
+            phis_a=phis_a,
+            phie=phie,
+            phis_c=phis_c,
+            cs_a=cs_a,
+            cs_c=cs_c,
+            j_a=j_a,
+            j_c=j_c,
+        )

@@ -8,7 +8,7 @@ class CCSolution(BaseSolution):
     Base: :class:`~bmlite.SPM.solutions.BaseSolution`
     """
 
-    __slots__ = ['postvars']
+    __slots__ = ["postvars"]
 
     def __init__(self, sim: object, exp: dict) -> None:
         super().__init__(sim, exp)
@@ -25,26 +25,30 @@ class CCSolution(BaseSolution):
         classname : str
             Name of current class.
         """
-        return 'CCSolution'
+        return "CCSolution"
 
     def post(self) -> None:
         from ..postutils import post
+
         self.postvars = post(self)
 
     def plot(self, *args) -> None:
-
-        if 'debug' in args or 'all' in args:
+        if "debug" in args or "all" in args:
             from ..postutils import debug
+
             debug(self)
 
-        if 'verify' in args or 'all' in args:
+        if "verify" in args or "all" in args:
             from ..postutils import verify
+
             verify(self)
 
-        if 'general' in args or 'all' in args:
+        if "general" in args or "all" in args:
             from ..postutils import general
+
             general(self)
 
-        if 'contours' in args or 'all' in args:
+        if "contours" in args or "all" in args:
             from ..postutils import contours
+
             contours(self)

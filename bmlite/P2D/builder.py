@@ -12,7 +12,6 @@ from numpy import ndarray as _ndarray
 
 
 class Battery(object):
-
     def __init__(self, **kwargs) -> None:
         """
         A class for battery-level attributes.
@@ -32,9 +31,9 @@ class Battery(object):
             ====== =====================================================
         """
 
-        self.cap = kwargs.get('cap')
-        self.temp = kwargs.get('temp')
-        self.area = kwargs.get('area')
+        self.cap = kwargs.get("cap")
+        self.temp = kwargs.get("temp")
+        self.area = kwargs.get("area")
 
         self.update()
 
@@ -51,7 +50,6 @@ class Battery(object):
 
 
 class Electrolyte(object):
-
     def __init__(self, **kwargs) -> None:
         """
         A class for the electrolyte attributes and methods.
@@ -70,8 +68,8 @@ class Electrolyte(object):
             ========== ================================================
         """
 
-        self.Li_0 = kwargs.get('Li_0')
-        self.material = kwargs.get('material')
+        self.Li_0 = kwargs.get("Li_0")
+        self.material = kwargs.get("material")
 
     def update(self) -> None:
         """
@@ -174,7 +172,6 @@ class Electrolyte(object):
 
 
 class Electrode(object):
-
     def __init__(self, **kwargs) -> None:
         """
         A class for the electrode-specific attributes and methods.
@@ -209,21 +206,21 @@ class Electrode(object):
             ========= =========================================================
         """
 
-        self.Nx = kwargs.get('Nx')
-        self.Nr = kwargs.get('Nr')
-        self.thick = kwargs.get('thick')
-        self.R_s = kwargs.get('R_s')
-        self.eps_el = kwargs.get('eps_el')
-        self.eps_CBD = kwargs.get('eps_CBD')
-        self.p_sol = kwargs.get('p_sol')
-        self.p_liq = kwargs.get('p_liq')
-        self.alpha_a = kwargs.get('alpha_a')
-        self.alpha_c = kwargs.get('alpha_c')
-        self.Li_max = kwargs.get('Li_max')
-        self.x_0 = kwargs.get('x_0')
-        self.i0_deg = kwargs.get('i0_deg')
-        self.Ds_deg = kwargs.get('Ds_deg')
-        self.material = kwargs.get('material')
+        self.Nx = kwargs.get("Nx")
+        self.Nr = kwargs.get("Nr")
+        self.thick = kwargs.get("thick")
+        self.R_s = kwargs.get("R_s")
+        self.eps_el = kwargs.get("eps_el")
+        self.eps_CBD = kwargs.get("eps_CBD")
+        self.p_sol = kwargs.get("p_sol")
+        self.p_liq = kwargs.get("p_liq")
+        self.alpha_a = kwargs.get("alpha_a")
+        self.alpha_c = kwargs.get("alpha_c")
+        self.Li_max = kwargs.get("Li_max")
+        self.x_0 = kwargs.get("x_0")
+        self.i0_deg = kwargs.get("i0_deg")
+        self.Ds_deg = kwargs.get("Ds_deg")
+        self.material = kwargs.get("material")
 
         self.update()
 
@@ -250,11 +247,13 @@ class Electrode(object):
 
         self.eps_s = 1 - self.eps_el
         self.eps_AM = 1 - self.eps_el - self.eps_CBD
-        self.sigma_s = 10*self.eps_s
-        self.A_s = 3*self.eps_AM / self.R_s
+        self.sigma_s = 10 * self.eps_s
+        self.A_s = 3 * self.eps_AM / self.R_s
 
         ActiveMaterial = getattr(materials, self.material)
-        self._material = ActiveMaterial(self.alpha_a, self.alpha_c, self.Li_max)
+        self._material = ActiveMaterial(
+            self.alpha_a, self.alpha_c, self.Li_max
+        )
 
     def get_Ds(self, x: float | _ndarray, T: float) -> float | _ndarray:
         """
@@ -275,10 +274,11 @@ class Electrode(object):
             Lithium diffusivity in the solid phase [m^2/s].
         """
 
-        return self.Ds_deg*self._material.get_Ds(x, T)
+        return self.Ds_deg * self._material.get_Ds(x, T)
 
-    def get_i0(self, x: float | _ndarray, C_Li: float | _ndarray,
-               T: float) -> float | _ndarray:
+    def get_i0(
+        self, x: float | _ndarray, C_Li: float | _ndarray, T: float
+    ) -> float | _ndarray:
         """
         Calculate the exchange current density given the surface intercalation
         fraction ``x`` at the particle surface, the local lithium ion
@@ -303,7 +303,7 @@ class Electrode(object):
             Exchange current density [A/m^2].
         """
 
-        return self.i0_deg*self._material.get_i0(x, C_Li, T)
+        return self.i0_deg * self._material.get_i0(x, C_Li, T)
 
     def get_Eeq(self, x: float | _ndarray, T: float) -> float | _ndarray:
         """
@@ -352,16 +352,20 @@ class Electrode(object):
 
         import numpy as np
 
-        self.x = np.linspace(self.thick/self.Nx/2,
-                             self.thick*(1-1/self.Nx/2), self.Nx)
+        self.x = np.linspace(
+            self.thick / self.Nx / 2,
+            self.thick * (1 - 1 / self.Nx / 2),
+            self.Nx,
+        )
 
-        self.xm = np.hstack([0, 0.5*(self.x[:-1]+self.x[1:])])
+        self.xm = np.hstack([0, 0.5 * (self.x[:-1] + self.x[1:])])
         self.xp = np.hstack([self.xm[1:], self.thick])
 
-        self.r = np.linspace(self.R_s/self.Nr/2,
-                             self.R_s*(1-1/self.Nr/2), self.Nr)
+        self.r = np.linspace(
+            self.R_s / self.Nr / 2, self.R_s * (1 - 1 / self.Nr / 2), self.Nr
+        )
 
-        self.rm = np.hstack([0, 0.5*(self.r[:-1]+self.r[1:])])
+        self.rm = np.hstack([0, 0.5 * (self.r[:-1] + self.r[1:])])
         self.rp = np.hstack([self.rm[1:], self.R_s])
 
     def make_ptr(self) -> None:
@@ -369,34 +373,39 @@ class Electrode(object):
         # ptr_an and ptr_ca -> [[Li_ed(0->R_s)], phi_ed, Li_el, phi_el, ...]
 
         self.ptr = {}
-        self.ptr['Li_ed']  = 0
-        self.ptr['r_off']  = 1
+        self.ptr["Li_ed"] = 0
+        self.ptr["r_off"] = 1
 
-        self.ptr['phi_ed'] = self.ptr['Li_ed'] + self.Nr
-        self.ptr['Li_el'] = self.ptr['phi_ed'] + 1
-        self.ptr['phi_el'] = self.ptr['Li_el'] + 1
-        self.ptr['x_off'] = self.Nr + 3
+        self.ptr["phi_ed"] = self.ptr["Li_ed"] + self.Nr
+        self.ptr["Li_el"] = self.ptr["phi_ed"] + 1
+        self.ptr["phi_el"] = self.ptr["Li_el"] + 1
+        self.ptr["x_off"] = self.Nr + 3
 
-        self.ptr['shift'] = self.Nx*self.ptr['x_off']
+        self.ptr["shift"] = self.Nx * self.ptr["x_off"]
 
     def sv_0(self, el: object) -> _ndarray:
         import numpy as np
 
-        return np.tile(np.hstack([self.x_0*np.ones(self.Nr),
-                                  self.phi_0, el.Li_0, el.phi_0]), self.Nx)
+        return np.tile(
+            np.hstack(
+                [self.x_0 * np.ones(self.Nr), self.phi_0, el.Li_0, el.phi_0]
+            ),
+            self.Nx,
+        )
 
     def algidx(self) -> _ndarray:
         import numpy as np
 
-        return np.hstack([self.x_ptr('phi_ed'), self.x_ptr('phi_el')])
+        return np.hstack([self.x_ptr("phi_ed"), self.x_ptr("phi_el")])
 
     def x_ptr(self, key: str, shift: int = 0) -> list[int]:
-        return [self.ptr[key] + i*self.ptr['x_off'] + shift
-                for i in range(self.Nx)]
+        return [
+            self.ptr[key] + i * self.ptr["x_off"] + shift
+            for i in range(self.Nx)
+        ]
 
 
 class Separator(object):
-
     def __init__(self, **kwargs) -> None:
         """
         A class for the separator attributes and methods.
@@ -419,10 +428,10 @@ class Separator(object):
             ======== =========================================================
         """
 
-        self.Nx = kwargs.get('Nx')
-        self.thick = kwargs.get('thick')
-        self.eps_el = kwargs.get('eps_el')
-        self.p_liq = kwargs.get('p_liq')
+        self.Nx = kwargs.get("Nx")
+        self.thick = kwargs.get("thick")
+        self.eps_el = kwargs.get("eps_el")
+        self.p_liq = kwargs.get("p_liq")
 
         self.update()
 
@@ -461,21 +470,24 @@ class Separator(object):
 
         import numpy as np
 
-        self.x = np.linspace(self.thick/self.Nx/2,
-                             self.thick*(1-1/self.Nx/2), self.Nx)
+        self.x = np.linspace(
+            self.thick / self.Nx / 2,
+            self.thick * (1 - 1 / self.Nx / 2),
+            self.Nx,
+        )
 
-        self.xm = np.hstack([0, 0.5*(self.x[:-1]+self.x[1:])])
+        self.xm = np.hstack([0, 0.5 * (self.x[:-1] + self.x[1:])])
         self.xp = np.hstack([self.xm[1:], self.thick])
 
     def make_ptr(self) -> None:
         # [[ptr_an], Li_el, phi_el, ..., [ptr_ca]]
 
         self.ptr = {}
-        self.ptr['Li_el'] = 0
-        self.ptr['phi_el'] = self.ptr['Li_el'] + 1
-        self.ptr['x_off'] = 2
+        self.ptr["Li_el"] = 0
+        self.ptr["phi_el"] = self.ptr["Li_el"] + 1
+        self.ptr["x_off"] = 2
 
-        self.ptr['shift'] = self.Nx*self.ptr['x_off']
+        self.ptr["shift"] = self.Nx * self.ptr["x_off"]
 
     def sv_0(self, el: object) -> _ndarray:
         import numpy as np
@@ -485,8 +497,10 @@ class Separator(object):
     def algidx(self) -> _ndarray:
         import numpy as np
 
-        return np.array(self.x_ptr('phi_el'))
+        return np.array(self.x_ptr("phi_el"))
 
     def x_ptr(self, key: str, shift: int = 0) -> list[int]:
-        return [self.ptr[key] + i*self.ptr['x_off'] + shift
-                for i in range(self.Nx)]
+        return [
+            self.ptr[key] + i * self.ptr["x_off"] + shift
+            for i in range(self.Nx)
+        ]

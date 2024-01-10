@@ -29,13 +29,10 @@ from typing import Callable as _Callable
 from numpy import ndarray as _ndarray
 from scikits.odes import dae as _DAE
 
-from . import materials
-from . import P2D
-from . import SPM
+from . import P2D, SPM, materials
 
 
 class Constants(object):
-
     __slots__ = []
 
     _F = 96485.3321e3
@@ -120,23 +117,22 @@ class IDASolver(_DAE):
     """
 
     def __init__(self, residuals, **kwargs) -> None:
-
         options = {}
-        options['rtol'] = kwargs.get('rtol', 1e-6)
-        options['atol'] = kwargs.get('atol', 1e-9)
-        options['user_data'] = kwargs.get('user_data', None)
-        options['linsolver'] = kwargs.get('linsolver', 'dense')
-        options['lband'] = kwargs.get('lband', 0)
-        options['uband'] = kwargs.get('uband', 0)
-        options['max_step_size'] = kwargs.get('max_step_size', 0.)
-        options['rootfn'] = kwargs.get('rootfn', None)
-        options['nr_rootfns'] = kwargs.get('nr_rootfns', 0)
+        options["rtol"] = kwargs.get("rtol", 1e-6)
+        options["atol"] = kwargs.get("atol", 1e-9)
+        options["user_data"] = kwargs.get("user_data", None)
+        options["linsolver"] = kwargs.get("linsolver", "dense")
+        options["lband"] = kwargs.get("lband", 0)
+        options["uband"] = kwargs.get("uband", 0)
+        options["max_step_size"] = kwargs.get("max_step_size", 0.0)
+        options["rootfn"] = kwargs.get("rootfn", None)
+        options["nr_rootfns"] = kwargs.get("nr_rootfns", 0)
 
-        options['old_api'] = kwargs.get('old_api', False)
-        options['compute_initcond'] = kwargs.get('compute_initcond', 'yp0')
-        options['algebraic_vars_idx'] = kwargs.get('algebraic_vars_idx', None)
+        options["old_api"] = kwargs.get("old_api", False)
+        options["compute_initcond"] = kwargs.get("compute_initcond", "yp0")
+        options["algebraic_vars_idx"] = kwargs.get("algebraic_vars_idx", None)
 
-        super().__init__('ida', residuals, **options)
+        super().__init__("ida", residuals, **options)
 
 
 def docs() -> None:
@@ -148,11 +144,12 @@ def docs() -> None:
     None.
     """
 
-    import os, webbrowser
+    import os
+    import webbrowser
 
-    sitepath = os.path.dirname(__file__) + '/docs/build/index.html'
+    sitepath = os.path.dirname(__file__) + "/docs/build/index.html"
 
-    webbrowser.open_new_tab('file:' + sitepath)
+    webbrowser.open_new_tab("file:" + sitepath)
 
 
 def format_ax(ax: object) -> None:
@@ -174,14 +171,14 @@ def format_ax(ax: object) -> None:
 
     from matplotlib.ticker import AutoMinorLocator
 
-    if ax.get_xaxis().get_scale() != 'log':
+    if ax.get_xaxis().get_scale() != "log":
         ax.xaxis.set_minor_locator(AutoMinorLocator())
 
-    if ax.get_yaxis().get_scale() != 'log':
+    if ax.get_yaxis().get_scale() != "log":
         ax.yaxis.set_minor_locator(AutoMinorLocator())
 
-    ax.tick_params(axis='x', top=True, which='both', direction='in')
-    ax.tick_params(axis='y', right=True, which='both', direction='in')
+    ax.tick_params(axis="x", top=True, which="both", direction="in")
+    ax.tick_params(axis="y", right=True, which="both", direction="in")
 
 
-__version__ = '0.0.1'
+__version__ = "0.0.1"

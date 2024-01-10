@@ -7,18 +7,26 @@ class, and run any available experiments using its "run" methods, e.g.
 processing, plotting, and saving methods.
 """
 
-from . import builder
-from . import dae
-from . import solutions
-from . import postutils
+from . import builder, dae, postutils, solutions
 
 
 class Simulation(object):
+    __slots__ = [
+        "_yamlfile",
+        "_yamlpath",
+        "_flags",
+        "bat",
+        "el",
+        "an",
+        "ca",
+        "sv_0",
+        "svdot_0",
+        "lband",
+        "uband",
+        "algidx",
+    ]
 
-    __slots__ = ['_yamlfile', '_yamlpath', '_flags', 'bat', 'el', 'an', 'ca',
-                 'sv_0', 'svdot_0', 'lband', 'uband', 'algidx']
-
-    def __init__(self, yamlfile: str = 'default_SPM') -> None:
+    def __init__(self, yamlfile: str = "default_SPM") -> None:
         """
         Make a SPM simulation capable of running various experiments.
 
@@ -58,15 +66,15 @@ class Simulation(object):
 
         from ruamel.yaml import YAML
 
-        from .builder import Battery, Electrolyte, Electrode
+        from .builder import Battery, Electrode, Electrolyte
 
-        if '.yaml' not in yamlfile:
-            yamlfile += '.yaml'
+        if ".yaml" not in yamlfile:
+            yamlfile += ".yaml"
 
-        defaults = os.listdir(os.path.dirname(__file__) + '/default_sims')
+        defaults = os.listdir(os.path.dirname(__file__) + "/default_sims")
         if yamlfile in defaults:
-            path = os.path.dirname(__file__) + '/default_sims/' + yamlfile
-            print('\n[BatMods WARNING] SPM Simulation: Using a default yaml\n')
+            path = os.path.dirname(__file__) + "/default_sims/" + yamlfile
+            print("\n[BatMods WARNING] SPM Simulation: Using a default yaml\n")
             yamlpath = Path(path)
 
         elif os.path.exists(yamlfile):
@@ -75,18 +83,18 @@ class Simulation(object):
         self._yamlfile = yamlfile
         self._yamlpath = yamlpath
 
-        yaml = YAML(typ='safe')
+        yaml = YAML(typ="safe")
         yamldict = yaml.load(yamlpath)
 
-        self.bat = Battery(**yamldict['battery'])
-        self.el = Electrolyte(**yamldict['electrolyte'])
-        self.an = Electrode(**yamldict['anode'])
-        self.ca = Electrode(**yamldict['cathode'])
+        self.bat = Battery(**yamldict["battery"])
+        self.el = Electrolyte(**yamldict["electrolyte"])
+        self.an = Electrode(**yamldict["anode"])
+        self.ca = Electrode(**yamldict["cathode"])
 
         # Function output flags
         self._flags = {}
-        self._flags['band'] = False
-        self._flags['post'] = False
+        self._flags["band"] = False
+        self._flags["post"] = False
 
         # Pre process dependent parameters, mesh, etc.
         self.pre()
@@ -133,21 +141,22 @@ class Simulation(object):
 
         self.ca.make_ptr()
         for key, val in self.ca.ptr.items():
-            if 'shift' not in key and 'off' not in key:
-                self.ca.ptr[key] += self.an.ptr['shift']
+            if "shift" not in key and "off" not in key:
+                self.ca.ptr[key] += self.an.ptr["shift"]
 
         self.el.make_ptr()
         for key, val in self.el.ptr.items():
-            if 'shift' not in key and 'off' not in key:
-                self.el.ptr[key] += self.an.ptr['shift'] + self.ca.ptr['shift']
+            if "shift" not in key and "off" not in key:
+                self.el.ptr[key] += self.an.ptr["shift"] + self.ca.ptr["shift"]
 
         # Initialize potentials [V]
-        self.an.phi_0 = 0.
+        self.an.phi_0 = 0.0
 
         self.el.phi_0 = -self.an.get_Eeq(self.an.x_0, self.bat.temp)
 
-        self.ca.phi_0 = self.ca.get_Eeq(self.ca.x_0, self.bat.temp) \
-                      - self.an.get_Eeq(self.an.x_0, self.bat.temp)
+        self.ca.phi_0 = self.ca.get_Eeq(
+            self.ca.x_0, self.bat.temp
+        ) - self.an.get_Eeq(self.an.x_0, self.bat.temp)
 
         # Initialize sv and svdot
         self.sv_0 = np.hstack([self.an.sv_0(), self.ca.sv_0(), self.el.sv_0()])
@@ -155,8 +164,11 @@ class Simulation(object):
         self.svdot_0 = np.zeros_like(self.sv_0)
 
         # Algebraic indices
-        self.algidx = list(self.an.algidx()) + list(self.ca.algidx()) \
-                    + list(self.el.algidx())
+        self.algidx = (
+            list(self.an.algidx())
+            + list(self.ca.algidx())
+            + list(self.el.algidx())
+        )
 
         # Determine the bandwidth
         self.lband, self.uband, _ = bandwidth(self)
@@ -187,12 +199,12 @@ class Simulation(object):
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
 
         ax.spy(j_pat)
-        ax.text(0.1, 0.2, 'lband: ' + str(lband), transform=ax.transAxes)
-        ax.text(0.1, 0.1, 'uband: ' + str(uband), transform=ax.transAxes)
+        ax.text(0.1, 0.2, "lband: " + str(lband), transform=ax.transAxes)
+        ax.text(0.1, 0.1, "uband: " + str(uband), transform=ax.transAxes)
 
         format_ax(ax)
 
-        if 'inline' not in plt.get_backend():
+        if "inline" not in plt.get_backend():
             fig.show()
 
     def run_CC(self, exp: dict, **kwargs) -> object:
@@ -254,15 +266,16 @@ class Simulation(object):
         from .solutions import CCSolution
 
         # Area-specific current
-        exp['i_ext'] = exp['C_rate']*self.bat.cap / self.bat.area
+        exp["i_ext"] = exp["C_rate"] * self.bat.cap / self.bat.area
 
         # Solver options
-        options = {'user_data': (self, exp),
-                   'linsolver': 'band',
-                   'lband': self.lband,
-                   'uband': self.uband,
-                   'algebraic_vars_idx': self.algidx
-                   }
+        options = {
+            "user_data": (self, exp),
+            "linsolver": "band",
+            "lband": self.lband,
+            "uband": self.uband,
+            "algebraic_vars_idx": self.algidx,
+        }
 
         for key, val in kwargs.items():
             options[key] = val
@@ -270,7 +283,7 @@ class Simulation(object):
         solver = IDASolver(residuals, **options)
 
         # Run the simulation
-        t_span = np.linspace(exp['t_min'], exp['t_max'], exp['Nt'])
+        t_span = np.linspace(exp["t_min"], exp["t_max"], exp["Nt"])
 
         start = time.time()
         idasol = solver.solve(t_span, self.sv_0, self.svdot_0)
@@ -321,29 +334,29 @@ def load(loadname: str) -> tuple[object]:
 
     loadpath = Path(loadname)
 
-    simfile = [f for f in os.listdir(loadpath) if '_sim.yaml' in f][0]
-    simpath = loadname + '/' + simfile
+    simfile = [f for f in os.listdir(loadpath) if "_sim.yaml" in f][0]
+    simpath = loadname + "/" + simfile
 
     sim = Simulation(simpath)
 
-    expfile = [f for f in os.listdir(loadpath) if '_exp.yaml' in f][0]
+    expfile = [f for f in os.listdir(loadpath) if "_exp.yaml" in f][0]
     exppath = loadpath.joinpath(expfile)
 
     exp = yaml.load(exppath)
 
-    solfile = [f for f in os.listdir(loadpath) if '_sol.yaml' in f][0]
+    solfile = [f for f in os.listdir(loadpath) if "_sol.yaml" in f][0]
     solpath = loadpath.joinpath(solfile)
 
-    npfile = [f for f in os.listdir(loadpath) if '_sol.npz' in f][0]
-    nppath = loadname + '/' + npfile
+    npfile = [f for f in os.listdir(loadpath) if "_sol.npz" in f][0]
+    nppath = loadname + "/" + npfile
 
     soldict = yaml.load(solpath)
 
-    Solution = getattr(solutions, soldict['classname'])
+    Solution = getattr(solutions, soldict["classname"])
     sol = Solution(sim, exp)
 
     data = np.load(nppath)
-    for k in ['t', 'y', 'ydot']:
+    for k in ["t", "y", "ydot"]:
         soldict[k] = data[k]
 
     data.close()
@@ -372,55 +385,54 @@ def templates(sim: str | int = None, exp: str | int = None) -> None:
     None.
     """
 
-    import os, json
+    import json
+    import os
     from pathlib import Path
 
     from ruamel.yaml import YAML
 
     dirname = os.path.dirname(__file__)
 
-    simlist = os.listdir(dirname + '/default_sims/')
-    explist = os.listdir(dirname + '/default_exps/')
+    simlist = os.listdir(dirname + "/default_sims/")
+    explist = os.listdir(dirname + "/default_exps/")
 
     if sim == None and exp == None:
-        print('\nAvailable templates list for SPM simulations:')
+        print("\nAvailable templates list for SPM simulations:")
         for i, file in enumerate(simlist):
-            print('\t- [' + str(i) + '] ' +  file.removesuffix('.yaml'))
+            print("\t- [" + str(i) + "] " + file.removesuffix(".yaml"))
 
-        print('\nAvailable templates list for SPM experiments:')
+        print("\nAvailable templates list for SPM experiments:")
         for i, file in enumerate(explist):
-            print('\t- [' + str(i) + '] ' + file.removesuffix('.yaml'))
+            print("\t- [" + str(i) + "] " + file.removesuffix(".yaml"))
 
     if type(sim) == str:
+        if ".yaml" not in sim:
+            sim += ".yaml"
 
-        if '.yaml' not in sim:
-            sim += '.yaml'
-
-        print('\n' + '='*30 + '\n' + sim + '\n' + '='*30)
-        file = dirname + '/default_sims/' + sim
-        with open(file, 'r') as f:
-            print('\n' + f.read())
+        print("\n" + "=" * 30 + "\n" + sim + "\n" + "=" * 30)
+        file = dirname + "/default_sims/" + sim
+        with open(file, "r") as f:
+            print("\n" + f.read())
 
     elif type(sim) == int:
-        print('\n' + '='*30 + '\n' + simlist[sim] + '\n' + '='*30)
-        file = dirname + '/default_sims/' + simlist[sim]
-        with open(file, 'r') as f:
-            print('\n' + f.read())
+        print("\n" + "=" * 30 + "\n" + simlist[sim] + "\n" + "=" * 30)
+        file = dirname + "/default_sims/" + simlist[sim]
+        with open(file, "r") as f:
+            print("\n" + f.read())
 
     yaml = YAML()
 
     if type(exp) == str:
+        if ".yaml" not in exp:
+            exp += ".yaml"
 
-        if '.yaml' not in exp:
-            exp += '.yaml'
-
-        print('\n' + '='*30 + '\n' + exp + '\n' + '='*30)
-        file = dirname + '/default_exps/' + exp
+        print("\n" + "=" * 30 + "\n" + exp + "\n" + "=" * 30)
+        file = dirname + "/default_exps/" + exp
         expdict = yaml.load(Path(file))
-        print('exp = ' + json.dumps(expdict, indent=4))
+        print("exp = " + json.dumps(expdict, indent=4))
 
     elif type(exp) == int:
-        print('\n' + '='*30 + '\n' + explist[exp] + '\n' + '='*30)
-        file = dirname + '/default_exps/' + explist[exp]
+        print("\n" + "=" * 30 + "\n" + explist[exp] + "\n" + "=" * 30)
+        file = dirname + "/default_exps/" + explist[exp]
         expdict = yaml.load(Path(file))
-        print('exp = ' + json.dumps(expdict, indent=4))
+        print("exp = " + json.dumps(expdict, indent=4))

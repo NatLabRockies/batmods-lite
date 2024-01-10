@@ -45,19 +45,19 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
 
     # Fake OCV experiment
     exp = {}
-    exp['C_rate'] = 0.
-    exp['t_min'] = 0.
-    exp['t_max'] = 3600.
-    exp['Nt'] = 3601
+    exp["C_rate"] = 0.0
+    exp["t_min"] = 0.0
+    exp["t_max"] = 3600.0
+    exp["Nt"] = 3601
 
-    exp['BC'] = 'current'
-    exp['i_ext'] = exp['C_rate']*sim.bat.cap / sim.bat.area
+    exp["BC"] = "current"
+    exp["i_ext"] = exp["C_rate"] * sim.bat.cap / sim.bat.area
 
     # Turn on band flag
-    sim._flags['band'] = True
+    sim._flags["band"] = True
 
     # Perturbe variables
-    jac = np.zeros([N,N])
+    jac = np.zeros([N, N])
     sv = sim.sv_0.copy()
     svdot = sim.svdot_0.copy()
     res = np.zeros_like(sv)
@@ -71,7 +71,7 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
         dsv[j] = 1.01 * (sv[j] + 0.01)
         dres = res_0 - residuals(0, dsv, svdot, res, (sim, exp))
 
-        jac[:,j] = dres
+        jac[:, j] = dres
 
     for j in range(N):
         sv = np.copy(sv)
@@ -79,26 +79,25 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
         dsvp = np.copy(svdot)
 
         dsvp[j] = 1.01 * (svdot[j] + 0.01)
-        dres = res_0 - residuals(0., sv, dsvp, res, (sim, exp))
+        dres = res_0 - residuals(0.0, sv, dsvp, res, (sim, exp))
 
-        jac[:,j] += dres
+        jac[:, j] += dres
 
     # Find lband and uband
     lband = 0
     uband = 0
 
     for i in range(jac.shape[0]):
-
-        l_inds = np.where(abs(jac[i,:i]) > 0)[0]
+        l_inds = np.where(abs(jac[i, :i]) > 0)[0]
         if len(l_inds) >= 1 and i - l_inds[0] > lband:
             lband = i - l_inds[0]
 
-        u_inds = i + np.where(abs(jac[i,i:]) > 0)[0]
+        u_inds = i + np.where(abs(jac[i, i:]) > 0)[0]
         if len(u_inds) >= 1 and u_inds[-1] - i > uband:
             uband = u_inds[-1] - i
 
     # Turn off band flag
-    sim._flags['band'] = False
+    sim._flags["band"] = False
 
     # Make Jacobian pattern of zeros and ones
     j_pat = np.zeros_like(jac)
@@ -107,8 +106,13 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
     return lband, uband, j_pat
 
 
-def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
-              inputs: tuple[object, dict]) -> None | tuple[_ndarray]:
+def residuals(
+    t: float,
+    sv: _ndarray,
+    svdot: _ndarray,
+    res: _ndarray,
+    inputs: tuple[object, dict],
+) -> None | tuple[_ndarray]:
     """
     The DAE residuals ``res = M*y' - f(t, y)`` for the SPM model.
 
@@ -170,12 +174,12 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     T = bat.temp
 
     # Organize values from sv
-    phi_an = sv[an.ptr['phi_ed']]
-    phi_el = sv[el.ptr['phi_el']]
-    phi_ca = sv[ca.ptr['phi_ed']]
+    phi_an = sv[an.ptr["phi_ed"]]
+    phi_el = sv[el.ptr["phi_el"]]
+    phi_ca = sv[ca.ptr["phi_ed"]]
 
-    Li_an = sv[an.r_ptr('Li_ed')]*an.Li_max
-    Li_ca = sv[ca.r_ptr('Li_ed')]*ca.Li_max
+    Li_an = sv[an.r_ptr("Li_ed")] * an.Li_max
+    Li_ca = sv[ca.r_ptr("Li_ed")] * ca.Li_max
 
     # Electrolyte -------------------------------------------------------------
 
@@ -183,35 +187,45 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     eta = phi_an - phi_el - an.get_Eeq(Li_an[-1] / an.Li_max, T)
 
     i0 = an.get_i0(Li_an[-1] / an.Li_max, el.Li_0, T)
-    sdot_an = i0*(  np.exp( an.alpha_a*c.F*eta/c.R/T)
-                  - np.exp(-an.alpha_c*c.F*eta/c.R/T)) / c.F
+    sdot_an = (
+        i0
+        * (
+            np.exp(an.alpha_a * c.F * eta / c.R / T)
+            - np.exp(-an.alpha_c * c.F * eta / c.R / T)
+        )
+        / c.F
+    )
 
     # Electrolyte potential (algebraic)
-    res[el.ptr['phi_el']] = sdot_an + exp['i_ext'] / an.thick / an.A_s / c.F
+    res[el.ptr["phi_el"]] = sdot_an + exp["i_ext"] / an.thick / an.A_s / c.F
 
     # Anode -------------------------------------------------------------------
 
     # Weighted solid particle properties
-    wt_m = 0.5*(an.rp[:-1] - an.rm[:-1]) / (an.r[1:] - an.r[:-1])
-    wt_p = 0.5*(an.rp[1:] - an.rm[1:]) / (an.r[1:] - an.r[:-1])
+    wt_m = 0.5 * (an.rp[:-1] - an.rm[:-1]) / (an.r[1:] - an.r[:-1])
+    wt_p = 0.5 * (an.rp[1:] - an.rm[1:]) / (an.r[1:] - an.r[:-1])
 
-    Ds_an = wt_m*an.get_Ds(Li_an[:-1] / an.Li_max, T) \
-          + wt_p*an.get_Ds(Li_an[1:] / an.Li_max, T)
+    Ds_an = wt_m * an.get_Ds(Li_an[:-1] / an.Li_max, T) + wt_p * an.get_Ds(
+        Li_an[1:] / an.Li_max, T
+    )
 
     # Solid-phase radial diffusion (differential)
     Nm_ed = np.zeros(an.Nr)
     Np_ed = np.zeros(an.Nr)
 
-    Np_ed[:-1] = Ds_an*(Li_an[1:] - Li_an[:-1]) / (an.r[1:] - an.r[:-1])
+    Np_ed[:-1] = Ds_an * (Li_an[1:] - Li_an[:-1]) / (an.r[1:] - an.r[:-1])
     Nm_ed[1:] = Np_ed[:-1]
 
     Np_ed[-1] = -sdot_an
 
-    res[an.r_ptr('Li_ed')] = an.Li_max*svdot[an.r_ptr('Li_ed')] - 1/an.r**2 \
-                           *1/(an.rp-an.rm) * ( an.rp**2*Np_ed-an.rm**2*Nm_ed )
+    res[an.r_ptr("Li_ed")] = an.Li_max * svdot[
+        an.r_ptr("Li_ed")
+    ] - 1 / an.r**2 * 1 / (an.rp - an.rm) * (
+        an.rp**2 * Np_ed - an.rm**2 * Nm_ed
+    )
 
     # Solid-phase COC (algebraic)
-    res[an.ptr['phi_ed']] = phi_an - 0.
+    res[an.ptr["phi_ed"]] = phi_an - 0.0
 
     # Cathode -----------------------------------------------------------------
 
@@ -219,33 +233,43 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     eta = phi_ca - phi_el - ca.get_Eeq(Li_ca[-1] / ca.Li_max, T)
 
     i0 = ca.get_i0(Li_ca[-1] / ca.Li_max, el.Li_0, T)
-    sdot_ca = i0*(  np.exp( ca.alpha_a*c.F*eta/c.R/T)
-                  - np.exp(-ca.alpha_c*c.F*eta/c.R/T)) / c.F
+    sdot_ca = (
+        i0
+        * (
+            np.exp(ca.alpha_a * c.F * eta / c.R / T)
+            - np.exp(-ca.alpha_c * c.F * eta / c.R / T)
+        )
+        / c.F
+    )
 
     # Weighted solid particle properties
-    wt_m = 0.5*(ca.rp[:-1] - ca.rm[:-1]) / (ca.r[1:] - ca.r[:-1])
-    wt_p = 0.5*(ca.rp[1:] - ca.rm[1:]) / (ca.r[1:] - ca.r[:-1])
+    wt_m = 0.5 * (ca.rp[:-1] - ca.rm[:-1]) / (ca.r[1:] - ca.r[:-1])
+    wt_p = 0.5 * (ca.rp[1:] - ca.rm[1:]) / (ca.r[1:] - ca.r[:-1])
 
-    Ds_ca = wt_m*ca.get_Ds(Li_ca[:-1] / ca.Li_max, T) \
-          + wt_p*ca.get_Ds(Li_ca[1:] / ca.Li_max, T)
+    Ds_ca = wt_m * ca.get_Ds(Li_ca[:-1] / ca.Li_max, T) + wt_p * ca.get_Ds(
+        Li_ca[1:] / ca.Li_max, T
+    )
 
     # Solid-phase radial diffusion (differential)
     Nm_ed = np.zeros(ca.Nr)
     Np_ed = np.zeros(ca.Nr)
 
-    Np_ed[:-1] = Ds_ca*(Li_ca[1:] - Li_ca[:-1]) / (ca.r[1:] - ca.r[:-1])
+    Np_ed[:-1] = Ds_ca * (Li_ca[1:] - Li_ca[:-1]) / (ca.r[1:] - ca.r[:-1])
     Nm_ed[1:] = Np_ed[:-1]
 
     Np_ed[-1] = -sdot_ca
 
-    res[ca.r_ptr('Li_ed')] = ca.Li_max*svdot[ca.r_ptr('Li_ed')] - 1/ca.r**2 \
-                           *1/(ca.rp-ca.rm) * ( ca.rp**2*Np_ed-ca.rm**2*Nm_ed )
+    res[ca.r_ptr("Li_ed")] = ca.Li_max * svdot[
+        ca.r_ptr("Li_ed")
+    ] - 1 / ca.r**2 * 1 / (ca.rp - ca.rm) * (
+        ca.rp**2 * Np_ed - ca.rm**2 * Nm_ed
+    )
 
     # Solid-phase COC (algebraic)
-    res[ca.ptr['phi_ed']] = sdot_ca - exp['i_ext'] / ca.thick / ca.A_s / c.F
+    res[ca.ptr["phi_ed"]] = sdot_ca - exp["i_ext"] / ca.thick / ca.A_s / c.F
 
-    if sim._flags['band']:
+    if sim._flags["band"]:
         return res
 
-    elif sim._flags['post']:
+    elif sim._flags["post"]:
         return res, sdot_an, sdot_ca

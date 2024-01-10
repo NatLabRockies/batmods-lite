@@ -11,16 +11,16 @@ def test_gas_constant():
 
 def test_spm_construction():
     sim = bm.SPM.Simulation()
-    assert hasattr(sim, 'bat')
-    assert hasattr(sim, 'el')
-    assert hasattr(sim, 'an')
-    assert hasattr(sim, 'ca')
+    assert hasattr(sim, "bat")
+    assert hasattr(sim, "el")
+    assert hasattr(sim, "an")
+    assert hasattr(sim, "ca")
 
 
 def test_p2d_construction():
     sim = bm.P2D.Simulation()
-    assert hasattr(sim, 'bat')
-    assert hasattr(sim, 'el')
-    assert hasattr(sim, 'an')
-    assert hasattr(sim, 'sep')
-    assert hasattr(sim, 'ca')
+    assert hasattr(sim, "bat")
+    assert hasattr(sim, "el")
+    assert hasattr(sim, "an")
+    assert hasattr(sim, "sep")
+    assert hasattr(sim, "ca")

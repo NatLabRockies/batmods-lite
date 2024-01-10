@@ -1,14 +1,14 @@
+import numpy as np
 import pytest
 
-import numpy as np
 import bmlite as bm
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def args():
     alpha_a = 0.5
     alpha_c = 0.5
-    Li_max = 50.
+    Li_max = 50.0
     return alpha_a, alpha_c, Li_max
 
 
@@ -18,8 +18,9 @@ def test_gen2_electrolyte():
     C_Li = np.array([1.2, 1.4])
 
     assert np.allclose(el.get_D(1.0, 303.15), 1.58571930e-10, atol=1e-14)
-    assert np.allclose(el.get_D(C_Li, 303.15), [1.35029958e-10, 1.145972e-10],
-                       atol=1e-14)
+    assert np.allclose(
+        el.get_D(C_Li, 303.15), [1.35029958e-10, 1.145972e-10], atol=1e-14
+    )
 
     assert np.allclose(el.get_t0(1.0, 303.15), 0.45967069)
     assert np.allclose(el.get_t0(C_Li, 303.15), [0.46292429, 0.46599655])
@@ -44,7 +45,7 @@ def test_graphite_fast(args):
     assert np.allclose(gr.get_Ds(x, 303.15), [3.0e-14, 3.0e-14], atol=1e-18)
 
     assert np.allclose(gr.get_i0(0.25, 1.2, 303.15), 16.00903065)
-    assert np.allclose(gr.get_i0(x, 1.2, 303.15), [16.00903065,  5.17597817])
+    assert np.allclose(gr.get_i0(x, 1.2, 303.15), [16.00903065, 5.17597817])
 
     assert np.allclose(gr.get_Eeq(0.25, 303.15), 0.12185042)
     assert np.allclose(gr.get_Eeq(x, 303.15), [0.07350187, 0.01585165])
@@ -63,7 +64,7 @@ def test_graphite_slow(args):
     assert np.allclose(gr.get_Ds(x, 303.15), [3.0e-14, 3.0e-14], atol=1e-18)
 
     assert np.allclose(gr.get_i0(0.25, 1.2, 303.15), 16.00903065)
-    assert np.allclose(gr.get_i0(x, 1.2, 303.15), [16.00903065,  5.17597817])
+    assert np.allclose(gr.get_i0(x, 1.2, 303.15), [16.00903065, 5.17597817])
 
     assert np.allclose(gr.get_Eeq(0.25, 303.15), 0.14283605)
     assert np.allclose(gr.get_Eeq(x, 303.15), [0.10035986, 0.02679])
@@ -79,8 +80,9 @@ def test_nmc_532_fast(args):
     x = np.array([0.75, 0.98])
 
     assert np.allclose(nmc.get_Ds(0.25, 303.15), 2.25630659e-16, atol=1e-20)
-    assert np.allclose(nmc.get_Ds(x, 303.15), [2.36737202e-15, 1.92455666e-15],
-                       atol=1e-20)
+    assert np.allclose(
+        nmc.get_Ds(x, 303.15), [2.36737202e-15, 1.92455666e-15], atol=1e-20
+    )
 
     assert np.allclose(nmc.get_i0(0.25, 1.2, 303.15), 2.82890928)
     assert np.allclose(nmc.get_i0(x, 1.2, 303.15), [2.39367959, 0.96017122])
@@ -99,11 +101,12 @@ def test_nmc_532_slow(args):
     x = np.array([0.75, 0.98])
 
     assert np.allclose(nmc.get_Ds(0.25, 303.15), 2.25630659e-16, atol=1e-20)
-    assert np.allclose(nmc.get_Ds(x, 303.15), [2.36737202e-15, 1.92455666e-15],
-                       atol=1e-20)
+    assert np.allclose(
+        nmc.get_Ds(x, 303.15), [2.36737202e-15, 1.92455666e-15], atol=1e-20
+    )
 
     assert np.allclose(nmc.get_i0(0.25, 1.2, 303.15), 2.82890928)
     assert np.allclose(nmc.get_i0(x, 1.2, 303.15), [2.39367959, 0.96017122])
 
-    assert np.allclose(nmc.get_Eeq(0.25, 303.15), 0.)
+    assert np.allclose(nmc.get_Eeq(0.25, 303.15), 0.0)
     assert np.allclose(nmc.get_Eeq(x, 303.15), [3.74209879, 3.56861776])
