@@ -1,7 +1,9 @@
 from ._base_solution import BaseSolution
 from ._cc_solution import CCSolution
+from ._cv_solution import CVSolution
+from ._cp_solution import CPSolution
 
-__all_exports = [BaseSolution, CCSolution]
+__all_exports = [BaseSolution, CCSolution, CVSolution, CPSolution]
 
 for __export in __all_exports:
     __export.__module__ = __name__

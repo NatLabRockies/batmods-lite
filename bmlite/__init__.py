@@ -31,6 +31,7 @@ from scikits.odes import dae as _DAE
 
 from . import materials
 from . import P2D
+from . import plotutils
 from . import SPM
 
 
@@ -62,7 +63,7 @@ class Constants(object):
         return self._R
 
 
-class IDASolver(_DAE):
+class IDASolver():
     """
     An IDA solver defined by a residuals function.
 
@@ -85,23 +86,23 @@ class IDASolver(_DAE):
         The keyword arguments specify the Sundials IDA solver options. A
         partial list of options/defaults is given below:
 
-        ================== ==================================================
-        Key                Description (type or options, default)
-        ================== ==================================================
-        rtol               relative tolerance (*float*, 1e-6)
-        atol               absolute tolerance (*float*, 1e-12)
-        user_data          the ``inputs`` parameter (*tuple*, ``None``)
-        linsolver          linear solver (``{'dense', 'band'}``, ``'dense'``)
-        lband              width of the lower band (*int*, 0)
-        uband              width of the upper band (*int*, 0)
-        max_step_size      max time step [s] (*float*, 0. -> unrestricted)
-        rootfn             root/event function (*Callable*, ``None``)
-        nr_rootfns         number of events in ``'rootfn'`` (*int*, ``0``)
-        compute_initcond   vary y or yp to get a consistent initial condition
-                           (``{'y0', 'yp0', None}``, ``'yp0'``)
-        algebraic_vars_idx the indices of the algebraic variables in the
-                           ``residuals`` y array (*list[int]*, ``None``)
-        ================== ==================================================
+        ================ ==================================================
+        Key              Description (type or options, default)
+        ================ ==================================================
+        rtol             relative tolerance (*float*, 1e-6)
+        atol             absolute tolerance (*float*, 1e-12)
+        user_data        the ``inputs`` parameter (*tuple*, ``None``)
+        linsolver        linear solver (``{'dense', 'band'}``, ``'dense'``)
+        lband            width of the lower band (*int*, 0)
+        uband            width of the upper band (*int*, 0)
+        rootfn           root/event function (*Callable*, ``None``)
+        nr_rootfns       number of events in ``'rootfn'`` (*int*, ``0``)
+        initcond         variable set to vary for a consistent initial
+                         condition (``{'y0', 'yp0', None}``, ``'yp0'``)
+        algidx           the indicies of the algebraic variables in the
+                         ``residuals`` y array (*list[int]*, ``None``)
+        max_step_size    max time step [s] (*float*, 0. -> unrestricted)
+        ================ ==================================================
 
     Notes
     -----
@@ -119,24 +120,35 @@ class IDASolver(_DAE):
       .. _scikits-odes: https://bmcage.github.io/odes/dev/
     """
 
+    __slots__ = ['_integrator']
+
     def __init__(self, residuals, **kwargs) -> None:
 
         options = {}
         options['rtol'] = kwargs.get('rtol', 1e-6)
         options['atol'] = kwargs.get('atol', 1e-9)
         options['user_data'] = kwargs.get('user_data', None)
+
         options['linsolver'] = kwargs.get('linsolver', 'dense')
         options['lband'] = kwargs.get('lband', 0)
         options['uband'] = kwargs.get('uband', 0)
-        options['max_step_size'] = kwargs.get('max_step_size', 0.)
+
         options['rootfn'] = kwargs.get('rootfn', None)
         options['nr_rootfns'] = kwargs.get('nr_rootfns', 0)
 
-        options['old_api'] = kwargs.get('old_api', False)
-        options['compute_initcond'] = kwargs.get('compute_initcond', 'yp0')
-        options['algebraic_vars_idx'] = kwargs.get('algebraic_vars_idx', None)
+        options['compute_initcond'] = kwargs.get('initcond', 'yp0')
+        options['algebraic_vars_idx'] = kwargs.get('algidx', None)
+        options['max_step_size'] = kwargs.get('max_step_size', 0.)
 
-        super().__init__('ida', residuals, **options)
+        options['old_api'] = False
+
+        _DAE.__init__(self, 'ida', residuals, **options)
+
+    def solve(self, t_span, y_0, yp_0) -> object:
+        return _DAE.solve(self, t_span, y_0, yp_0)
+
+    def init_step(self, t_0, y_0, yp_0) -> object:
+        return _DAE.init_step(self, t_0, y_0, yp_0)
 
 
 def docs() -> None:

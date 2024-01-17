@@ -1,9 +1,9 @@
 from ._base_solution import BaseSolution
 
 
-class CCSolution(BaseSolution):
+class CPSolution(BaseSolution):
     """
-    Constant current solution for SPM simulations.
+    Constant power solution for SPM simuations.
 
     Base: :class:`~bmlite.SPM.solutions.BaseSolution`
     """
@@ -25,12 +25,12 @@ class CCSolution(BaseSolution):
         classname : str
             Name of current class.
         """
-        return 'CCSolution'
+        return 'CPSolution'
 
     def post(self) -> None:
         from ..postutils import post
 
-        self._sim._flags['BC'] = 'current'
+        self._sim._flags['BC'] = 'power'
         self.postvars = post(self)
         self._sim._flags['BC'] = None
 
@@ -40,10 +40,6 @@ class CCSolution(BaseSolution):
             from ..postutils import debug
             debug(self)
 
-        if 'verify' in args or 'all' in args:
-            from ..postutils import verify
-            verify(self)
-
         if 'current' in args or 'all' in args:
             from ..postutils import current
             current(self)
@@ -52,13 +48,9 @@ class CCSolution(BaseSolution):
             from ..postutils import voltage
             voltage(self)
 
-        if 'general' in args or 'all' in args:
-            from ..postutils import general
-            general(self)
-
-        if 'contours' in args or 'all' in args:
-            from ..postutils import contours
-            contours(self)
+        if 'power' in args or 'all' in args:
+            from ..postutils import power
+            power(self)
 
     def slice_and_save(self, savename: str, overwrite: bool = False) -> None:
         """

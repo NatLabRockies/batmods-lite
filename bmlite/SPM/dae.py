@@ -53,8 +53,9 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
     exp['BC'] = 'current'
     exp['i_ext'] = exp['C_rate']*sim.bat.cap / sim.bat.area
 
-    # Turn on band flag
+    # Turn on band flag and set BC
     sim._flags['band'] = True
+    sim._flags['BC'] = 'current'
 
     # Perturbed variables
     jac = np.zeros([N,N])
@@ -97,8 +98,9 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
         if len(u_inds) >= 1 and u_inds[-1] - i > uband:
             uband = u_inds[-1] - i
 
-    # Turn off band flag
+    # Turn off band flag and reset BC
     sim._flags['band'] = False
+    sim._flags['BC'] = None
 
     # Make Jacobian pattern of zeros and ones
     j_pat = np.zeros_like(jac)
@@ -177,19 +179,14 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     Li_an = sv[an.r_ptr('Li_ed')]*an.Li_max
     Li_ca = sv[ca.r_ptr('Li_ed')]*ca.Li_max
 
-    # Electrolyte -------------------------------------------------------------
+    # Anode -------------------------------------------------------------------
 
     # Reaction current
     eta = phi_an - phi_el - an.get_Eeq(Li_an[-1] / an.Li_max, T)
 
     i0 = an.get_i0(Li_an[-1] / an.Li_max, el.Li_0, T)
     sdot_an = i0*(  np.exp( an.alpha_a*c.F*eta/c.R/T)
-                  - np.exp(-an.alpha_c*c.F*eta/c.R/T)) / c.F
-
-    # Electrolyte potential (algebraic)
-    res[el.ptr['phi_el']] = sdot_an + exp['i_ext'] / an.thick / an.A_s / c.F
-
-    # Anode -------------------------------------------------------------------
+                  - np.exp(-an.alpha_c*c.F*eta/c.R/T)  ) / c.F
 
     # Weighted solid particle properties
     wt_m = 0.5*(an.rp[:-1] - an.rm[:-1]) / (an.r[1:] - an.r[:-1])
@@ -220,7 +217,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     i0 = ca.get_i0(Li_ca[-1] / ca.Li_max, el.Li_0, T)
     sdot_ca = i0*(  np.exp( ca.alpha_a*c.F*eta/c.R/T)
-                  - np.exp(-ca.alpha_c*c.F*eta/c.R/T)) / c.F
+                  - np.exp(-ca.alpha_c*c.F*eta/c.R/T)  ) / c.F
 
     # Weighted solid particle properties
     wt_m = 0.5*(ca.rp[:-1] - ca.rm[:-1]) / (ca.r[1:] - ca.r[:-1])
@@ -242,7 +239,31 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
                            *1/(ca.rp-ca.rm) * ( ca.rp**2*Np_ed-ca.rm**2*Nm_ed )
 
     # Solid-phase COC (algebraic)
-    res[ca.ptr['phi_ed']] = sdot_ca - exp['i_ext'] / ca.thick / ca.A_s / c.F
+    if sim._flags['BC'] == 'current':
+        exp['i_ext'] = exp['C_rate']*bat.cap / bat.area
+        res[ca.ptr['phi_ed']] = sdot_ca - exp['i_ext'] / ca.A_s / ca.thick / c.F
+
+    elif sim._flags['BC'] == 'voltage':
+        exp['i_ext'] = sdot_ca*ca.A_s*ca.thick*c.F
+        res[ca.ptr['phi_ed']] = phi_ca - exp['V_ext']
+
+    elif sim._flags['BC'] == 'power':
+        exp['i_ext'] = sdot_ca*ca.thick*ca.A_s*c.F
+        res[ca.ptr['phi_ed']] = exp['i_ext']*phi_ca - exp['P_ext']
+
+    # Electrolyte -------------------------------------------------------------
+
+    # Electrolyte potential (algebraic)
+    if sim._flags['BC'] == 'current':
+        res[el.ptr['phi_el']] = sdot_an + exp['i_ext'] / an.A_s / an.thick / c.F
+
+    elif sim._flags['BC'] == 'voltage':
+        res[el.ptr['phi_el']] = sdot_an*an.A_s*an.thick + sdot_ca*ca.A_s*ca.thick
+
+    elif sim._flags['BC'] == 'power':
+        res[el.ptr['phi_el']] = sdot_an*an.A_s*an.thick + sdot_ca*ca.A_s*ca.thick
+
+    # Returns -----------------------------------------------------------------
 
     if sim._flags['band']:
         return res

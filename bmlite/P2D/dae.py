@@ -234,7 +234,15 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     Np_io = D_eff*(Li_el[1:] - Li_el[:-1]) / (x_all[1:] - x_all[:-1])
 
-    # Anode--------------------------------------------------------------------
+    # Boundary condition ------------------------------------------------------
+
+    if sim._flags['BC'] == 'current':
+        i_ext = exp['C_rate']*bat.cap / bat.area
+
+    else:
+        i_ext = np.nan
+
+    # Anode -------------------------------------------------------------------
 
     # Transference numbers for all anode cell boundaries
     t0_an = t0_b[:an.Nx+1]
@@ -250,7 +258,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     s_eff = an.sigma_s*an.eps_s**an.p_sol
     ip_ed = -s_eff*(phi_an[1:] - phi_an[:-1]) / (an.x[1:] - an.x[:-1])
 
-    im_ed = np.hstack([-exp['i_ext'], ip_ed])
+    im_ed = np.hstack([-i_ext, ip_ed])
     ip_ed = np.hstack([ip_ed, 0.])
 
     # Overpotentials and Li+ productions
@@ -292,7 +300,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
                             + an.A_s*sdot_an*c.F
 
     # Reference potential BC (algebraic)
-    res[an.x_ptr('phi_ed')[0]] = phi_an[0]
+    res[an.x_ptr('phi_ed')[0]] = phi_an[0] - 0.
 
     # Electrolyte COM (differential)
     res[an.x_ptr('Li_el')] = an.eps_el*svdot[an.x_ptr('Li_el')] \
@@ -307,7 +315,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     sum_ip = ip_el + ip_ed
     i_el_x = im_el
 
-    # Separator----------------------------------------------------------------
+    # Separator ---------------------------------------------------------------
 
     # Transference numbers for all separator cell boundaries
     t0_sep = t0_b[an.Nx:an.Nx+sep.Nx+1]
@@ -331,7 +339,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     sum_ip = np.hstack([sum_ip, ip_el])
     i_el_x = np.hstack([i_el_x, im_el])
 
-    # Cathode------------------------------------------------------------------
+    # Cathode -----------------------------------------------------------------
 
     # Transference numbers for all cathode cell boundaries
     t0_ca = t0_b[an.Nx+sep.Nx:]
@@ -348,7 +356,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     ip_ed = -s_eff*(phi_ca[1:] - phi_ca[:-1]) / (ca.x[1:] - ca.x[:-1])
 
     im_ed = np.hstack([0., ip_ed])
-    ip_ed = np.hstack([ip_ed, -exp['i_ext']])
+    ip_ed = np.hstack([ip_ed, -i_ext])
 
     # Overpotentials and Li+ productions
     eta = phi_ca - phi_el_ca - ca.get_Eeq(Li_ca[:,-1] / ca.Li_max, T)
@@ -388,6 +396,17 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     res[ca.x_ptr('phi_ed')] = (ip_ed - im_ed) / (ca.xp - ca.xm) \
                             + ca.A_s*sdot_ca*c.F
 
+    if sim._flags['BC'] == 'current':
+        exp['i_ext'] = i_ext
+
+    elif sim._flags['BC'] == 'voltage':
+        exp['i_ext'] = sdot_ca[-1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) - im_ed[-1]
+        res[ca.x_ptr('phi_ed')[-1]] = phi_ca[-1] - exp['V_ext']
+
+    elif sim._flags['BC'] == 'power':
+        exp['i_ext'] = sdot_ca[-1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) - im_ed[-1]
+        res[ca.x_ptr('phi_ed')[-1]] = exp['i_ext']*phi_ca[-1] - exp['P_ext']
+
     # Electrolyte COM (differential)
     res[ca.x_ptr('Li_el')] = ca.eps_el*svdot[ca.x_ptr('Li_el')] \
          - ( Np_el - Nm_el - (ip_el*t0_ca[1:] - im_el*t0_ca[:-1])/c.F ) \
@@ -400,6 +419,8 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     # Store some outputs for verification
     sum_ip = np.hstack([sum_ip, ip_el + ip_ed])
     i_el_x = np.hstack([i_el_x, im_el, ip_el[-1]])
+
+    # Returns -----------------------------------------------------------------
 
     if sim._flags['band']:
         return res

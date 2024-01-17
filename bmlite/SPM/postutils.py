@@ -7,7 +7,13 @@ experiment. Therefore, not all ``Solution`` classes may have access to all of
 the following functions.
 """
 
+import matplotlib.pyplot as _plt
 from numpy import ndarray as _ndarray
+
+if 'inline' in _plt.get_backend():
+    _display = lambda fig: None
+else:
+    _display = lambda fig: fig.show()
 
 
 def contour(ax: object, xlim: list[float], ylim: list[float], z: _ndarray,
@@ -32,6 +38,65 @@ def contour(ax: object, xlim: list[float], ylim: list[float], z: _ndarray,
 
     cbar = fig.colorbar(im, cax=cax)
     cbar.set_label(label)
+
+
+def current(sol: object) -> None:
+    import matplotlib.pyplot as plt
+
+    from .. import format_ax
+
+    if len(sol.postvars) == 0:
+        sol.post()
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+
+    ax.set_xlabel(r'$t$ [s]')
+    ax.set_ylabel(r'Current density, $i_{\rm ext}$ [A/m$^2$]')
+
+    ax.plot(sol.t, sol.postvars['i_ext'], '-k')
+    format_ax(ax)
+
+    _display(fig)
+
+
+def voltage(sol: object) -> None:
+    import matplotlib.pyplot as plt
+
+    from .. import format_ax
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+
+    ax.set_xlabel(r'$t$ [s]')
+    ax.set_ylabel('Cell voltage [V]')
+
+    sim = sol._sim
+
+    ax.plot(sol.t, sol.y[:, sim.ca.ptr['phi_ed']], '-k')
+    format_ax(ax)
+
+    _display(fig)
+
+
+def power(sol: object) -> None:
+    import matplotlib.pyplot as plt
+
+    from .. import format_ax
+
+    if len(sol.postvars) == 0:
+        sol.post()
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+
+    ax.set_xlabel(r'$t$ [s]')
+    ax.set_ylabel(r'Power density, $P_{\rm ext}$ [W/m$^2$]')
+
+    sim = sol._sim
+
+    i_ext = sol.postvars['i_ext']
+    V_cell = sol.y[:, sim.ca.ptr['phi_ed']]
+
+    ax.plot(sol.t, i_ext*V_cell, '-k')
+    format_ax(ax)
 
 
 def debug(sol: object) -> None:
@@ -116,13 +181,15 @@ def post(sol: object) -> dict:
     from .dae import residuals
 
     # Pull sim and exp from sol
-    sim, exp = sol._sim, sol._exp
+    sim, exp = sol._sim, sol._exp.copy()
 
     # Extract desired variables for each time
     res = np.zeros_like(sol.y)
 
     sdot_an = np.zeros_like(sol.t)
     sdot_ca = np.zeros_like(sol.t)
+
+    i_ext = np.zeros_like(sol.t)
 
     # Turn on output from residuals
     sim._flags['post'] = True
@@ -133,6 +200,8 @@ def post(sol: object) -> dict:
         output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
         res[i], sdot_an[i], sdot_ca[i] = output
 
+        i_ext[i] = exp['i_ext']
+
     # Turn off output from residuals
     sim._flags['post'] = False
 
@@ -142,6 +211,8 @@ def post(sol: object) -> dict:
 
     postvars['sdot_an'] = sdot_an
     postvars['sdot_ca'] = sdot_ca
+
+    postvars['i_ext'] = i_ext
 
     return postvars
 
@@ -327,6 +398,8 @@ def contours(sol: object) -> None:
     contour(ax[0], xlim, ylim, z, r'[kmol/m$^3$]')
 
     ax[0].set_ylabel(r'$t$ [s]')
+
+    ax[0].set_xlabel(r'$r$ [$\mu$m]')
     ax[0].set_title(r'$C_{\rm s, an}$')
 
     # Li concentrations in cathode [kmol/m^3]
@@ -339,7 +412,7 @@ def contours(sol: object) -> None:
 
     contour(ax[1], xlim, ylim, z, r'[kmol/m$^3$]')
 
-    ax[1].set_xlabel(r'$x$ [$\mu$m]')
+    ax[1].set_xlabel(r'$r$ [$\mu$m]')
     ax[1].set_title(r'$C_{\rm s, ca}$')
 
     # Adjust spacing

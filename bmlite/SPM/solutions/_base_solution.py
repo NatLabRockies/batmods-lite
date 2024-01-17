@@ -27,7 +27,7 @@ class BaseSolution(object):
         """
 
         self._sim = sim
-        self._exp = exp
+        self._exp = exp.copy()
 
         self._t = None
         self._y = None
@@ -233,19 +233,16 @@ class BaseSolution(object):
         None.
         """
 
-        spacer = {True: '',
-                  False: ' ' * 11
-                  }
-
-        endline = {True: ')',
-                   False: ',\n'
-                   }
-
-        last = len(self._exp)
-
         experiment = 'Experiment('
         for i, (k, v) in enumerate(self._exp.items()):
-            experiment += spacer[i == 0] + f'{k} = {v}' + endline[i == last]
+
+            if i == 0: spacer = ''
+            else: spacer = ' ' * 11
+
+            if i == len(self._exp) - 1: endline = ')'
+            else: endline = ',\n'
+
+            experiment += spacer + f'{k} = {v}' + endline
 
         print(experiment + '\n')
 
@@ -344,62 +341,3 @@ class BaseSolution(object):
     #     t.to_csv(savepath.joinpath('t.csv'), **pd_opts)
     #     y.to_csv(savepath.joinpath('y.csv'), **pd_opts)
     #     ydot.to_csv(savepath.joinpath('ydot.csv'), **pd_opts)
-
-    def slice_and_save(self, savename: str, overwrite: bool = False) -> None:
-        """
-        Save a ``.npz`` file with all spatial, time, and state variables
-        separated into 1D and 2D arrays. The keys are given below. The index
-        order of the 2D arrays is given with the value descriptions.
-
-        ========= =====================================================
-        Key       Value [units] (type)
-        ========= =====================================================
-        r_a       r mesh for anode particles [m] (1D array)
-        r_c       r mesh for cathode particles [m] (1D array)
-        t         saved solution times [s] (1D array)
-        phis_a    anode electrode potentials at t [V] (1D array)
-        cs_a      electrode Li at t, r_a [kmol/m^3] (2D array)
-        phis_c    cathode electrode potentials at t [V] (1D array)
-        cs_c      electrode Li at t, r_c [kmol/m^3] (2D array)
-        phie      electrolyte potentials at t [V] (1D array)
-        j_a       anode Faradaic current at t [kmol/m^2/s] (1D array)
-        j_c       cathode Faradaic current at t [kmol/m^2/s] (1D array)
-        ========= =====================================================
-
-        Parameters
-        ----------
-        savename : str
-            Either a file name or the absolute/relative file path. The ``.npz``
-            extension will be added to the end of the string if it is not
-            already there. If only the file name is given, the file will be
-            saved in the user's current working directory.
-
-        overwrite : bool, optional
-            DESCRIPTION. The default is ``False``.
-
-        Returns
-        -------
-        None.
-        """
-
-        import numpy as np
-
-        sim = self._sim
-
-        r_a = sim.an.r
-        r_c = sim.ca.r
-
-        t = self.t
-
-        phis_a = self.y[:, sim.an.ptr['phi_ed']]
-        phis_c = self.y[:, sim.ca.ptr['phi_ed']]
-        phie = self.y[:, sim.el.ptr['phi_el']]
-
-        cs_a = self.y[:, sim.an.r_ptr('Li_ed')]*sim.an.Li_max
-        cs_c = self.y[:, sim.ca.r_ptr('Li_ed')]*sim.ca.Li_max
-
-        j_a = self.postvars['sdot_an']
-        j_c = self.postvars['sdot_ca']
-
-        np.savez(savename, r_a=r_a, r_c=r_c, t=t, phis_a=phis_a, phie=phie,
-                 phis_c=phis_c, cs_a=cs_a, cs_c=cs_c, j_a=j_a, j_c=j_c)

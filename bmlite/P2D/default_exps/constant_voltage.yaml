@@ -1,0 +1,4 @@
+V_ext:  3.8     # External voltage [V]
+t_min:  0.      # Min time [s]
+t_max:  1350.   # Max time [s]
+Nt:     150     # Number time discretizations [-]

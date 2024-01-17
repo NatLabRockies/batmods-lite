@@ -1,9 +1,9 @@
 from ._base_solution import BaseSolution
 
 
-class CCSolution(BaseSolution):
+class CVSolution(BaseSolution):
     """
-    Constant current solution for P2D simulations.
+    Constant voltage solution for P2D simuations.
 
     Base: :class:`~bmlite.P2D.solutions.BaseSolution`
     """
@@ -25,12 +25,12 @@ class CCSolution(BaseSolution):
         classname : str
             Name of current class.
         """
-        return 'CCSolution'
+        return 'CVSolution'
 
     def post(self) -> None:
         from ..postutils import post
 
-        self._sim._flags['BC'] = 'current'
+        self._sim._flags['BC'] = 'voltage'
         self.postvars = post(self)
         self._sim._flags['BC'] = None
 

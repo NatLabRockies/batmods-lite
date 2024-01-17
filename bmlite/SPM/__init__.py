@@ -87,6 +87,7 @@ class Simulation(object):
         self._flags = {}
         self._flags['band'] = False
         self._flags['post'] = False
+        self._flags['BC'] = None
 
         # Pre process dependent parameters, mesh, etc.
         self.pre()
@@ -253,15 +254,18 @@ class Simulation(object):
         from .dae import residuals
         from .solutions import CCSolution
 
-        # Area-specific current
-        exp['i_ext'] = exp['C_rate']*self.bat.cap / self.bat.area
+        # Boundary condition flag
+        self._flags['BC'] = 'current'
+
+        # Initialize solution
+        sol = CCSolution(self, exp)
 
         # Solver options
         options = {'user_data': (self, exp),
                    'linsolver': 'band',
                    'lband': self.lband,
                    'uband': self.uband,
-                   'algebraic_vars_idx': self.algidx
+                   'algidx': self.algidx
                    }
 
         for key, val in kwargs.items():
@@ -276,81 +280,298 @@ class Simulation(object):
         idasol = solver.solve(t_span, self.sv_0, self.svdot_0)
         solvetime = time.time() - start
 
-        sol = CCSolution(self, exp)
         sol.ida_fill(idasol, solvetime)
+
+        # Reset boundary condition flag
+        self._flags['BC'] = None
+
+        return sol
+
+    def run_CV(self, exp: dict, **kwargs) -> object:
+        """
+        Runs a constant voltage experiment specified by the details given in
+        the experiment dictionary ``exp``.
+
+        Parameters
+        ----------
+        exp : dict
+            The constant voltage experimental details. Required keys and
+            descriptions are listed below:
+
+            =========== ==========================================
+            Key         Value [units] (type)
+            =========== ==========================================
+            V_ext       externally applied voltage [V] (*float*)
+            t_min       minimum time [s] (*float*)
+            t_max       maximum time [s] (*float*)
+            Nt          number of time discretizations [-] (*int*)
+            =========== ==========================================
+
+        **kwargs : dict, optional
+            The keyword arguments specify the Sundials IDA solver options. A
+            partial list of options/defaults is given below:
+
+            =============== =================================================
+            Key             Description (type or options, default)
+            =============== =================================================
+            rtol            relative tolerance (*float*, 1e-6)
+            atol            absolute tolerance (*float*, 1e-9)
+            linsolver       linear solver (``{'dense', 'band'}``, ``'band'``)
+            lband           width of the lower band (*int*, ``self.lband``)
+            uband           width of the upper band (*int*, ``self.uband``)
+            max_step_size   maximum time step (*float*, 0. -> unrestricted)
+            rootfn          root/event function (*Callable*, ``None``)
+            nr_rootfns      number of events in ``'rootfn'`` (*int*, 0)
+            =============== =================================================
+
+        Returns
+        -------
+        sol : CVSolution object
+            Solution class with the returned variable values, messages, exit
+            flags, etc. from the IDA solver. The returned ``CVSolution``
+            instance includes post processing, plotting, and saving methods.
+
+        See also
+        --------
+        bmlite.IDASolver
+        bmlite.SPM.solutions.CVSolution
+        """
+
+        import time
+
+        import numpy as np
+
+        from .. import IDASolver
+        from .dae import residuals
+        from .solutions import CVSolution
+
+        # Boundary condition flag
+        self._flags['BC'] = 'voltage'
+
+        # Initialize solution
+        sol = CVSolution(self, exp)
+
+        # Solver options
+        options = {'user_data': (self, exp),
+                   'linsolver': 'band',
+                   'lband': self.lband,
+                   'uband': self.uband,
+                   'algidx': self.algidx
+                   }
+
+        for key, val in kwargs.items():
+            options[key] = val
+
+        solver = IDASolver(residuals, **options)
+
+        # Run the simulation
+        t_span = np.linspace(exp['t_min'], exp['t_max'], exp['Nt'])
+
+        start = time.time()
+        idasol = solver.solve(t_span, self.sv_0, self.svdot_0)
+        solvetime = time.time() - start
+
+        sol.ida_fill(idasol, solvetime)
+
+        if not sol.success:
+            print('\n[BatMods WARNING] run_CV: bad initstep, trying to resolve\n')
+
+            V_ext = exp['V_ext']
+            V_init = self.sv_0[self.ca.ptr['phi_ed']]
+
+            sv_0, svdot_0 = self.sv_0, self.svdot_0
+
+            if V_ext < V_init:
+                exp['V_ext'] = V_ext + 0.1
+            elif V_ext > V_init:
+                exp['V_ext'] = V_ext - 0.1
+
+            start = time.time()
+
+            for wt in [0.9, 0.8, 0.7, 0.5, 0.4, 0.3, 0.2, 0.1]:
+
+                exp['V_ext'] = wt*V_init + (1 - wt)*V_ext
+                init = solver.init_step(exp['t_min'], sv_0, svdot_0)
+
+                exp['V_ext'] = V_ext
+                idasol = solver.solve(t_span, init.values.y, init.values.ydot)
+
+                if idasol.flag >= 0:
+                    break
+
+            if not idasol.flag >= 0:
+                print('\n[BatMods ERROR] run_CV: failed to resolve bad initstep\n')
+
+            solvetime = time.time() - start
+
+            sol.ida_fill(idasol, solvetime)
+
+        # Reset boundary condition flag
+        self._flags['BC'] = None
+
+        return sol
+
+    def run_CP(self, exp: dict, **kwargs) -> object:
+        """
+        Runs a constant power experiment specified by the details given in
+        the experiment dictionary ``exp``.
+
+        Parameters
+        ----------
+        exp : dict
+            The constant power experimental details. Required keys and
+            descriptions are listed below:
+
+            ======== ========================================================
+            Key      Value [units] (type)
+            ======== ========================================================
+            P_ext    external power (+ charge, - discharge) [W/m^2] (*float*)
+            t_min    minimum time [s] (*float*)
+            t_max    maximum time [s] (*float*)
+            Nt       number of time discretizations [-] (*int*)
+            ======== ========================================================
+
+        **kwargs : dict, optional
+            The keyword arguments specify the Sundials IDA solver options. A
+            partial list of options/defaults is given below:
+
+            =============== =================================================
+            Key             Description (type or options, default)
+            =============== =================================================
+            rtol            relative tolerance (*float*, 1e-6)
+            atol            absolute tolerance (*float*, 1e-9)
+            linsolver       linear solver (``{'dense', 'band'}``, ``'band'``)
+            lband           width of the lower band (*int*, ``self.lband``)
+            uband           width of the upper band (*int*, ``self.uband``)
+            max_step_size   maximum time step (*float*, 0. -> unrestricted)
+            rootfn          root/event function (*Callable*, ``None``)
+            nr_rootfns      number of events in ``'rootfn'`` (*int*, 0)
+            =============== =================================================
+
+        Returns
+        -------
+        sol : CPSolution object
+            Solution class with the returned variable values, messages, exit
+            flags, etc. from the IDA solver. The returned ``CPSolution``
+            instance includes post processing, plotting, and saving methods.
+
+        See also
+        --------
+        bmlite.IDASolver
+        bmlite.SPM.solutions.CPSolution
+        """
+
+        import time
+
+        import numpy as np
+
+        from .. import IDASolver
+        from .dae import residuals
+        from .solutions import CPSolution
+
+        # Boundary condition flag
+        self._flags['BC'] = 'power'
+
+        # Initialize solution
+        sol = CPSolution(self, exp)
+
+        # Solver options
+        options = {'user_data': (self, exp),
+                   'linsolver': 'band',
+                   'lband': self.lband,
+                   'uband': self.uband,
+                   'algidx': self.algidx
+                   }
+
+        for key, val in kwargs.items():
+            options[key] = val
+
+        solver = IDASolver(residuals, **options)
+
+        # Run the simulation
+        t_span = np.linspace(exp['t_min'], exp['t_max'], exp['Nt'])
+
+        start = time.time()
+        idasol = solver.solve(t_span, self.sv_0, self.svdot_0)
+        solvetime = time.time() - start
+
+        sol.ida_fill(idasol, solvetime)
+
+        # Reset boundary condition flag
+        self._flags['BC'] = None
 
         return sol
 
 
-def load(loadname: str) -> tuple[object]:
-    """
-    Load a previous SPM simulation and solution pair.
+# def load(loadname: str) -> tuple[object]:
+#     """
+#     Load a previous SPM simulation and solution pair.
 
-    The ``Solution`` classes have a save method that create a directory
-    with saved ``.yaml`` and ``.npz`` files which can be used to reconstruct
-    the ``sim`` and ``sol`` objects from a previous experiment.
+#     The ``Solution`` classes have a save method that create a directory
+#     with saved ``.yaml`` and ``.npz`` files which can be used to reconstruct
+#     the ``sim`` and ``sol`` objects from a previous experiment.
 
-    Parameters
-    ----------
-    loadname : str
-        The absolute or relative path to a directory with previously saved
-        solution files.
+#     Parameters
+#     ----------
+#     loadname : str
+#         The absolute or relative path to a directory with previously saved
+#         solution files.
 
-    Returns
-    -------
-    sim : SPM Simulation object
-        An initialized SPM simulation instance.
+#     Returns
+#     -------
+#     sim : SPM Simulation object
+#         An initialized SPM simulation instance.
 
-    sol : SPM Solution object
-        An initialized and filled SPM solution instance. The solution class is
-        determined from information in the previously saved ``.yaml`` files.
+#     sol : SPM Solution object
+#         An initialized and filled SPM solution instance. The solution class is
+#         determined from information in the previously saved ``.yaml`` files.
 
-    See also
-    --------
-    bmlite.SPM.Simulation
-    bmlite.SPM.solutions.BaseSolution.save
-    """
+#     See also
+#     --------
+#     bmlite.SPM.Simulation
+#     bmlite.SPM.solutions.BaseSolution.save
+#     """
 
-    import os
-    from pathlib import Path
+#     import os
+#     from pathlib import Path
 
-    import numpy as np
-    from ruamel.yaml import YAML
+#     import numpy as np
+#     from ruamel.yaml import YAML
 
-    yaml = YAML()
+#     yaml = YAML()
 
-    loadpath = Path(loadname)
+#     loadpath = Path(loadname)
 
-    simfile = [f for f in os.listdir(loadpath) if '_sim.yaml' in f][0]
-    simpath = loadname + '/' + simfile
+#     simfile = [f for f in os.listdir(loadpath) if '_sim.yaml' in f][0]
+#     simpath = loadname + '/' + simfile
 
-    sim = Simulation(simpath)
+#     sim = Simulation(simpath)
 
-    expfile = [f for f in os.listdir(loadpath) if '_exp.yaml' in f][0]
-    exppath = loadpath.joinpath(expfile)
+#     expfile = [f for f in os.listdir(loadpath) if '_exp.yaml' in f][0]
+#     exppath = loadpath.joinpath(expfile)
 
-    exp = yaml.load(exppath)
+#     exp = yaml.load(exppath)
 
-    solfile = [f for f in os.listdir(loadpath) if '_sol.yaml' in f][0]
-    solpath = loadpath.joinpath(solfile)
+#     solfile = [f for f in os.listdir(loadpath) if '_sol.yaml' in f][0]
+#     solpath = loadpath.joinpath(solfile)
 
-    npfile = [f for f in os.listdir(loadpath) if '_sol.npz' in f][0]
-    nppath = loadname + '/' + npfile
+#     npfile = [f for f in os.listdir(loadpath) if '_sol.npz' in f][0]
+#     nppath = loadname + '/' + npfile
 
-    soldict = yaml.load(solpath)
+#     soldict = yaml.load(solpath)
 
-    Solution = getattr(solutions, soldict['classname'])
-    sol = Solution(sim, exp)
+#     Solution = getattr(solutions, soldict['classname'])
+#     sol = Solution(sim, exp)
 
-    data = np.load(nppath)
-    for k in ['t', 'y', 'ydot']:
-        soldict[k] = data[k]
+#     data = np.load(nppath)
+#     for k in ['t', 'y', 'ydot']:
+#         soldict[k] = data[k]
 
-    data.close()
+#     data.close()
 
-    sol.dict_fill(soldict)
+#     sol.dict_fill(soldict)
 
-    return sim, sol
+#     return sim, sol
 
 
 def templates(sim: str | int = None, exp: str | int = None) -> None:

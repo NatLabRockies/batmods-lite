@@ -173,6 +173,8 @@ def post(sol: object) -> dict:
     sum_ip = np.zeros([sol.t.size, an.Nx+sep.Nx+ca.Nx])
     i_el_x = np.zeros([sol.t.size, an.Nx+sep.Nx+ca.Nx+1])
 
+    i_ext = np.zeros_like(sol.t)
+
     # Turn on output from residuals
     sim._flags['post'] = True
 
@@ -181,6 +183,8 @@ def post(sol: object) -> dict:
 
         output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
         res[i,:], sdot_an[i,:], sdot_ca[i,:], sum_ip[i,:], i_el_x[i,:] = output
+
+        i_ext[i] = exp['i_ext']
 
     div_i_an = res[:, an.x_ptr('phi_ed')] + res[:, an.x_ptr('phi_el')]
     div_i_sep = res[:, sep.x_ptr('phi_el')]
@@ -202,6 +206,8 @@ def post(sol: object) -> dict:
 
     postvars['sum_ip'] = sum_ip
     postvars['i_el_x'] = i_el_x
+
+    postvars['i_ext'] = i_ext
 
     return postvars
 
