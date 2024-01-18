@@ -1,0 +1,58 @@
+name: BatMods-lite-CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'README*'
+      - 'LICENSE'
+      - 'docs/*'
+
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'README*'
+      - 'LICENSE'
+      - 'docs/*'
+
+jobs:
+  tests:
+    name: (${{ matrix.python-version }}, ${{ matrix.os }})
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        python-version: ['3.10'] # ['3.8', '3.9', '3.10', '3.11']
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          miniconda-version: 'latest'
+          use-only-tar-bz2: true
+          auto-update-conda: true
+          auto-activate-base: true
+      - name: Make environment
+        run: |
+          conda create --name batmods
+          conda activate batmods
+      - name: Conda dependencies
+        run: conda install -c conda-forge scikits.odes
+      - name: Pip dependencies
+        run: pip install .
+      - name: List packages
+        run: conda list
+      - name: Pytest
+        run: |
+          pip install pytest
+          pytest

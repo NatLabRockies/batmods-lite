@@ -4,17 +4,17 @@ BatMods-lite
 
 Provides:
 
-1. Simple API to run pre-built battery models
-2. Library of kinetic and transport properties for common battery materials
+1. Library of pre-built battery models
+2. Kinetic/transport properties for common battery materials
 
 How to use the documentation
 ----------------------------
-Documentation is accessible via python's ``help()`` function which prints
+Documentation is accessible via Python's ``help()`` function which prints
 docstrings from the specified package, module, function, class, etc. (e.g.,
 ``help(bmlite.SPM)``). In addition, you can access the documentation
 by calling the built-in ``bmlite.docs()`` method to open a locally run website.
-The website is recommended because it has search functionality and includes
-examples in jupyter notebooks.
+The website includes search functionality and examples, beyond the code
+docstrings.
 
 Viewing documentation using IPython
 -----------------------------------
@@ -24,7 +24,7 @@ key). To view the type hints and brief descriptions, type an open parenthesis
 ``(`` after any function, method, class, etc. (e.g., ``bm.Constants(``).
 """
 
-from typing import Callable as _Callable
+from typing import NamedTuple as _NamedTuple
 
 from numpy import ndarray as _ndarray
 from scikits.odes import dae as _DAE
@@ -63,7 +63,7 @@ class Constants(object):
         return self._R
 
 
-class IDASolver():
+class IDASolver(object):
     """
     An IDA solver defined by a residuals function.
 
@@ -72,13 +72,13 @@ class IDASolver():
     with a signature like ``def resdiuals(t, y, yp, res, inputs) -> None``.
     The ``res`` parameter must be a 1D array the same size as ``y`` and ``yp``.
     Although the function returns ``None``, the solver uses the filled ``res``
-    array to integrate/solve the system. The ``inputs`` parameter is a ``tuple``
+    array to integrate/solve the system. The ``inputs`` parameter is a *tuple*
     that is used to pass any required user-defined ``*args`` to the function.
 
     Parameters
     ----------
     residuals : Callable
-        Residual function like ``def residuals(t, y, yp, res, inputs)``.
+        Residuals function ``def residuals(t, y, yp, res, inputs) -> None``.
         For some examples, see :func:`bmlite.SPM.dae.residuals` and/or
         :func:`bmlite.P2D.dae.residuals`.
 
@@ -87,7 +87,7 @@ class IDASolver():
         partial list of options/defaults is given below:
 
         ================ ==================================================
-        Key              Description (type or options, default)
+        Key              Description (*type* or {options}, default)
         ================ ==================================================
         rtol             relative tolerance (*float*, 1e-6)
         atol             absolute tolerance (*float*, 1e-12)
@@ -109,8 +109,8 @@ class IDASolver():
     * The solver name IDA stands for Implicit Differential-Algebraic solver. It
       is part of the `SUNDIALS`_ package, and is accessed here through the
       `scikits-odes`_ python wrapper.
-    * The solver can be unstable if the ``algebraic_vars_idx`` keyword argument
-      is not specified for DAEs.
+    * The solver can be unstable if the ``algidx`` keyword argument is not
+      specified for DAEs.
     * The ``rootfn`` keyword argument must have the signature ``def f(t, y, yp,
       events, inputs) -> None`` where the ``events`` parameter is an array that
       is filled with root functions. If any element in ``events`` hits zero
@@ -144,11 +144,58 @@ class IDASolver():
 
         _DAE.__init__(self, 'ida', residuals, **options)
 
-    def solve(self, t_span, y_0, yp_0) -> object:
-        return _DAE.solve(self, t_span, y_0, yp_0)
+    def solve(self, t_span: _ndarray, y0: _ndarray,
+              yp0: _ndarray) -> _NamedTuple:
+        """
+        Solve the ODE/DAE system and save the solution at each time in
+        ``t_span``.
 
-    def init_step(self, t_0, y_0, yp_0) -> object:
-        return _DAE.init_step(self, t_0, y_0, yp_0)
+        Parameters
+        ----------
+        t_span : 1D array
+            Array of times [s] to store the solution. ``t_span[0]`` must be the
+            start time and ``t_span[-1]`` the final time.
+
+        y0 : 1D array
+            Array of state variables at ``t = t_span[0]``.
+
+        yp0 : 1D array
+            Array of state variable time derivatives at ``t = t_span[0]``.
+
+        Returns
+        -------
+        idasol : NamedTuple
+            Solution returned by SUNDIALS IDA integrator.
+        """
+
+        idasol = _DAE.solve(self, t_span, y0, yp0)
+
+        return idasol
+
+    def init_step(self, t0: float, y0: _ndarray, yp0: _ndarray) -> _NamedTuple:
+        """
+        Solve the ODE/DAE for a consistent initial condition at ``t = t0``.
+
+        Parameters
+        ----------
+        t0 : float
+            Initial time [s].
+
+        y0 : 1D array
+            Array of state variables at ``t = t0``.
+
+        yp0 : 1D array
+            Array of state variable time derivatives at ``t = t0``.
+
+        Returns
+        -------
+        idasol : NamedTuple
+            Solution returned by SUNDIALS IDA integrator.
+        """
+
+        idasol = _DAE.init_step(self, t0, y0, yp0)
+
+        return idasol
 
 
 def docs() -> None:
@@ -162,9 +209,9 @@ def docs() -> None:
 
     import os, webbrowser
 
-    sitepath = os.path.dirname(__file__) + '/docs/build/index.html'
+    sitepath = os.path.dirname(__file__) + '/../docs/build/index.html'
 
-    webbrowser.open_new_tab('file:' + sitepath)
+    webbrowser.open_new_tab('file://' + os.path.realpath(sitepath))
 
 
 def format_ax(ax: object) -> None:

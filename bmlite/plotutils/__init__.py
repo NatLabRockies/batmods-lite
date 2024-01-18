@@ -1,49 +1,14 @@
-def format_lims(ax: object) -> None:
-    """
-    Formats an ``axis`` object by adjusting the limits.
+"""
+BatMods-lite Plotting Utilities
+-------------------------------
+"""
 
-    Specifically, sets the x and y limits such that there is 10% white space
-    all the way around the perimeter. In the case that x or y is constant, the
-    default matplotlib behavior is adopted for the limits on that respective
-    variable.
 
-    Parameters
-    ----------
-    ax : object
-        An ``axis`` instance from a ``matplotlib`` figure.
+def show(fig: object) -> None:
+    import matplotlib as mpl
 
-    Returns
-    -------
-    None.
-    """
-
-    for i, line in enumerate(ax.lines):
-
-        x = line.get_xdata()
-        y = line.get_ydata()
-
-        if i == 0:
-            x_min, x_max = x.min(), x.max()
-            y_min, y_max = y.min(), y.max()
-
-        if x.min() < x_min: x_min = x.min()
-        if x.max() > x_max: x_max = x.max()
-
-        if y.min() < y_min: y_min = y.min()
-        if y.max() > y_max: y_max = y.max()
-
-    dx = abs(x_max - x_min)
-    dy = abs(y_max - y_min)
-
-    if dx != 0:
-        ax.set_xlim([x_min - 0.1*dx, x_max + 0.1*dx])
-    else:
-        pass
-
-    if dy != 0:
-        ax.set_ylim([y_min - 0.1*dy, y_max + 0.1*dy])
-    else:
-        pass
+    if 'inline' not in mpl.get_backend():
+        fig.show()
 
 
 def format_ticks(ax: object) -> None:

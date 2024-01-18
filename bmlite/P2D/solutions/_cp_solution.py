@@ -114,8 +114,8 @@ class CPSolution(BaseSolution):
             savename += '.npz'
 
         if os.path.exists(savename) and not overwrite:
-            raise Exception('save_and_slice file already exists. Overwrite with'
-                            ' flag or delete the file and try again.')
+            raise Exception('save_and_slice file already exists. Overwrite'
+                            ' with flag or delete the file and try again.')
 
         sim = self._sim
 
@@ -146,11 +146,11 @@ class CPSolution(BaseSolution):
 
         cs_a = np.zeros([t.size, x_a.size, sim.an.Nr])
         for k in range(sim.an.Nr):
-            cs_a[:,:,k] = self.y[:, sim.an.x_ptr('Li_ed', k)]*sim.an.Li_max
+            cs_a[:, :, k] = self.y[:, sim.an.x_ptr('Li_ed', k)] * sim.an.Li_max
 
         cs_c = np.zeros([t.size, x_c.size, sim.ca.Nr])
         for k in range(sim.ca.Nr):
-            cs_c[:,:,k] = self.y[:, sim.ca.x_ptr('Li_ed', k)]*sim.ca.Li_max
+            cs_c[:, :, k] = self.y[:, sim.ca.x_ptr('Li_ed', k)] * sim.ca.Li_max
 
         ie = self.postvars['i_el_x']
         j_a = self.postvars['sdot_an']

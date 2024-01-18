@@ -374,7 +374,7 @@ class Simulation(object):
         sol.ida_fill(idasol, solvetime)
 
         if not sol.success:
-            print('\n[BatMods WARNING] run_CV: bad initstep, trying to resolve\n')
+            print('[BatMods WARNING] run_CV: bad initstep, trying to resolve')
 
             V_ext = exp['V_ext']
             V_init = self.sv_0[self.ca.ptr['phi_ed']]
@@ -390,7 +390,7 @@ class Simulation(object):
 
             for wt in [0.9, 0.8, 0.7, 0.5, 0.4, 0.3, 0.2, 0.1]:
 
-                exp['V_ext'] = wt*V_init + (1 - wt)*V_ext
+                exp['V_ext'] = wt * V_init + (1 - wt) * V_ext
                 init = solver.init_step(exp['t_min'], sv_0, svdot_0)
 
                 exp['V_ext'] = V_ext
@@ -400,7 +400,7 @@ class Simulation(object):
                     break
 
             if not idasol.flag >= 0:
-                print('\n[BatMods ERROR] run_CV: failed to resolve bad initstep\n')
+                print('[BatMods ERROR] run_CV: failed to resolve bad initstep')
 
             solvetime = time.time() - start
 
@@ -523,8 +523,9 @@ class Simulation(object):
 #         An initialized SPM simulation instance.
 
 #     sol : SPM Solution object
-#         An initialized and filled SPM solution instance. The solution class is
-#         determined from information in the previously saved ``.yaml`` files.
+#         An initialized and filled SPM solution instance. The solution class
+#         is determined from information in the previously saved ``.yaml``
+#         files.
 
 #     See also
 #     --------
@@ -603,10 +604,10 @@ def templates(sim: str | int = None, exp: str | int = None) -> None:
     simlist = os.listdir(dirname + '/default_sims/')
     explist = os.listdir(dirname + '/default_exps/')
 
-    if sim == None and exp == None:
+    if sim is None and exp is None:
         print('\nAvailable templates list for SPM simulations:')
         for i, file in enumerate(simlist):
-            print('\t- [' + str(i) + '] ' +  file.removesuffix('.yaml'))
+            print('\t- [' + str(i) + '] ' + file.removesuffix('.yaml'))
 
         print('\nAvailable templates list for SPM experiments:')
         for i, file in enumerate(explist):
@@ -617,13 +618,13 @@ def templates(sim: str | int = None, exp: str | int = None) -> None:
         if '.yaml' not in sim:
             sim += '.yaml'
 
-        print('\n' + '='*30 + '\n' + sim + '\n' + '='*30)
+        print('\n' + '=' * 30 + '\n' + sim + '\n' + '=' * 30)
         file = dirname + '/default_sims/' + sim
         with open(file, 'r') as f:
             print('\n' + f.read())
 
     elif type(sim) == int:
-        print('\n' + '='*30 + '\n' + simlist[sim] + '\n' + '='*30)
+        print('\n' + '=' * 30 + '\n' + simlist[sim] + '\n' + '=' * 30)
         file = dirname + '/default_sims/' + simlist[sim]
         with open(file, 'r') as f:
             print('\n' + f.read())
@@ -635,13 +636,13 @@ def templates(sim: str | int = None, exp: str | int = None) -> None:
         if '.yaml' not in exp:
             exp += '.yaml'
 
-        print('\n' + '='*30 + '\n' + exp + '\n' + '='*30)
+        print('\n' + '=' * 30 + '\n' + exp + '\n' + '=' * 30)
         file = dirname + '/default_exps/' + exp
         expdict = yaml.load(Path(file))
         print('exp = ' + json.dumps(expdict, indent=4))
 
     elif type(exp) == int:
-        print('\n' + '='*30 + '\n' + explist[exp] + '\n' + '='*30)
+        print('\n' + '=' * 30 + '\n' + explist[exp] + '\n' + '=' * 30)
         file = dirname + '/default_exps/' + explist[exp]
         expdict = yaml.load(Path(file))
         print('exp = ' + json.dumps(expdict, indent=4))
