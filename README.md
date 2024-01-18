@@ -1,17 +1,21 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./logos/dark.svg"/>
-  <img alt="BatMods-lite logo" src="./logos/light.svg"/>
+  <source media="(prefers-color-scheme: dark)" srcset="./logos/dark.svg">
+  <img alt="BatMods-lite logo" src="./logos/light.svg">
 </picture>
 
 <p>
-  <a href="https://github.com/NREL/BatMods-lite/actions/workflows/ci.yaml">
-      <img alt="CI badge" src="https://github.com/NREL/BatMods-lite/actions/workflows/ci.yaml/badge.svg"/>
+  <a href="https://github.com/NREL/BatMods-lite/actions/workflows/ci.yaml"
+    style="text-decoration: none;">
+    <img alt="CI badge" 
+      src="https://github.com/NREL/BatMods-lite/actions/workflows/ci.yaml/badge.svg">
   </a>
-  <a href="https://www.python.org/dev/peps/pep-0008">
-      <img alt="PEP8 badge" src="https://img.shields.io/badge/code%20style-pep8-orange.svg"/>
+  &nbsp;
+  <a href="https://www.python.org/dev/peps/pep-0008"
+    style="text-decoration: none;">
+    <img alt="PEP8 badge" 
+      src="https://img.shields.io/badge/code%20style-pep8-orange.svg">
   </a>
 </p>
----
 
 BatMods-lite is a Python package that includes:
 
@@ -42,7 +46,7 @@ import bmlite as bm
 bm.docs()
 ```
 
-## Formatting [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+## Formatting
 BatMods-lite code follows the PEP8 style guide. It is the autors' preference to not adopt the more opinionated `black` formatting style. Please keep this in mind if you plan to contribute.
 
 ## Acknowledgements
