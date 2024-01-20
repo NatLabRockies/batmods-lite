@@ -1,4 +1,4 @@
-import pytest
+import os, pytest
 
 import numpy as np
 import bmlite as bm
@@ -15,7 +15,8 @@ def args():
 def test_gen2_electrolyte():
     el = bm.materials.Gen2Electrolyte()
 
-    data = np.load(__file__ + '/../materials_data/gen2electrolyte.npz')
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/gen2electrolyte.npz')
 
     C_Li, T = data['C_Li'], data['T']
 
@@ -37,7 +38,8 @@ def test_gen2_electrolyte():
 def test_graphite_fast(args):
     gr = bm.materials.GraphiteFast(args[0], args[1], args[2])
 
-    data = np.load(__file__ + '/../materials_data/graphitefast.npz')
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/graphitefast.npz')
 
     x, C_Li, T = data['x'], data['C_Li'], data['T']
 
@@ -56,7 +58,8 @@ def test_graphite_fast(args):
 def test_graphite_slow(args):
     gr = bm.materials.GraphiteSlow(args[0], args[1], args[2])
 
-    data = np.load(__file__ + '/../materials_data/graphiteslow.npz')
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/graphiteslow.npz')
 
     x, C_Li, T = data['x'], data['C_Li'], data['T']
 
@@ -75,7 +78,8 @@ def test_graphite_slow(args):
 def test_nmc_532_fast(args):
     nmc = bm.materials.NMC532Fast(args[0], args[1], args[2])
 
-    data = np.load(__file__ + '/../materials_data/nmc532fast.npz')
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/nmc532fast.npz')
 
     x, C_Li, T = data['x'], data['C_Li'], data['T']
 
@@ -94,7 +98,8 @@ def test_nmc_532_fast(args):
 def test_nmc_532_slow(args):
     nmc = bm.materials.NMC532Slow(args[0], args[1], args[2])
 
-    data = np.load(__file__ + '/../materials_data/nmc532slow.npz')
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/nmc532slow.npz')
 
     x, C_Li, T = data['x'], data['C_Li'], data['T']
 
