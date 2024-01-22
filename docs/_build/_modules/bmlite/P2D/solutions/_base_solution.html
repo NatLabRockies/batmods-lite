@@ -1,0 +1,814 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bmlite.P2D.solutions._base_solution &#8212; BatMods-lite 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=5fd90a42" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/bmlite/P2D/solutions/_base_solution';</script>
+    <script src="../../../../_static/custom.js?v=e2d01366"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../../_static/light.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/dark.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../api/bmlite/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../api/bmlite/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><!-- Added ids to keybindings for custom.js -->
+
+
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"
+         onfocus="removeKBD()"
+         onblur="addKBD()">
+  <span id="sb-kbd-span" class="search-button__kbd-shortcut"><kbd id="sb-kbd" class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>k</kbd></span>
+</form></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../P2D.html" class="nav-link">bmlite.P2D</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">bmlite.P2D.s...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for bmlite.P2D.solutions._base_solution</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">_ndarray</span>
+
+
+<div class="viewcode-block" id="BaseSolution">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/index.html#bmlite.P2D.solutions._base_solution.BaseSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseSolution</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base methods for all P2D Solution classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_sim&#39;</span><span class="p">,</span> <span class="s1">&#39;_exp&#39;</span><span class="p">,</span> <span class="s1">&#39;_t&#39;</span><span class="p">,</span> <span class="s1">&#39;_y&#39;</span><span class="p">,</span> <span class="s1">&#39;_ydot&#39;</span><span class="p">,</span> <span class="s1">&#39;_success&#39;</span><span class="p">,</span> <span class="s1">&#39;_onroot&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_message&#39;</span><span class="p">,</span> <span class="s1">&#39;_solvetime&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">exp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        When initialized, a copy of the P2D simulation object and experimental</span>
+<span class="sd">        details for the solution instance are stored, all other instance</span>
+<span class="sd">        attributes are set to ``None``. These are filled later with a &quot;fill&quot;</span>
+<span class="sd">        method (e.g., ``ida_fill()`` or ``dict_fill()``).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sim : P2D Simulation object</span>
+<span class="sd">            The P2D Simulation instance used to produce the solution.</span>
+
+<span class="sd">        exp : dict</span>
+<span class="sd">            Experiment dictionary. Specific key/value pairs are dependent on</span>
+<span class="sd">            the experiment that was run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span> <span class="o">=</span> <span class="n">sim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="o">=</span> <span class="n">exp</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ydot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseSolution.classname">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/_base_solution/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.classname">[docs]</a>
+    <span class="k">def</span> <span class="nf">classname</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class name.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        classname : str</span>
+<span class="sd">            Name of current class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;BaseSolution&#39;</span></div>
+
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseSolution.t">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/_base_solution/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.t">[docs]</a>
+    <span class="k">def</span> <span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saved solution times [s].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        t : 1D array</span>
+<span class="sd">            Solution times [s] returned by solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span></div>
+
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseSolution.y">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/_base_solution/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.y">[docs]</a>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saved spatiotemporal solution variables [units].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y : 2D array</span>
+<span class="sd">            Solution variables [units] returned by solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span></div>
+
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseSolution.ydot">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/_base_solution/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.ydot">[docs]</a>
+    <span class="k">def</span> <span class="nf">ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saved solution variable time derivates (i.e., dy/dt) [units].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ydot : 2D array</span>
+<span class="sd">            Solution variable time derivatives [units] returned by solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot</span></div>
+
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseSolution.success">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/_base_solution/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.success">[docs]</a>
+    <span class="k">def</span> <span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver overall exit status.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        success : bool</span>
+<span class="sd">            ``True`` if no errors, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_success</span></div>
+
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseSolution.onroot">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/_base_solution/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.onroot">[docs]</a>
+    <span class="k">def</span> <span class="nf">onroot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver root(event) exit status.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        onroot : bool</span>
+<span class="sd">            ``True`` if exit on root(event), ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span></div>
+
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseSolution.message">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/_base_solution/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.message">[docs]</a>
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver exit message.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        message : str</span>
+<span class="sd">            Exit message from Sundials IDA solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.solvetime">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.solvetime">[docs]</a>
+    <span class="k">def</span> <span class="nf">solvetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print solve time (not including pre/post processing).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        units : str, optional</span>
+<span class="sd">            Units for printed time (``&#39;s&#39;``, ``&#39;min&#39;``, or ``&#39;h&#39;``). The</span>
+<span class="sd">            default is ``&#39;s&#39;``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        solvetime : str</span>
+<span class="sd">            Time for Sundials IDA to solve problem in [units].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">converter</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span>
+                     <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">/</span> <span class="mf">60.</span><span class="p">,</span>
+                     <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">/</span> <span class="mf">3600.</span>
+                     <span class="p">}</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="n">converter</span><span class="p">[</span><span class="n">units</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Solve time: </span><span class="si">{</span><span class="n">time</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> &#39;</span> <span class="o">+</span> <span class="n">units</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.ida_fill">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.ida_fill">[docs]</a>
+    <span class="k">def</span> <span class="nf">ida_fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">solvetime</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill the instance attributes using the SolverReturn object from the</span>
+<span class="sd">        Sundials IDA solver.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sol : object</span>
+<span class="sd">            Sundials IDA SolverReturn object with the following attributes:</span>
+
+<span class="sd">            =========== =============================================</span>
+<span class="sd">            Attribute   Value (type)</span>
+<span class="sd">            =========== =============================================</span>
+<span class="sd">            t           solution times (1D array)</span>
+<span class="sd">            y           solution variables (2D array)</span>
+<span class="sd">            ydot        solution variable time derivatives (2D array)</span>
+<span class="sd">            success     overall solver exit status (bool)</span>
+<span class="sd">            onroot      onroot solver exit status (bool)</span>
+<span class="sd">            message     solver exit message (str)</span>
+<span class="sd">            =========== =============================================</span>
+
+<span class="sd">        solvetime : float</span>
+<span class="sd">            Solver integration time, in seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ydot</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ydot</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">sol</span><span class="o">.</span><span class="n">flag</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">roots</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">message</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span> <span class="o">=</span> <span class="n">solvetime</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.dict_fill">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.dict_fill">[docs]</a>
+    <span class="k">def</span> <span class="nf">dict_fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill the instance attributes using a dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sol : dict</span>
+<span class="sd">            Solution dictionary with the following key/value pairs:</span>
+
+<span class="sd">            =========== =============================================</span>
+<span class="sd">            Key         Value (type)</span>
+<span class="sd">            =========== =============================================</span>
+<span class="sd">            t           solution times (1D array)</span>
+<span class="sd">            y           solution variables (2D array)</span>
+<span class="sd">            ydot        solution variable time derivatives (2D array)</span>
+<span class="sd">            success     overall solver exit status (bool)</span>
+<span class="sd">            onroot      onroot solver exit status (bool)</span>
+<span class="sd">            message     solver exit message (str)</span>
+<span class="sd">            solvetime   solver integration time, in seconds (float)</span>
+<span class="sd">            =========== =============================================</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ydot</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;ydot&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;onroot&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;solvetime&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.report">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.report">[docs]</a>
+    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the experiment detials and solution success report.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">spacer</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                  <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="mi">11</span>
+                  <span class="p">}</span>
+
+        <span class="n">endline</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span>
+                   <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;,</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="p">}</span>
+
+        <span class="n">last</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">)</span>
+
+        <span class="n">experiment</span> <span class="o">=</span> <span class="s1">&#39;Experiment(&#39;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">experiment</span> <span class="o">+=</span> <span class="n">spacer</span><span class="p">[</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">endline</span><span class="p">[</span><span class="n">i</span> <span class="o">==</span> <span class="n">last</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">experiment</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">converter</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="kc">False</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; s&#39;</span>
+                     <span class="p">}</span>
+
+        <span class="n">solvetime</span> <span class="o">=</span> <span class="n">converter</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span> <span class="o">==</span> <span class="kc">None</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Solution(classname = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;         success = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_success</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;         onroot = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;         message = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;         solvetime = </span><span class="si">{</span><span class="n">solvetime</span><span class="si">}</span><span class="s1">)&#39;</span>
+              <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.to_dict">
+<a class="viewcode-back" href="../../../../api/bmlite/P2D/solutions/index.html#bmlite.P2D.solutions._base_solution.BaseSolution.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Output a dictionary with key/value pairs corresponding to the instance</span>
+<span class="sd">        attributes and values listed below.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sol : dict</span>
+<span class="sd">            Solution dictionary with the following key/value pairs:</span>
+
+<span class="sd">            =========== =============================================</span>
+<span class="sd">            Key         Value (type)</span>
+<span class="sd">            =========== =============================================</span>
+<span class="sd">            t           solution times (1D array)</span>
+<span class="sd">            y           solution variables (2D array)</span>
+<span class="sd">            ydot        solution variable time derivatives (2D array)</span>
+<span class="sd">            success     overall solver exit status (bool)</span>
+<span class="sd">            onroot      onroot solver exit status (bool)</span>
+<span class="sd">            message     solver exit message (str)</span>
+<span class="sd">            solvetime   solver integration time, in seconds (float)</span>
+<span class="sd">            =========== =============================================</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sol</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span>
+        <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+        <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;ydot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot</span>
+        <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_success</span>
+        <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;onroot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span>
+        <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message</span>
+        <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;solvetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span>
+
+        <span class="k">return</span> <span class="n">sol</span></div>
+</div>
+
+
+    <span class="c1"># def save(self, savename: str, overwrite: bool = False) -&gt; None:</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+
+
+    <span class="c1">#     Parameters</span>
+    <span class="c1">#     ----------</span>
+    <span class="c1">#     savename : str</span>
+    <span class="c1">#         DESCRIPTION.</span>
+
+    <span class="c1">#     overwrite : bool, optional</span>
+    <span class="c1">#         DESCRIPTION. The default is False.</span>
+
+    <span class="c1">#     Raises</span>
+    <span class="c1">#     ------</span>
+    <span class="c1">#     Exception</span>
+    <span class="c1">#         DESCRIPTION.</span>
+
+    <span class="c1">#     Returns</span>
+    <span class="c1">#     -------</span>
+    <span class="c1">#     None.</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+
+    <span class="c1">#     import os, shutil</span>
+    <span class="c1">#     from pathlib import Path</span>
+
+    <span class="c1">#     import numpy as np</span>
+    <span class="c1">#     from ruamel.yaml import YAML</span>
+
+    <span class="c1">#     savepath = Path(savename)</span>
+    <span class="c1">#     if os.path.exists(savepath) and not overwrite:</span>
+    <span class="c1">#         raise Exception(savename + &#39; already exists. Overwrite with flag.&#39;)</span>
+
+    <span class="c1">#     elif os.path.exists(savepath):</span>
+    <span class="c1">#         shutil.rmtree(savepath)</span>
+
+    <span class="c1">#     os.mkdir(savepath)</span>
+
+    <span class="c1">#     yaml = YAML()</span>
+    <span class="c1">#     yaml.indent(mapping=4)</span>
+
+    <span class="c1">#     path = os.path.dirname(__file__) + &#39;/../default_sims/default_P2D.yaml&#39;</span>
+
+    <span class="c1">#     yamlpath = Path(path)</span>
+    <span class="c1">#     default_yaml = yaml.load(yamlpath)</span>
+
+    <span class="c1">#     k_bat = default_yaml[&#39;battery&#39;].keys()</span>
+    <span class="c1">#     k_el = default_yaml[&#39;electrolyte&#39;].keys()</span>
+    <span class="c1">#     k_an = default_yaml[&#39;anode&#39;].keys()</span>
+    <span class="c1">#     k_sep = default_yaml[&#39;separator&#39;].keys()</span>
+    <span class="c1">#     k_ca = default_yaml[&#39;cathode&#39;].keys()</span>
+
+    <span class="c1">#     sim = self._sim</span>
+
+    <span class="c1">#     simdata = {}</span>
+    <span class="c1">#     simdata[&#39;battery&#39;] = dict((k, getattr(sim.bat, k)) for k in k_bat)</span>
+    <span class="c1">#     simdata[&#39;electrolyte&#39;] = dict((k, getattr(sim.el, k)) for k in k_el)</span>
+    <span class="c1">#     simdata[&#39;anode&#39;] = dict((k, getattr(sim.an, k)) for k in k_an)</span>
+    <span class="c1">#     simdata[&#39;separator&#39;] = dict((k, getattr(sim.sep, k)) for k in k_sep)</span>
+    <span class="c1">#     simdata[&#39;cathode&#39;] = dict((k, getattr(sim.ca, k)) for k in k_ca)</span>
+
+    <span class="c1">#     yaml.dump(simdata, savepath.joinpath(savename + &#39;_sim.yaml&#39;))</span>
+
+    <span class="c1">#     exp = self._exp</span>
+
+    <span class="c1">#     yaml.dump(exp, savepath.joinpath(savename + &#39;_exp.yaml&#39;))</span>
+
+    <span class="c1">#     soldata = self.to_dict()</span>
+    <span class="c1">#     soldata[&#39;classname&#39;] = self.classname</span>
+
+    <span class="c1">#     t = soldata.pop(&#39;t&#39;)</span>
+    <span class="c1">#     y = soldata.pop(&#39;y&#39;)</span>
+    <span class="c1">#     ydot = soldata.pop(&#39;ydot&#39;)</span>
+
+    <span class="c1">#     yaml.dump(soldata, savepath.joinpath(savename + &#39;_sol.yaml&#39;))</span>
+
+    <span class="c1">#     np.savez(savepath.joinpath(savename + &#39;_sol.npz&#39;), t=t, y=y, ydot=ydot)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, Corey R. Randall.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

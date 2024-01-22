@@ -206,7 +206,7 @@ def docs() -> None:
 
     import os, webbrowser
 
-    sitepath = os.path.dirname(__file__) + '/../docs/build/index.html'
+    sitepath = os.path.dirname(__file__) + '/../docs/_build/index.html'
 
     webbrowser.open_new_tab('file://' + os.path.realpath(sitepath))
 
