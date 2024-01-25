@@ -4,8 +4,6 @@
 	/* --pst-color-primary: #0079C2 !important; 
 	--pst-color-secondary: #5D9732 !important; */
 
-  --pst-color-success-highlight: pink !important;
-
   --pst-sidebar-font-size-mobile: 0.9rem !important;
 }
 
@@ -23,10 +21,6 @@ section span.caption-text {
 /* Dark theme tweaking */
 html[data-theme=dark] .sd-card img[src*='.svg'] {
   filter: invert(0.82) brightness(0.8) contrast(1.2);
-}
-
-.sd-btn-primary:hover {
-  background-color: pink;
 }
 
 /* Main index page overview cards */

@@ -4,7 +4,7 @@ BatMods-lite
 
 Provides:
 
-1. A library of pre-built battery models
+1. A library and API for pre-built battery models
 2. Kinetic/transport properties for common battery materials
 
 How to use the documentation
@@ -84,23 +84,21 @@ class IDASolver(object):
         The keyword arguments specify the Sundials IDA solver options. A
         partial list of options/defaults is given below:
 
-        ================ ==================================================
-        Key              Description (*type* or {options}, default)
-        ================ ==================================================
-        rtol             relative tolerance (*float*, 1e-6)
-        atol             absolute tolerance (*float*, 1e-12)
-        user_data        the ``inputs`` parameter (*tuple*, ``None``)
-        linsolver        linear solver (``{'dense', 'band'}``, ``'dense'``)
-        lband            width of the lower band (*int*, 0)
-        uband            width of the upper band (*int*, 0)
-        rootfn           root/event function (*Callable*, ``None``)
-        nr_rootfns       number of events in ``'rootfn'`` (*int*, ``0``)
-        initcond         variable set to vary for a consistent initial
-                         condition (``{'y0', 'yp0', None}``, ``'yp0'``)
-        algidx           the indicies of the algebraic variables in the
-                         ``residuals`` y array (*list[int]*, ``None``)
-        max_step_size    max time step [s] (*float*, 0. -> unrestricted)
-        ================ ==================================================
+        ============ =========================================================
+        Key          Description (*type* or {options}, default)
+        ============ =========================================================
+        rtol         relative tolerance (*float*, 1e-6)
+        atol         absolute tolerance (*float*, 1e-12)
+        user_data    the ``inputs`` parameter (*tuple*, ``None``)
+        linsolver    linear solver (``{'dense', 'band'}``, ``'dense'``)
+        lband        width of the lower band (*int*, 0)
+        uband        width of the upper band (*int*, 0)
+        rootfn       root/event function (*Callable*, ``None``)
+        nr_rootfns   number of events in ``'rootfn'`` (*int*, ``0``)
+        initcond     unknown variable set (``{'y0', 'yp0', None}``, ``'yp0'``)
+        algidx       algebraic variable indicies in y (*list[int]*, ``None``)
+        max_t_step   maximum time step [s] (*float*, 0. -> unrestricted)
+        ============ =========================================================
 
     Notes
     -----
@@ -136,7 +134,7 @@ class IDASolver(object):
 
         options['compute_initcond'] = kwargs.get('initcond', 'yp0')
         options['algebraic_vars_idx'] = kwargs.get('algidx', None)
-        options['max_step_size'] = kwargs.get('max_step_size', 0.)
+        options['max_step_size'] = kwargs.get('max_t_step', 0.)
 
         options['old_api'] = False
 

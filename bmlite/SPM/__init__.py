@@ -9,6 +9,7 @@ processing, plotting, and saving methods.
 
 from . import builder
 from . import dae
+from . import roots
 from . import solutions
 from . import postutils
 
@@ -46,11 +47,11 @@ class Simulation(object):
         if they do so. Otherwise, the dependent parameters may not be
         consistent with the user-defined inputs.
 
-        Notes
-        -----
-        * The ``'default_SPM.yaml'`` file can be accessed via the
-          ``templates()`` method. Please reference this for help building your
-          own ``.yaml`` file.
+        See also
+        --------
+        bmlite.SPM.templates :
+            Get help making your own ``.yaml`` file by starting with the
+            default template.
         """
 
         import os
@@ -66,7 +67,8 @@ class Simulation(object):
         defaults = os.listdir(os.path.dirname(__file__) + '/default_sims')
         if yamlfile in defaults:
             path = os.path.dirname(__file__) + '/default_sims/' + yamlfile
-            print('[BatMods WARNING] SPM Simulation: Using a default yaml')
+            print('\n[BatMods WARNING]\n'
+                  '\tSPM Simulation: Using a default yaml\n')
             yamlpath = Path(path)
 
         elif os.path.exists(yamlfile):
@@ -117,8 +119,6 @@ class Simulation(object):
 
         import numpy as np
 
-        from .dae import bandwidth
-
         # Update dependent parameters
         self.bat.update()
         self.el.update()
@@ -160,7 +160,9 @@ class Simulation(object):
                     + list(self.el.algidx())
 
         # Determine the bandwidth
-        self.lband, self.uband, _ = bandwidth(self)
+        # self.lband, self.uband, _ = bandwidth(self)
+        self.lband = self.el.ptr['phi_el'] - self.an.r_ptr('Li_ed')[-1]
+        self.uband = self.el.ptr['phi_el'] - self.an.r_ptr('Li_ed')[-1]
 
     def j_pattern(self) -> None:
         """
@@ -171,7 +173,11 @@ class Simulation(object):
 
         Returns
         -------
-        None.
+        lband : int
+            Lower bandwidth from the residual function's Jacobian pattern.
+
+        uband : int
+            Upper bandwidth from the residual function's Jacobian pattern.
 
         See also
         --------
@@ -185,7 +191,8 @@ class Simulation(object):
 
         lband, uband, j_pat = bandwidth(self)
 
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 4],
+                               layout='constrained')
 
         ax.spy(j_pat)
         ax.text(0.1, 0.2, 'lband: ' + str(lband), transform=ax.transAxes)
@@ -193,6 +200,8 @@ class Simulation(object):
 
         format_ticks(ax)
         show(fig)
+
+        return lband, uband
 
     def run_CC(self, exp: dict, **kwargs) -> object:
         """
@@ -218,18 +227,18 @@ class Simulation(object):
             The keyword arguments specify the Sundials IDA solver options. A
             partial list of options/defaults is given below:
 
-            =============== =================================================
-            Key             Description (*type* or {options}, default)
-            =============== =================================================
-            rtol            relative tolerance (*float*, 1e-6)
-            atol            absolute tolerance (*float*, 1e-9)
-            linsolver       linear solver (``{'dense', 'band'}``, ``'band'``)
-            lband           width of the lower band (*int*, ``self.lband``)
-            uband           width of the upper band (*int*, ``self.uband``)
-            max_step_size   maximum time step (*float*, 0. -> unrestricted)
-            rootfn          root/event function (*Callable*, ``None``)
-            nr_rootfns      number of events in ``'rootfn'`` (*int*, 0)
-            =============== =================================================
+            ============= =================================================
+            Key           Description (*type* or {options}, default)
+            ============= =================================================
+            rtol          relative tolerance (*float*, 1e-6)
+            atol          absolute tolerance (*float*, 1e-9)
+            linsolver     linear solver (``{'dense', 'band'}``, ``'band'``)
+            lband         width of the lower band (*int*, ``self.lband``)
+            uband         width of the upper band (*int*, ``self.uband``)
+            max_t_step    maximum time step (*float*, 0. -> unrestricted)
+            rootfn        root/event function (*Callable*, ``None``)
+            nr_rootfns    number of events in ``'rootfn'`` (*int*, 0)
+            ============= =================================================
 
         Returns
         -------
@@ -309,18 +318,18 @@ class Simulation(object):
             The keyword arguments specify the Sundials IDA solver options. A
             partial list of options/defaults is given below:
 
-            =============== =================================================
-            Key             Description (*type* or {options}, default)
-            =============== =================================================
-            rtol            relative tolerance (*float*, 1e-6)
-            atol            absolute tolerance (*float*, 1e-9)
-            linsolver       linear solver (``{'dense', 'band'}``, ``'band'``)
-            lband           width of the lower band (*int*, ``self.lband``)
-            uband           width of the upper band (*int*, ``self.uband``)
-            max_step_size   maximum time step (*float*, 0. -> unrestricted)
-            rootfn          root/event function (*Callable*, ``None``)
-            nr_rootfns      number of events in ``'rootfn'`` (*int*, 0)
-            =============== =================================================
+            ============= =================================================
+            Key           Description (*type* or {options}, default)
+            ============= =================================================
+            rtol          relative tolerance (*float*, 1e-6)
+            atol          absolute tolerance (*float*, 1e-9)
+            linsolver     linear solver (``{'dense', 'band'}``, ``'band'``)
+            lband         width of the lower band (*int*, ``self.lband``)
+            uband         width of the upper band (*int*, ``self.uband``)
+            max_t_step    maximum time step (*float*, 0. -> unrestricted)
+            rootfn        root/event function (*Callable*, ``None``)
+            nr_rootfns    number of events in ``'rootfn'`` (*int*, 0)
+            ============= =================================================
 
         Returns
         -------
@@ -372,7 +381,8 @@ class Simulation(object):
         sol.ida_fill(idasol, solvetime)
 
         if not sol.success:
-            print('[BatMods WARNING] run_CV: bad initstep, trying to resolve')
+            print('\n[BatMods WARNING]\n'
+                  '\trun_CV: bad initstep, trying to resolve\n')
 
             V_ext = exp['V_ext']
             V_init = self.sv_0[self.ca.ptr['phi_ed']]
@@ -391,9 +401,11 @@ class Simulation(object):
                     break
 
             if not idasol.flag >= 0:
-                print('[BatMods ERROR] run_CV: failed to resolve bad initstep')
+                print('\n[BatMods ERROR]\n'
+                      '\trun_CV: failed to resolve bad initstep\n')
             else:
-                print('[BatMods NOTE] run_CV: initstep successfully resolved')
+                print('\n[BatMods NOTE]\n'
+                      '\trun_CV: initstep successfully resolved\n')
 
             solvetime = time.time() - start
 
@@ -428,18 +440,18 @@ class Simulation(object):
             The keyword arguments specify the Sundials IDA solver options. A
             partial list of options/defaults is given below:
 
-            =============== =================================================
-            Key             Description (*type* or {options}, default)
-            =============== =================================================
-            rtol            relative tolerance (*float*, 1e-6)
-            atol            absolute tolerance (*float*, 1e-9)
-            linsolver       linear solver (``{'dense', 'band'}``, ``'band'``)
-            lband           width of the lower band (*int*, ``self.lband``)
-            uband           width of the upper band (*int*, ``self.uband``)
-            max_step_size   maximum time step (*float*, 0. -> unrestricted)
-            rootfn          root/event function (*Callable*, ``None``)
-            nr_rootfns      number of events in ``'rootfn'`` (*int*, 0)
-            =============== =================================================
+            ============= =================================================
+            Key           Description (*type* or {options}, default)
+            ============= =================================================
+            rtol          relative tolerance (*float*, 1e-6)
+            atol          absolute tolerance (*float*, 1e-9)
+            linsolver     linear solver (``{'dense', 'band'}``, ``'band'``)
+            lband         width of the lower band (*int*, ``self.lband``)
+            uband         width of the upper band (*int*, ``self.uband``)
+            max_t_step    maximum time step (*float*, 0. -> unrestricted)
+            rootfn        root/event function (*Callable*, ``None``)
+            nr_rootfns    number of events in ``'rootfn'`` (*int*, 0)
+            ============= =================================================
 
         Returns
         -------
@@ -496,6 +508,16 @@ class Simulation(object):
         return sol
 
     def copy(self) -> object:
+        """
+        Create a copy of the Simulation instance.
+
+        Returns
+        -------
+        sim : SPM Simulation object
+            A unique copy (stored separately in memory) of the Simulation
+            instance.
+        """
+
         from copy import deepcopy
 
         return deepcopy(self)

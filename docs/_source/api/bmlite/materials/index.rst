@@ -98,8 +98,8 @@ Classes
    
    Computationally fast Graphite kinetic and transport properties.
 
-   Differs from ``GraphiteSlow`` because the equilibrium potential is not
-   piecewise here, making it faster to evaluate.
+   Differs from ``GraphiteSlow`` because the equilibrium potential is
+   not piecewise here, making it less accurate, but faster to evaluate.
 
    :param alpha_a: Anodic symmetry factor in Butler-Volmer expression [-].
    :type alpha_a: float
@@ -162,7 +162,7 @@ Classes
    Computationally slow Graphite kinetic and transport properties.
 
    Differs from ``GraphiteFast`` because the equilibrium potential is
-   piecewise here, making it slower to evaluate.
+   piecewise here, making it more accurate, but slower to evaluate.
 
    :param alpha_a: Anodic symmetry factor in Butler-Volmer expression [-].
    :type alpha_a: float
@@ -225,7 +225,7 @@ Classes
    Computationally fast NMC532 kinetic and transport properties.
 
    Differs from ``NMC532Slow`` because the equilibrium potential is not
-   piecewise here, making it faster to evaluate.
+   piecewise here, making it less accurate, but faster to evaluate.
 
    :param alpha_a: Anodic symmetry factor in Butler-Volmer expression [-].
    :type alpha_a: float
@@ -288,7 +288,7 @@ Classes
    Computationally slow NMC532 kinetic and transport properties.
 
    Differs from ``NMC532Fast`` because the equilibrium potential is
-   piecewise here, making it slower to evaluate.
+   piecewise here, making it more accurate, but slower to evaluate.
 
    :param alpha_a: Anodic symmetry factor in Butler-Volmer expression [-].
    :type alpha_a: float

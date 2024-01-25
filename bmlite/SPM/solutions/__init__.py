@@ -1,3 +1,11 @@
+"""
+Solution Classes
+----------------
+This package contains class definitions for each experimental solution. Most
+solutions inherit from :class:`~bmlite.SPM.solutions.BaseSolution`, however,
+their verification processes are unique.
+"""
+
 from ._base_solution import BaseSolution
 from ._cc_solution import CCSolution
 from ._cv_solution import CVSolution

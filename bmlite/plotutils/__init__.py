@@ -10,6 +10,19 @@ from numpy import ndarray as _ndarray
 
 
 def show(fig: object) -> None:
+    """
+    Display a figure according to the backend.
+
+    Parameters
+    ----------
+    fig : object
+        A ``fig`` instance from a ``matplotlib`` figure.
+
+    Returns
+    -------
+    None.
+    """
+
     from matplotlib import get_backend
 
     if 'inline' not in get_backend():
@@ -45,25 +58,44 @@ def format_ticks(ax: object) -> None:
     ax.tick_params(axis='y', right=True, which='both', direction='in')
 
 
-def contour(ax: object, xlim: list[float], ylim: list[float], z: _ndarray,
-            label: str) -> None:
+def pixel(ax: object, xlims: list[float], ylims: list[float], z: _ndarray,
+            cblabel: str) -> None:
+    """
+    Fill an axis instance with a pixel plot defined by the inputs.
+
+    Parameters
+    ----------
+    ax : object
+        An ``axis`` instance from a ``matplotlib`` figure.
+
+    xlims : list[float]
+        Limits for the x-axis [x_low, x_high].
+
+    ylims : list[float]
+        Limits for the y-axis [y_low, y_high].
+
+    z : 2D array
+        Data to plot against x and y. ``z[0, 0]`` corresponds to x_low, y_low,
+        and ``z[-1, -1]`` corresponds to x_high, y_high.
+
+    cblabel : str
+        The colorbar label.
+
+    Returns
+    -------
+    None.
+    """
 
     import matplotlib.pyplot as plt
-    from mpl_toolkits.axes_grid1 import make_axes_locatable
 
     ax.set_xticks([])
-
-    divider = make_axes_locatable(ax)
-    cax = divider.append_axes('right', size='10%', pad=0.2)
-    cax.tick_params(direction='in')
 
     cmap = plt.cm.viridis
 
     im = ax.imshow(z, cmap=cmap, aspect='auto', vmin=z.min(), vmax=z.max(),
-                   extent=[xlim[0], xlim[1], ylim[1], ylim[0]],
+                   extent=[xlims[0], xlims[1], ylims[1], ylims[0]],
                    interpolation='nearest')
 
-    fig = ax.get_figure()
-
-    cbar = fig.colorbar(im, cax=cax)
-    cbar.set_label(label)
+    cb = plt.colorbar(im, ax=ax)
+    cb.ax.yaxis.set_offset_position('left')
+    cb.set_label(cblabel)

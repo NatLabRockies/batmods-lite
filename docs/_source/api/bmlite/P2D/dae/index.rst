@@ -73,13 +73,13 @@ Functions
                order and description of the arrays is given below:
 
                ======== =============================================================
-               Variable Description [units] (type)
+               Variable Description [units] (*type*)
                ======== =============================================================
                res      residuals ``res = M*y' - f(t, y)`` [units] (*1D array*)
                sdot_an  Li+ production rate at each x_a [kmol/m^3/s] (*1D array*)
                sdot_ca  Li+ production rate at each x_c [kmol/m^3/s] (*1D array*)
                sum_ip   ``i_ed + i_el`` at each "plus" interface [A/m^2] (*1D array*)
-               i_el_x   ``i_el`` at each interface [A/m^2] (*1D array*)
+               i_el_x   ``i_el`` at each x interface [A/m^2] (*1D array*)
                ======== =============================================================
 
 

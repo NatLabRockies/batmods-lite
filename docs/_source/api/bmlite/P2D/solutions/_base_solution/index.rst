@@ -56,7 +56,7 @@ Classes
 
       Solver root(event) exit status.
 
-      :returns: **onroot** (*bool*) -- ``True`` if exit on root(event), ``False`` otherwise.
+      :returns: **onroot** (*bool*) -- ``True`` if exit on root/event, ``False`` otherwise.
 
    .. py:property:: success
       :type: bool
@@ -92,17 +92,17 @@ Classes
 
       :param sol: Solution dictionary with the following key/value pairs:
 
-                  =========== =============================================
-                  Key         Value (type)
-                  =========== =============================================
-                  t           solution times (1D array)
-                  y           solution variables (2D array)
-                  ydot        solution variable time derivatives (2D array)
-                  success     overall solver exit status (bool)
-                  onroot      onroot solver exit status (bool)
-                  message     solver exit message (str)
-                  solvetime   solver integration time, in seconds (float)
-                  =========== =============================================
+                  =========== ========================================
+                  Key         Value [units] (*type*)
+                  =========== ========================================
+                  t           solution times [s] (*1D array*)
+                  y           solution variables [units] (*2D array*)
+                  ydot        dy/dt derivatives [units/s] (*2D array*)
+                  success     overall solver exit status (*bool*)
+                  onroot      onroot solver exit status (*bool*)
+                  message     solver exit message (*str*)
+                  solvetime   solver integration time [s] (*float*)
+                  =========== ========================================
       :type sol: dict
 
       :returns: *None.*
@@ -115,16 +115,16 @@ Classes
 
       :param sol: Sundials IDA SolverReturn object with the following attributes:
 
-                  =========== =============================================
-                  Attribute   Value (type)
-                  =========== =============================================
-                  t           solution times (1D array)
-                  y           solution variables (2D array)
-                  ydot        solution variable time derivatives (2D array)
-                  success     overall solver exit status (bool)
-                  onroot      onroot solver exit status (bool)
-                  message     solver exit message (str)
-                  =========== =============================================
+                  =========== ========================================
+                  Attribute   Value [units] (*type*)
+                  =========== ========================================
+                  t           solution times [s] (*1D array*)
+                  y           solution variables [units] (*2D array*)
+                  ydot        dy/dt derivatives [units/s] (*2D array*)
+                  success     overall solver exit status (*bool*)
+                  onroot      onroot solver exit status (*bool*)
+                  message     solver exit message (*str*)
+                  =========== ========================================
       :type sol: object
       :param solvetime: Solver integration time, in seconds.
       :type solvetime: float
@@ -132,9 +132,82 @@ Classes
       :returns: *None.*
 
 
+   .. py:method:: plot(*args: str) -> None
+
+      Generates requested plots based on ``*args``.
+
+      :param \*args: Use any number of the following arguments to see the described
+                     plots:
+
+                     ================= ===============================================
+                     arg               Plot description
+                     ================= ===============================================
+                     'current'         current density [A/m^2] vs. time [s]
+                     'voltage'         cell voltage [V] vs. time [s]
+                     'power'           power density [W/m^2] vs. time [s]
+                     'ivp'             combined current, voltage, and power plot
+                     'potentials'      anode, cathode, and electrolyte potentials [V]
+                     'electrolyte'     Li-ion concentration [kmol/m^3] vs. x and t
+                     'intercalation'   anode/cathode particle Li fractions vs. r and t
+                     'pixels'          pixel plots for most 2D variables
+                     ================= ===============================================
+      :type \*args: str
+
+      :returns: *None.*
+
+
+   .. py:method:: post() -> None
+
+
    .. py:method:: report() -> None
 
-      Prints the experiment detials and solution success report.
+      Prints the experiment details and solution success report.
+
+      :returns: *None.*
+
+
+   .. py:method:: slice_and_save(savename: str, overwrite: bool = False) -> None
+
+      Save a ``.npz`` file with all spatial, time, and state variables
+      separated into 1D, 2D, and 3D arrays. The keys are given below.
+      The index order of the 2D and 3D arrays is given with the value
+      descriptions.
+
+      ========= ====================================================
+      Key       Value [units] (*type*)
+      ========= ====================================================
+      x_a       x mesh in anode [m] (*1D array*)
+      x_s       x mesh in separator [m] (*1D array*)
+      x_c       x mesh in cathode [m] (*1D array*)
+      x         stacked x mesh for an, sep, and ca [m] (*1D array*)
+      r_a       r mesh for anode particles [m] (*1D array*)
+      r_c       r mesh for cathode particles [m] (*1D array*)
+      t         saved solution times [s] (*1D array*)
+      phie_a    electrolyte potentials at t, x_a [V] (*2D array*)
+      phis_a    electrode potentials at t, x_a [V] (*2D array*)
+      ce_a      electrolyte Li+ at t, x_a [kmol/m^3] (*2D array*)
+      cs_a      electrode Li at t, x_a, r_a [kmol/m^3] (*3D array*)
+      phie_s    electrolyte potentials at t, x_s [V] (*2D array*)
+      ce_s      electrolyte Li+ at t, x_s [kmol/m^3] (*2D array*)
+      phie_c    electrolyte potentials at t, x_c [V] (*2D array*)
+      phis_c    electrode potentials at t, x_c [V] (*2D array*)
+      ce_c      electrolyte Li+ at t, x_c [kmol/m^3] (*2D array*)
+      cs_c      electrode Li at t, x_c, r_c [kmol/m^3] (*3D array*)
+      phie      electrolyte potentials at t, x [V] (*2D array*)
+      ce        electrolyte Li+ at t, x [kmol/m^3] (*2D array*)
+      ie        ``i_el`` at t, x boundarys [A/m^2] (*2D array*)
+      j_a       Faradaic current at t, x_a [kmol/m^2/s] (*2D array*)
+      j_c       Faradaic current at t, x_c [kmol/m^2/s] (*2D array*)
+      ========= ====================================================
+
+      :param savename: Either a file name or the absolute/relative file path. The ``.npz``
+                       extension will be added to the end of the string if it is not
+                       already there. If only the file name is given, the file will be
+                       saved in the user's current working directory.
+      :type savename: str
+      :param overwrite: A flag to overwrite an existing ``.npz`` file with the same name
+                        if one exists. The default is ``False``.
+      :type overwrite: bool, optional
 
       :returns: *None.*
 
@@ -143,8 +216,8 @@ Classes
 
       Print solve time (not including pre/post processing).
 
-      :param units: Units for printed time (``'s'``, ``'min'``, or ``'h'``). The
-                    default is ``'s'``.
+      :param units: Units for printed time ``{'s', 'min', 'h'}``. The default is
+                    ``'s'``.
       :type units: str, optional
 
       :returns: **solvetime** (*str*) -- Time for Sundials IDA to solve problem in [units].
@@ -157,17 +230,17 @@ Classes
 
       :returns: **sol** (*dict*) -- Solution dictionary with the following key/value pairs:
 
-                =========== =============================================
-                Key         Value (type)
-                =========== =============================================
-                t           solution times (1D array)
-                y           solution variables (2D array)
-                ydot        solution variable time derivatives (2D array)
-                success     overall solver exit status (bool)
-                onroot      onroot solver exit status (bool)
-                message     solver exit message (str)
-                solvetime   solver integration time, in seconds (float)
-                =========== =============================================
+                =========== ========================================
+                Key         Value [units] (*type*)
+                =========== ========================================
+                t           solution times [s] (*1D array*)
+                y           solution variables [units] (*2D array*)
+                ydot        dy/dt derivatives [units/s] (*2D array*)
+                success     overall solver exit status (*bool*)
+                onroot      onroot solver exit status (*bool*)
+                message     solver exit message (*str*)
+                solvetime   solver integration time [s] (*float*)
+                =========== ========================================
 
 
 

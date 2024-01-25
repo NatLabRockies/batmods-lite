@@ -1,6 +1,6 @@
 """
-Post-processing Utilities Module
---------------------------------
+Post-processing Utilities
+-------------------------
 This module contains all post-processing functions for the SPM package. The
 available post-processing options for a given experiment are specific to that
 experiment. Therefore, not all ``Solution`` classes may have access to all of
@@ -9,6 +9,30 @@ the following functions.
 
 
 def post(sol: object) -> dict:
+    """
+    Run post processing to determine secondary variables.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    Returns
+    -------
+    postvars : dict
+        Post processed variables, as described below.
+
+        ========= ========================================================
+        Key       Value [units] (*type*)
+        ========= ========================================================
+        res       DAE residual at t (row) for y (col) [units] (*2D array*)
+        sdot_an   anode Faradaic current at t [kmol/m^2/s] (*1D array*)
+        sdot_ca   cathode Faradaic current at t [kmol/m^2/s] (*1D array*)
+        i_ext     external current density at t [A/m^2] (*1D array*)
+        A*h/m^2   areal capacity at t [A*h/m^2] (*1D array*)
+        ========= ========================================================
+    """
+
     import numpy as np
     from scipy.integrate import cumtrapz
 
@@ -18,8 +42,6 @@ def post(sol: object) -> dict:
     sim, exp = sol._sim, sol._exp.copy()
 
     # Extract desired variables for each time
-    res = np.zeros_like(sol.y)
-
     sdot_an = np.zeros_like(sol.t)
     sdot_ca = np.zeros_like(sol.t)
 
@@ -32,7 +54,7 @@ def post(sol: object) -> dict:
         sv, svdot = sol.y[i, :], sol.ydot[i, :]
 
         output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
-        res[i, :], sdot_an[i], sdot_ca[i] = output
+        sdot_an[i], sdot_ca[i] = output
 
         i_ext[i] = exp['i_ext']
 
@@ -44,7 +66,6 @@ def post(sol: object) -> dict:
 
     # Store outputs
     postvars = {}
-    postvars['res'] = res
 
     postvars['sdot_an'] = sdot_an
     postvars['sdot_ca'] = sdot_ca
@@ -56,18 +77,33 @@ def post(sol: object) -> dict:
 
 
 def current(sol: object, ax: object = None) -> None:
+    """
+    Plot current density vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    ax : object, optional
+        An ``axis`` instance from a ``matplotlib`` figure. The default is
+        ``None``. If not specified, a new figure is made.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import format_ticks, show
 
-    if len(sol.postvars) == 0:
-        sol.post()
-
     if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
+                               layout='constrained')
 
     ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'Current density, $i_{\rm ext}$ [A/m$^2$]')
+    ax.set_ylabel(r'$i_{\rm ext}$ [A/m$^2$]')
 
     ax.plot(sol.t, sol.postvars['i_ext'], '-k')
     format_ticks(ax)
@@ -77,15 +113,33 @@ def current(sol: object, ax: object = None) -> None:
 
 
 def voltage(sol: object, ax: object = None) -> None:
+    """
+    Plot cell voltage vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    ax : object, optional
+        An ``axis`` instance from a ``matplotlib`` figure. The default is
+        ``None``. If not specified, a new figure is made.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import format_ticks, show
 
     if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
+                               layout='constrained')
 
     ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel('Cell voltage [V]')
+    ax.set_ylabel(r'$\phi_{\rm ca} - \phi_{\rm an}$ [V]')
 
     sim = sol._sim
 
@@ -97,18 +151,33 @@ def voltage(sol: object, ax: object = None) -> None:
 
 
 def power(sol: object, ax: object = None) -> None:
+    """
+    Plot power density vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    ax : object, optional
+        An ``axis`` instance from a ``matplotlib`` figure. The default is
+        ``None``. If not specified, a new figure is made.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import format_ticks, show
 
-    if len(sol.postvars) == 0:
-        sol.post()
-
     if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
+                               layout='constrained')
 
     ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'Power density, $P_{\rm ext}$ [W/m$^2$]')
+    ax.set_ylabel(r'$p_{\rm ext}$ [W/m$^2$]')
 
     sim = sol._sim
 
@@ -122,29 +191,57 @@ def power(sol: object, ax: object = None) -> None:
         show(fig)
 
 
-def IVP(sol: object) -> None:
+def ivp(sol: object) -> None:
+    """
+    Subplots for current, voltage, and power.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import show
 
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[15, 3.5])
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
+                           layout='constrained')
 
     current(sol, ax[0])
     voltage(sol, ax[1])
     power(sol, ax[2])
 
-    fig.subplots_adjust(wspace=0.3)
+    fig.get_layout_engine().set(wspace=0.1)
     show(fig)
 
 
 def potentials(sol: object) -> None:
+    """
+    Plots anode, electrolyte, and cathode potentials vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import format_ticks, show
 
     an, ca, el = sol._sim.an, sol._sim.ca, sol._sim.el
 
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[15, 3.5])
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
+                           layout='constrained')
 
     ax[0].set_ylabel(r'$\phi_{\rm an}$ [V]')
     ax[1].set_ylabel(r'$\phi_{\rm ca}$ [V]')
@@ -158,11 +255,24 @@ def potentials(sol: object) -> None:
         ax[i].set_xlabel(r'$t$ [s]')
         format_ticks(ax[i])
 
-    fig.subplots_adjust(wspace=0.3)
+    fig.get_layout_engine().set(wspace=0.1)
     show(fig)
 
 
 def intercalation(sol: object) -> None:
+    """
+    Plots anode and cathode particle intercalation profiles vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib.colors as clrs
@@ -186,8 +296,8 @@ def intercalation(sol: object) -> None:
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=[8, 3],
                            layout='constrained')
 
-    ax[0].set_ylabel(r'$X_{\rm Li, an}$ [$-$]')
-    ax[1].set_ylabel(r'$X_{\rm Li, ca}$ [$-$]')
+    ax[0].set_ylabel(r'$X_{\rm Li}$ [$-$]')
+    ax[1].set_yticklabels([])
 
     ax[0].text(0.1, 0.1, 'Anode particle', transform=ax[0].transAxes)
     ax[1].text(0.1, 0.1, 'Cathode particle', transform=ax[1].transAxes)
@@ -213,23 +323,37 @@ def intercalation(sol: object) -> None:
     show(fig)
 
 
-def contours(sol: object) -> None:
+def pixels(sol: object) -> None:
+    """
+    Makes pixel plots for most 2D (space/time) variables.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
-    from ..plotutils import contour, show
+    from ..plotutils import pixel, show
 
     # Get needed domains
     an, ca = sol._sim.an, sol._sim.ca
 
     # Make figure
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=[6, 3.5])
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=[5.5, 3.25],
+                           layout='constrained')
 
     # Li concentrations in anode [kmol/m^3]
     xlims = [an.rm[0] * 1e6, an.rp[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
     z = sol.y[:, an.r_ptr('Li_ed')] * an.Li_max
 
-    contour(ax[0], xlims, ylims, z, r'[kmol/m$^3$]')
+    pixel(ax[0], xlims, ylims, z, r'[kmol/m$^3$]')
 
     ax[0].set_ylabel(r'$t$ [s]')
 
@@ -241,11 +365,12 @@ def contours(sol: object) -> None:
     ylims = [sol.t.min(), sol.t.max()]
     z = sol.y[:, ca.r_ptr('Li_ed')] * ca.Li_max
 
-    contour(ax[1], xlims, ylims, z, r'[kmol/m$^3$]')
+    pixel(ax[1], xlims, ylims, z, r'[kmol/m$^3$]')
 
+    ax[1].set_yticks([])
     ax[1].set_xlabel(r'$r$ [$\mu$m]')
     ax[1].set_title(r'$C_{\rm s, ca}$')
 
     # Adjust spacing
-    fig.subplots_adjust(wspace=0.8, hspace=0.2)
+    fig.get_layout_engine().set(hspace=0.1, wspace=0.1)
     show(fig)

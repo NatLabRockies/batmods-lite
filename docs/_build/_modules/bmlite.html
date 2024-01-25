@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=5fd90a42" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4bdb038c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -334,17 +334,17 @@ document.write(`
 
 <span class="sd">Provides:</span>
 
-<span class="sd">1. Simple API to run pre-built battery models</span>
-<span class="sd">2. Library of kinetic and transport properties for common battery materials</span>
+<span class="sd">1. A library and API for pre-built battery models</span>
+<span class="sd">2. Kinetic/transport properties for common battery materials</span>
 
 <span class="sd">How to use the documentation</span>
 <span class="sd">----------------------------</span>
-<span class="sd">Documentation is accessible via python&#39;s ``help()`` function which prints</span>
+<span class="sd">Documentation is accessible via Python&#39;s ``help()`` function which prints</span>
 <span class="sd">docstrings from the specified package, module, function, class, etc. (e.g.,</span>
 <span class="sd">``help(bmlite.SPM)``). In addition, you can access the documentation</span>
 <span class="sd">by calling the built-in ``bmlite.docs()`` method to open a locally run website.</span>
-<span class="sd">The website is recommended because it has search functionality and includes</span>
-<span class="sd">examples in jupyter notebooks.</span>
+<span class="sd">The website includes search functionality and examples, beyond the code</span>
+<span class="sd">docstrings.</span>
 
 <span class="sd">Viewing documentation using IPython</span>
 <span class="sd">-----------------------------------</span>
@@ -353,8 +353,6 @@ document.write(`
 <span class="sd">key). To view the type hints and brief descriptions, type an open parenthesis</span>
 <span class="sd">``(`` after any function, method, class, etc. (e.g., ``bm.Constants(``).</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span> <span class="k">as</span> <span class="n">_Callable</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">_ndarray</span>
 <span class="kn">from</span> <span class="nn">scikits.odes</span> <span class="kn">import</span> <span class="n">dae</span> <span class="k">as</span> <span class="n">_DAE</span>
@@ -404,7 +402,7 @@ document.write(`
 
 <div class="viewcode-block" id="IDASolver">
 <a class="viewcode-back" href="../api/bmlite/index.html#bmlite.IDASolver">[docs]</a>
-<span class="k">class</span> <span class="nc">IDASolver</span><span class="p">(</span><span class="n">_DAE</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">IDASolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An IDA solver defined by a residuals function.</span>
 
@@ -413,13 +411,13 @@ document.write(`
 <span class="sd">    with a signature like ``def resdiuals(t, y, yp, res, inputs) -&gt; None``.</span>
 <span class="sd">    The ``res`` parameter must be a 1D array the same size as ``y`` and ``yp``.</span>
 <span class="sd">    Although the function returns ``None``, the solver uses the filled ``res``</span>
-<span class="sd">    array to integrate/solve the sytem. The ``inputs`` parameter is a ``tuple``</span>
+<span class="sd">    array to integrate/solve the system. The ``inputs`` parameter is a *tuple*</span>
 <span class="sd">    that is used to pass any required user-defined ``*args`` to the function.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    residuals : Callable</span>
-<span class="sd">        Residual function like ``def residuals(t, y, yp, res, inputs)``.</span>
+<span class="sd">        Residuals function ``def residuals(t, y, yp, res, inputs) -&gt; None``.</span>
 <span class="sd">        For some examples, see :func:`bmlite.SPM.dae.residuals` and/or</span>
 <span class="sd">        :func:`bmlite.P2D.dae.residuals`.</span>
 
@@ -427,32 +425,30 @@ document.write(`
 <span class="sd">        The keyword arguments specify the Sundials IDA solver options. A</span>
 <span class="sd">        partial list of options/defaults is given below:</span>
 
-<span class="sd">        ================== ==================================================</span>
-<span class="sd">        Key                Description (type or options, default)</span>
-<span class="sd">        ================== ==================================================</span>
-<span class="sd">        rtol               relative tolerance (*float*, 1e-6)</span>
-<span class="sd">        atol               absolute tolerance (*float*, 1e-12)</span>
-<span class="sd">        user_data          the ``inputs`` parameter (*tuple*, ``None``)</span>
-<span class="sd">        linsolver          linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;dense&#39;``)</span>
-<span class="sd">        lband              width of the lower band (*int*, 0)</span>
-<span class="sd">        uband              width of the upper band (*int*, 0)</span>
-<span class="sd">        max_step_size      max time step [s] (*float*, 0. -&gt; unrestricted)</span>
-<span class="sd">        rootfn             root/event function (*Callable*, ``None``)</span>
-<span class="sd">        nr_rootfns         number of events in ``&#39;rootfn&#39;`` (*int*, ``0``)</span>
-<span class="sd">        compute_initcond   vary y or yp to get a consistent initial condition</span>
-<span class="sd">                           (``{&#39;y0&#39;, &#39;yp0&#39;, None}``, ``&#39;yp0&#39;``)</span>
-<span class="sd">        algebraic_vars_idx the indicies of the algebraic variables in the</span>
-<span class="sd">                           ``residuals`` y array (*list[int]*, ``None``)</span>
-<span class="sd">        ================== ==================================================</span>
+<span class="sd">        ============ =========================================================</span>
+<span class="sd">        Key          Description (*type* or {options}, default)</span>
+<span class="sd">        ============ =========================================================</span>
+<span class="sd">        rtol         relative tolerance (*float*, 1e-6)</span>
+<span class="sd">        atol         absolute tolerance (*float*, 1e-12)</span>
+<span class="sd">        user_data    the ``inputs`` parameter (*tuple*, ``None``)</span>
+<span class="sd">        linsolver    linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;dense&#39;``)</span>
+<span class="sd">        lband        width of the lower band (*int*, 0)</span>
+<span class="sd">        uband        width of the upper band (*int*, 0)</span>
+<span class="sd">        rootfn       root/event function (*Callable*, ``None``)</span>
+<span class="sd">        nr_rootfns   number of events in ``&#39;rootfn&#39;`` (*int*, ``0``)</span>
+<span class="sd">        initcond     unknown variable set (``{&#39;y0&#39;, &#39;yp0&#39;, None}``, ``&#39;yp0&#39;``)</span>
+<span class="sd">        algidx       algebraic variable indicies in y (*list[int]*, ``None``)</span>
+<span class="sd">        max_t_step   maximum time step [s] (*float*, 0. -&gt; unrestricted)</span>
+<span class="sd">        ============ =========================================================</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    * The solver name IDA stands for Implicit Differential-Algebraic solver. It</span>
-<span class="sd">      is part of the `SUNDIALS`_ package, and is accessed here through the</span>
+<span class="sd">    * The solver name IDA stands for Implicit Differential-Algebraic solver.</span>
+<span class="sd">      It is part of the `SUNDIALS`_ package, and is accessed here through the</span>
 <span class="sd">      `scikits-odes`_ python wrapper.</span>
-<span class="sd">    * The solver can be unstable if the ``algebraic_vars_idx`` keyword argument</span>
-<span class="sd">      is not specified for DAEs.</span>
-<span class="sd">    * The ``rootfn`` keyward argument must have the signature ``def f(t, y, yp,</span>
+<span class="sd">    * The solver can be unstable if the ``algidx`` keyword argument is not</span>
+<span class="sd">      specified for DAEs.</span>
+<span class="sd">    * The ``rootfn`` keyword argument must have the signature ``def f(t, y, yp,</span>
 <span class="sd">      events, inputs) -&gt; None`` where the ``events`` parameter is an array that</span>
 <span class="sd">      is filled with root functions. If any element in ``events`` hits zero</span>
 <span class="sd">      during the solver integration, the solver will exit.</span>
@@ -461,24 +457,87 @@ document.write(`
 <span class="sd">      .. _scikits-odes: https://bmcage.github.io/odes/dev/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_integrator&#39;</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residuals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;rtol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rtol&#39;</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">)</span>
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;atol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;atol&#39;</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">)</span>
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_data&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;linsolver&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;linsolver&#39;</span><span class="p">,</span> <span class="s1">&#39;dense&#39;</span><span class="p">)</span>
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;lband&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lband&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;uband&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uband&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;max_step_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;max_step_size&#39;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;rootfn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rootfn&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">options</span><span class="p">[</span><span class="s1">&#39;nr_rootfns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nr_rootfns&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;old_api&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;old_api&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;compute_initcond&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;compute_initcond&#39;</span><span class="p">,</span> <span class="s1">&#39;yp0&#39;</span><span class="p">)</span>
-        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;algebraic_vars_idx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;algebraic_vars_idx&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;compute_initcond&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;initcond&#39;</span><span class="p">,</span> <span class="s1">&#39;yp0&#39;</span><span class="p">)</span>
+        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;algebraic_vars_idx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;algidx&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;max_step_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;max_t_step&#39;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;ida&#39;</span><span class="p">,</span> <span class="n">residuals</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
+        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;old_api&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">_DAE</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;ida&#39;</span><span class="p">,</span> <span class="n">residuals</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IDASolver.solve">
+<a class="viewcode-back" href="../api/bmlite/index.html#bmlite.IDASolver.solve">[docs]</a>
+    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_span</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span> <span class="n">y0</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span> <span class="n">yp0</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the ODE/DAE system and save the solution at each time in</span>
+<span class="sd">        ``t_span``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t_span : 1D array</span>
+<span class="sd">            Array of times [s] to store the solution. ``t_span[0]`` must be</span>
+<span class="sd">            the start time and ``t_span[-1]`` the final time.</span>
+
+<span class="sd">        y0 : 1D array</span>
+<span class="sd">            Array of state variables at ``t = t_span[0]``.</span>
+
+<span class="sd">        yp0 : 1D array</span>
+<span class="sd">            Array of state variable time derivatives at ``t = t_span[0]``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        idasol : NamedTuple</span>
+<span class="sd">            Solution returned by SUNDIALS IDA integrator over ``t_span``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">idasol</span> <span class="o">=</span> <span class="n">_DAE</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_span</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">yp0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">idasol</span></div>
+
+
+<div class="viewcode-block" id="IDASolver.init_step">
+<a class="viewcode-back" href="../api/bmlite/index.html#bmlite.IDASolver.init_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y0</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span> <span class="n">yp0</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the ODE/DAE for a consistent initial condition at ``t = t0``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t0 : float</span>
+<span class="sd">            Initial time [s].</span>
+
+<span class="sd">        y0 : 1D array</span>
+<span class="sd">            Array of state variables at ``t = t0``.</span>
+
+<span class="sd">        yp0 : 1D array</span>
+<span class="sd">            Array of state variable time derivatives at ``t = t0``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        idasol : NamedTuple</span>
+<span class="sd">            Solution returned by SUNDIALS IDA integrator at ``t = t0``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">idasol</span> <span class="o">=</span> <span class="n">_DAE</span><span class="o">.</span><span class="n">init_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">yp0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">idasol</span></div>
+</div>
 
 
 
@@ -495,42 +554,86 @@ document.write(`
 
     <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">webbrowser</span>
 
-    <span class="n">sitepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/docs/build/index.html&#39;</span>
+    <span class="n">sitepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/../docs/_build/index.html&#39;</span>
 
-    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open_new_tab</span><span class="p">(</span><span class="s1">&#39;file:&#39;</span> <span class="o">+</span> <span class="n">sitepath</span><span class="p">)</span></div>
+    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open_new_tab</span><span class="p">(</span><span class="s1">&#39;file://&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">sitepath</span><span class="p">))</span></div>
 
 
 
-<div class="viewcode-block" id="format_ax">
-<a class="viewcode-back" href="../api/bmlite/index.html#bmlite.format_ax">[docs]</a>
-<span class="k">def</span> <span class="nf">format_ax</span><span class="p">(</span><span class="n">ax</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_templates</span><span class="p">(</span><span class="n">model__file__</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">exp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Formats an ``axis`` object by adjusting the ticks.</span>
-
-<span class="sd">    Specifically, the top and right ticks are added, minor ticks are turned on,</span>
-<span class="sd">    and all ticks are set to face inward.</span>
+<span class="sd">    Print simulation and/or experiment templates. If both ``sim`` and ``exp``</span>
+<span class="sd">    are ``None``, a list of available templates will be printed. Otherwise,</span>
+<span class="sd">    if a name or index is given, that template will print to the console.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ax : object</span>
-<span class="sd">        An ``axis`` instance from a ``matplotlib`` figure.</span>
+<span class="sd">    model__file__ : str</span>
+<span class="sd">        The module ``__file__`` attribute. This sets the local path to make</span>
+<span class="sd">        sure templates are pulled from the correct model path.</span>
+
+<span class="sd">    model_name : str</span>
+<span class="sd">        Name for the model package. This ensures template lists are labeled</span>
+<span class="sd">        correctly.</span>
+
+<span class="sd">    sim : str | int, optional</span>
+<span class="sd">        Simulation template file name or index. The default is ``None``.</span>
+
+<span class="sd">    exp : str | int, optional</span>
+<span class="sd">        Experiment template file name or index. The default is ``None``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">AutoMinorLocator</span>
+    <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">json</span>
+    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-    <span class="k">if</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">get_scale</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">AutoMinorLocator</span><span class="p">())</span>
+    <span class="kn">from</span> <span class="nn">ruamel.yaml</span> <span class="kn">import</span> <span class="n">YAML</span>
 
-    <span class="k">if</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">get_scale</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">AutoMinorLocator</span><span class="p">())</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">model__file__</span><span class="p">)</span>
 
-    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">)</span></div>
+    <span class="n">simlist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_sims/&#39;</span><span class="p">)</span>
+    <span class="n">explist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_exps/&#39;</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">sim</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Templates for &#39;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39; simulations:&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">simlist</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;- [&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span> <span class="n">file</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Templates for &#39;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39; experiments:&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">explist</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;- [&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span> <span class="n">file</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;.yaml&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sim</span><span class="p">:</span>
+            <span class="n">sim</span> <span class="o">+=</span> <span class="s1">&#39;.yaml&#39;</span>
+
+        <span class="n">simfile</span> <span class="o">=</span> <span class="n">sim</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">simfile</span> <span class="o">=</span> <span class="n">simlist</span><span class="p">[</span><span class="n">sim</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">sim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">30</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">simfile</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_sims/&#39;</span> <span class="o">+</span> <span class="n">simfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;.yaml&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="n">exp</span> <span class="o">+=</span> <span class="s1">&#39;.yaml&#39;</span>
+
+        <span class="n">expfile</span> <span class="o">=</span> <span class="n">exp</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">expfile</span> <span class="o">=</span> <span class="n">explist</span><span class="p">[</span><span class="n">exp</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">exp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">30</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">expfile</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
+        <span class="n">expdict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_exps/&#39;</span> <span class="o">+</span> <span class="n">expfile</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;exp = &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">expdict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.0.1&#39;</span>

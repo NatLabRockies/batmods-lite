@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=5fd90a42" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=4bdb038c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -51,7 +51,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="bmlite.P2D" href="P2D/index.html" />
-    <link rel="prev" title="2. Constant Current" href="../../examples/P2D_constant_current.html" />
+    <link rel="prev" title="4. Constant Power" href="../../examples/P2D_constant_power.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -348,16 +348,16 @@ document.write(`
 <p class="rubric">BatMods-lite</p>
 <p>Provides:</p>
 <ol class="arabic simple">
-<li><p>Simple API to run pre-built battery models</p></li>
-<li><p>Library of kinetic and transport properties for common battery materials</p></li>
+<li><p>A library and API for pre-built battery models</p></li>
+<li><p>Kinetic/transport properties for common battery materials</p></li>
 </ol>
 <p class="rubric">How to use the documentation</p>
-<p>Documentation is accessible via python’s <code class="docutils literal notranslate"><span class="pre">help()</span></code> function which prints
+<p>Documentation is accessible via Python’s <code class="docutils literal notranslate"><span class="pre">help()</span></code> function which prints
 docstrings from the specified package, module, function, class, etc. (e.g.,
 <code class="docutils literal notranslate"><span class="pre">help(bmlite.SPM)</span></code>). In addition, you can access the documentation
 by calling the built-in <code class="docutils literal notranslate"><span class="pre">bmlite.docs()</span></code> method to open a locally run website.
-The website is recommended because it has search functionality and includes
-examples in jupyter notebooks.</p>
+The website includes search functionality and examples, beyond the code
+docstrings.</p>
 <p class="rubric">Viewing documentation using IPython</p>
 <p>Start IPython and import <code class="docutils literal notranslate"><span class="pre">bmlite</span></code> under the alias <code class="docutils literal notranslate"><span class="pre">bm</span></code>. To see what’s
 available in <code class="docutils literal notranslate"><span class="pre">bmlite</span></code>, type <code class="docutils literal notranslate"><span class="pre">bm.&lt;TAB&gt;</span></code> (where <code class="docutils literal notranslate"><span class="pre">&lt;TAB&gt;</span></code> refers to the TAB
@@ -367,20 +367,8 @@ key). To view the type hints and brief descriptions, type an open parenthesis
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="P2D/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.P2D</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="P2D/solutions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.P2D.solutions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="P2D/builder/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.P2D.builder</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="P2D/dae/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.P2D.dae</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="P2D/postutils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.P2D.postutils</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="SPM/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="SPM/solutions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.solutions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="SPM/builder/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.builder</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="SPM/dae/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.dae</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="SPM/postutils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.postutils</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="P2D/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.P2D</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="SPM/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="materials/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.materials</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotutils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.plotutils</span></code></a></li>
 </ul>
@@ -407,9 +395,6 @@ key). To view the type hints and brief descriptions, type an open parenthesis
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bmlite.docs" title="bmlite.docs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">docs</span></code></a>(→ None)</p></td>
 <td><p>Opens a new tab in your browser with a locally run docs website.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bmlite.format_ax" title="bmlite.format_ax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_ax</span></code></a>(→ None)</p></td>
-<td><p>Formats an <code class="docutils literal notranslate"><span class="pre">axis</span></code> object by adjusting the ticks.</p></td>
 </tr>
 </tbody>
 </table>
@@ -440,12 +425,12 @@ key). To view the type hints and brief descriptions, type an open parenthesis
 with a signature like <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">resdiuals(t,</span> <span class="pre">y,</span> <span class="pre">yp,</span> <span class="pre">res,</span> <span class="pre">inputs)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>.
 The <code class="docutils literal notranslate"><span class="pre">res</span></code> parameter must be a 1D array the same size as <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">yp</span></code>.
 Although the function returns <code class="docutils literal notranslate"><span class="pre">None</span></code>, the solver uses the filled <code class="docutils literal notranslate"><span class="pre">res</span></code>
-array to integrate/solve the sytem. The <code class="docutils literal notranslate"><span class="pre">inputs</span></code> parameter is a <code class="docutils literal notranslate"><span class="pre">tuple</span></code>
+array to integrate/solve the system. The <code class="docutils literal notranslate"><span class="pre">inputs</span></code> parameter is a <em>tuple</em>
 that is used to pass any required user-defined <code class="docutils literal notranslate"><span class="pre">*args</span></code> to the function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>residuals</strong> (<em>Callable</em>) – Residual function like <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">residuals(t,</span> <span class="pre">y,</span> <span class="pre">yp,</span> <span class="pre">res,</span> <span class="pre">inputs)</span></code>.
+<li><p><strong>residuals</strong> (<em>Callable</em>) – Residuals function <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">residuals(t,</span> <span class="pre">y,</span> <span class="pre">yp,</span> <span class="pre">res,</span> <span class="pre">inputs)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>.
 For some examples, see <a class="reference internal" href="SPM/dae/index.html#bmlite.SPM.dae.residuals" title="bmlite.SPM.dae.residuals"><code class="xref py py-func docutils literal notranslate"><span class="pre">bmlite.SPM.dae.residuals()</span></code></a> and/or
 <a class="reference internal" href="P2D/dae/index.html#bmlite.P2D.dae.residuals" title="bmlite.P2D.dae.residuals"><code class="xref py py-func docutils literal notranslate"><span class="pre">bmlite.P2D.dae.residuals()</span></code></a>.</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>The keyword arguments specify the Sundials IDA solver options. A
@@ -453,7 +438,7 @@ partial list of options/defaults is given below:</p>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
-<th class="head"><p>Description (type or options, default)</p></th>
+<th class="head"><p>Description (<em>type</em> or {options}, default)</p></th>
 </tr>
 </thead>
 <tbody>
@@ -475,22 +460,20 @@ partial list of options/defaults is given below:</p>
 <tr class="row-odd"><td><p>uband</p></td>
 <td><p>width of the upper band (<em>int</em>, 0)</p></td>
 </tr>
-<tr class="row-even"><td><p>max_step_size</p></td>
-<td><p>max time step [s] (<em>float</em>, 0. -&gt; unrestricted)</p></td>
-</tr>
-<tr class="row-odd"><td><p>rootfn</p></td>
+<tr class="row-even"><td><p>rootfn</p></td>
 <td><p>root/event function (<em>Callable</em>, <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></td>
 </tr>
-<tr class="row-even"><td><p>nr_rootfns</p></td>
+<tr class="row-odd"><td><p>nr_rootfns</p></td>
 <td><p>number of events in <code class="docutils literal notranslate"><span class="pre">'rootfn'</span></code> (<em>int</em>, <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></td>
 </tr>
-<tr class="row-odd"><td><p>compute_initcond</p></td>
-<td><p>vary y or yp to get a consistent initial condition
-(<code class="docutils literal notranslate"><span class="pre">{'y0',</span> <span class="pre">'yp0',</span> <span class="pre">None}</span></code>, <code class="docutils literal notranslate"><span class="pre">'yp0'</span></code>)</p></td>
+<tr class="row-even"><td><p>initcond</p></td>
+<td><p>unknown variable set (<code class="docutils literal notranslate"><span class="pre">{'y0',</span> <span class="pre">'yp0',</span> <span class="pre">None}</span></code>, <code class="docutils literal notranslate"><span class="pre">'yp0'</span></code>)</p></td>
 </tr>
-<tr class="row-even"><td><p>algebraic_vars_idx</p></td>
-<td><p>the indicies of the algebraic variables in the
-<code class="docutils literal notranslate"><span class="pre">residuals</span></code> y array (<em>list[int]</em>, <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></td>
+<tr class="row-odd"><td><p>algidx</p></td>
+<td><p>algebraic variable indicies in y (<em>list[int]</em>, <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>max_t_step</p></td>
+<td><p>maximum time step [s] (<em>float</em>, 0. -&gt; unrestricted)</p></td>
 </tr>
 </tbody>
 </table>
@@ -500,17 +483,55 @@ partial list of options/defaults is given below:</p>
 </dl>
 <p class="rubric">Notes</p>
 <ul class="simple">
-<li><p>The solver name IDA stands for Implicit Differential-Algebraic solver. It
-is part of the <a class="reference external" href="https://sundials.readthedocs.io/">SUNDIALS</a> package, and is accessed here through the
+<li><p>The solver name IDA stands for Implicit Differential-Algebraic solver.
+It is part of the <a class="reference external" href="https://sundials.readthedocs.io/">SUNDIALS</a> package, and is accessed here through the
 <a class="reference external" href="https://bmcage.github.io/odes/dev/">scikits-odes</a> python wrapper.</p></li>
-<li><p>The solver can be unstable if the <code class="docutils literal notranslate"><span class="pre">algebraic_vars_idx</span></code> keyword argument
-is not specified for DAEs.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">rootfn</span></code> keyward argument must have the signature <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">f(t,</span> <span class="pre">y,</span> <span class="pre">yp,</span>
+<li><p>The solver can be unstable if the <code class="docutils literal notranslate"><span class="pre">algidx</span></code> keyword argument is not
+specified for DAEs.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rootfn</span></code> keyword argument must have the signature <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">f(t,</span> <span class="pre">y,</span> <span class="pre">yp,</span>
 <span class="pre">events,</span> <span class="pre">inputs)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code> where the <code class="docutils literal notranslate"><span class="pre">events</span></code> parameter is an array that
 is filled with root functions. If any element in <code class="docutils literal notranslate"><span class="pre">events</span></code> hits zero
 during the solver integration, the solver will exit.</p>
 </li>
 </ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="bmlite.IDASolver.init_step">
+<span class="sig-name descname"><span class="pre">init_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yp0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">object</span></span></span><a class="reference internal" href="../../_modules/bmlite.html#IDASolver.init_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.IDASolver.init_step" title="Link to this definition">#</a></dt>
+<dd><p>Solve the ODE/DAE for a consistent initial condition at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">t0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0</strong> (<em>float</em>) – Initial time [s].</p></li>
+<li><p><strong>y0</strong> (<em>1D array</em>) – Array of state variables at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">t0</span></code>.</p></li>
+<li><p><strong>yp0</strong> (<em>1D array</em>) – Array of state variable time derivatives at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">t0</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>idasol</strong> (<em>NamedTuple</em>) – Solution returned by SUNDIALS IDA integrator at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">t0</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bmlite.IDASolver.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_span</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yp0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">object</span></span></span><a class="reference internal" href="../../_modules/bmlite.html#IDASolver.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.IDASolver.solve" title="Link to this definition">#</a></dt>
+<dd><p>Solve the ODE/DAE system and save the solution at each time in
+<code class="docutils literal notranslate"><span class="pre">t_span</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_span</strong> (<em>1D array</em>) – Array of times [s] to store the solution. <code class="docutils literal notranslate"><span class="pre">t_span[0]</span></code> must be
+the start time and <code class="docutils literal notranslate"><span class="pre">t_span[-1]</span></code> the final time.</p></li>
+<li><p><strong>y0</strong> (<em>1D array</em>) – Array of state variables at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">t_span[0]</span></code>.</p></li>
+<li><p><strong>yp0</strong> (<em>1D array</em>) – Array of state variable time derivatives at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">t_span[0]</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>idasol</strong> (<em>NamedTuple</em>) – Solution returned by SUNDIALS IDA integrator over <code class="docutils literal notranslate"><span class="pre">t_span</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -520,22 +541,6 @@ during the solver integration, the solver will exit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="bmlite.format_ax">
-<span class="sig-prename descclassname"><span class="pre">bmlite.</span></span><span class="sig-name descname"><span class="pre">format_ax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bmlite.html#format_ax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.format_ax" title="Link to this definition">#</a></dt>
-<dd><p>Formats an <code class="docutils literal notranslate"><span class="pre">axis</span></code> object by adjusting the ticks.</p>
-<p>Specifically, the top and right ticks are added, minor ticks are turned on,
-and all ticks are set to face inward.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ax</strong> (<em>object</em>) – An <code class="docutils literal notranslate"><span class="pre">axis</span></code> instance from a <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> figure.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
 </dd>
 </dl>
 </dd></dl>
@@ -573,9 +578,12 @@ and all ticks are set to face inward.</p>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.Constants.R"><code class="docutils literal notranslate"><span class="pre">Constants.R</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.IDASolver"><code class="docutils literal notranslate"><span class="pre">IDASolver</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.IDASolver"><code class="docutils literal notranslate"><span class="pre">IDASolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.IDASolver.init_step"><code class="docutils literal notranslate"><span class="pre">IDASolver.init_step()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.IDASolver.solve"><code class="docutils literal notranslate"><span class="pre">IDASolver.solve()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.docs"><code class="docutils literal notranslate"><span class="pre">docs()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.format_ax"><code class="docutils literal notranslate"><span class="pre">format_ax()</span></code></a></li>
 </ul>
 </li>
 </ul>

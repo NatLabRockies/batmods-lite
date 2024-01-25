@@ -5,7 +5,7 @@
 
 .. autoapi-nested-parse::
 
-   .. rubric:: Battery Builder Module
+   .. rubric:: Battery Builder
 
    Contains classes to construct the battery for P2D simulations. Each class reads
    in keyword arguments that define parameters relevant to its specific domain.

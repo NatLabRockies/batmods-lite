@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=5fd90a42" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=4bdb038c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -348,19 +348,17 @@ document.write(`
 <span class="sd">    Base: :class:`~bmlite.SPM.solutions.BaseSolution`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;postvars&#39;</span><span class="p">]</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">exp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
 <div class="viewcode-block" id="CPSolution.classname">
 <a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/_cp_solution/index.html#bmlite.SPM.solutions._cp_solution.CPSolution.classname">[docs]</a>
     <span class="k">def</span> <span class="nf">classname</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class name. Overwrites ``classname()`` from ``BaseSolution``.</span>
+<span class="sd">        Class name. Overwrites ``BaseSolution``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -370,110 +368,92 @@ document.write(`
         <span class="k">return</span> <span class="s1">&#39;CPSolution&#39;</span></div>
 
 
-<div class="viewcode-block" id="CPSolution.post">
-<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._cp_solution.CPSolution.post">[docs]</a>
-    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">post</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="s1">&#39;BC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;power&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span> <span class="o">=</span> <span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="s1">&#39;BC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
-
-
-<div class="viewcode-block" id="CPSolution.plot">
-<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._cp_solution.CPSolution.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="s1">&#39;debug&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;all&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">debug</span>
-            <span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s1">&#39;current&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;all&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">current</span>
-            <span class="n">current</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s1">&#39;voltage&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;all&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">voltage</span>
-            <span class="n">voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s1">&#39;power&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;all&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">power</span>
-            <span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="CPSolution.slice_and_save">
-<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._cp_solution.CPSolution.slice_and_save">[docs]</a>
-    <span class="k">def</span> <span class="nf">slice_and_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">savename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="CPSolution.verify">
+<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._cp_solution.CPSolution.verify">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plotflag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">rtol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-3</span><span class="p">,</span>
+               <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save a ``.npz`` file with all spatial, time, and state variables</span>
-<span class="sd">        separated into 1D and 2D arrays. The keys are given below. The index</span>
-<span class="sd">        order of the 2D arrays is given with the value descriptions.</span>
+<span class="sd">        Verifies the solution is consistent.</span>
 
-<span class="sd">        ========= =====================================================</span>
-<span class="sd">        Key       Value [units] (type)</span>
-<span class="sd">        ========= =====================================================</span>
-<span class="sd">        r_a       r mesh for anode particles [m] (1D array)</span>
-<span class="sd">        r_c       r mesh for cathode particles [m] (1D array)</span>
-<span class="sd">        t         saved solution times [s] (1D array)</span>
-<span class="sd">        phis_a    anode electrode potentials at t [V] (1D array)</span>
-<span class="sd">        cs_a      electrode Li at t, r_a [kmol/m^3] (2D array)</span>
-<span class="sd">        phis_c    cathode electrode potentials at t [V] (1D array)</span>
-<span class="sd">        cs_c      electrode Li at t, r_c [kmol/m^3] (2D array)</span>
-<span class="sd">        phie      electrolyte potentials at t [V] (1D array)</span>
-<span class="sd">        j_a       anode Faradaic current at t [kmol/m^2/s] (1D array)</span>
-<span class="sd">        j_c       cathode Faradaic current at t [kmol/m^2/s] (1D array)</span>
-<span class="sd">        ========= =====================================================</span>
+<span class="sd">        Specifically, for a constant power experiment, this method checks</span>
+<span class="sd">        that the calculated power was within tolerance of the boundary</span>
+<span class="sd">        condition. In addition, the anodic and cathodic Faradaic currents are</span>
+<span class="sd">        checked against the current at each time step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        savename : str</span>
-<span class="sd">            Either a file name or the absolute/relative file path. The ``.npz``</span>
-<span class="sd">            extension will be added to the end of the string if it is not</span>
-<span class="sd">            already there. If only the file name is given, the file will be</span>
-<span class="sd">            saved in the user&#39;s current working directory.</span>
+<span class="sd">        plotflag : bool, optional</span>
+<span class="sd">            A flag to see plots showing the verification calculations. The</span>
+<span class="sd">            default is ``False``.</span>
 
-<span class="sd">        overwrite : bool, optional</span>
-<span class="sd">            A flag to overwrite and existing ``.npz`` file with the same name</span>
-<span class="sd">            if one exists. The default is ``False``.</span>
+<span class="sd">        rtol : float, optional</span>
+<span class="sd">            The relative tolerance for array comparisons. The default is 5e-3.</span>
+
+<span class="sd">        atol : float, optional</span>
+<span class="sd">            The relative tolerance for array comparisons. The default is 1e-3.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        None.</span>
+<span class="sd">        checks : bool</span>
+<span class="sd">            ``True`` is all checks are satisfied, ``False`` otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="kn">import</span> <span class="nn">os</span>
-
         <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+        <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">Constants</span>
+        <span class="kn">from</span> <span class="nn">...plotutils</span> <span class="kn">import</span> <span class="n">format_ticks</span><span class="p">,</span> <span class="n">show</span>
+        <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">power</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Constants</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="s1">&#39;.npz&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">savename</span><span class="p">:</span>
-            <span class="n">savename</span> <span class="o">+=</span> <span class="s1">&#39;.npz&#39;</span>
+        <span class="n">sim</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span>
 
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">savename</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;save_and_slice file already exists. Overwrite with&#39;</span>
-                            <span class="s1">&#39; flag or delete the file and try again.&#39;</span><span class="p">)</span>
+        <span class="n">an</span><span class="p">,</span> <span class="n">ca</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span>
 
-        <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span>
+        <span class="n">P_ext</span> <span class="o">=</span> <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;P_ext&#39;</span><span class="p">]</span>
+        <span class="n">P_mod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;i_ext&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">ca</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
+        <span class="n">i_mod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;i_ext&#39;</span><span class="p">]</span>
 
-        <span class="n">r_a</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r</span>
-        <span class="n">r_c</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">r</span>
+        <span class="n">i_an</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_an&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">A_s</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">thick</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="n">F</span>
+        <span class="n">i_ca</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_ca&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">A_s</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">thick</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="n">F</span>
 
-        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
+        <span class="n">checks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">P_ext</span><span class="p">,</span> <span class="n">P_mod</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">))</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">i_mod</span><span class="p">,</span> <span class="o">-</span><span class="n">i_an</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">))</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">i_mod</span><span class="p">,</span> <span class="n">i_ca</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">))</span>
 
-        <span class="n">phis_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
-        <span class="n">phis_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
-        <span class="n">phie</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_el&#39;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">plotflag</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+                                   <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;constrained&#39;</span><span class="p">)</span>
 
-        <span class="n">cs_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)]</span><span class="o">*</span><span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">Li_max</span>
-        <span class="n">cs_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)]</span><span class="o">*</span><span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">Li_max</span>
+            <span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="n">j_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_an&#39;</span><span class="p">]</span>
-        <span class="n">j_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_ca&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">P_mod</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">ylims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.995</span> <span class="o">*</span> <span class="n">P_mod</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="mf">1.005</span> <span class="o">*</span> <span class="n">P_mod</span><span class="o">.</span><span class="n">mean</span><span class="p">()])</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">ylims</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ylims</span><span class="p">)])</span>
 
-        <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">savename</span><span class="p">,</span> <span class="n">r_a</span><span class="o">=</span><span class="n">r_a</span><span class="p">,</span> <span class="n">r_c</span><span class="o">=</span><span class="n">r_c</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">phis_a</span><span class="o">=</span><span class="n">phis_a</span><span class="p">,</span> <span class="n">phie</span><span class="o">=</span><span class="n">phie</span><span class="p">,</span>
-                 <span class="n">phis_c</span><span class="o">=</span><span class="n">phis_c</span><span class="p">,</span> <span class="n">cs_a</span><span class="o">=</span><span class="n">cs_a</span><span class="p">,</span> <span class="n">cs_c</span><span class="o">=</span><span class="n">cs_c</span><span class="p">,</span> <span class="n">j_a</span><span class="o">=</span><span class="n">j_a</span><span class="p">,</span> <span class="n">j_c</span><span class="o">=</span><span class="n">j_c</span><span class="p">)</span></div>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$i_{\rm ext} + i_{\rm an}$ [A/m$^2$]&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$i_{\rm ext} - i_{\rm ca}$ [A/m$^2$]&#39;</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">i_mod</span> <span class="o">+</span> <span class="n">i_an</span><span class="p">,</span> <span class="s1">&#39;-C3&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">i_mod</span> <span class="o">-</span> <span class="n">i_ca</span><span class="p">,</span> <span class="s1">&#39;-C2&#39;</span><span class="p">)</span>
+
+            <span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
+            <span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">])</span>
+                <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ [s]&#39;</span><span class="p">)</span>
+                <span class="n">format_ticks</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="n">fig</span><span class="o">.</span><span class="n">get_layout_engine</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">checks</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

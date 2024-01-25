@@ -32,6 +32,7 @@ Submodules
    builder/index.rst
    dae/index.rst
    postutils/index.rst
+   roots/index.rst
 
 
 Package Contents
@@ -51,7 +52,6 @@ Functions
 
 .. autoapisummary::
 
-   bmlite.P2D.load
    bmlite.P2D.templates
 
 
@@ -86,11 +86,18 @@ Functions
       if they do so. Otherwise, the dependent parameters may not be
       consistent with the user-defined inputs.
 
-   .. rubric:: Notes
+   .. seealso::
 
-   * The ``'default_P2D.yaml'`` file can be accessed via the
-     ``templates()`` method. Please reference this for help building your
-     own ``.yaml`` file.
+      :obj:`bmlite.P2D.templates`
+          Get help making your own ``.yaml`` file by starting with the default template.
+
+   .. py:method:: copy() -> object
+
+      Create a copy of the Simulation instance.
+
+      :returns: **sim** (*P2D Simulation object*) -- A unique copy (stored separately in memory) of the Simulation
+                instance.
+
 
    .. py:method:: j_pattern() -> None
 
@@ -99,7 +106,8 @@ Functions
       Runs the ``bmlite.P2D.dae.bandwidth`` function to determine and plot
       the Jacobian pattern.
 
-      :returns: *None.*
+      :returns: * **lband** (*int*) -- Lower bandwidth from the residual function's Jacobian pattern.
+                * **uband** (*int*) -- Upper bandwidth from the residual function's Jacobian pattern.
 
       .. seealso:: :obj:`bmlite.P2D.dae.bandwidth`
 
@@ -134,7 +142,7 @@ Functions
                   descriptions are listed below:
 
                   =========== ==============================================
-                  Key         Value [units] (type)
+                  Key         Value [units] (*type*)
                   =========== ==============================================
                   C_rate      C-rate (+ charge, - discharge) [1/h] (*float*)
                   t_min       minimum time [s] (*float*)
@@ -145,18 +153,18 @@ Functions
       :param \*\*kwargs: The keyword arguments specify the Sundials IDA solver options. A
                          partial list of options/defaults is given below:
 
-                         =============== =================================================
-                         Key             Description (type or options, default)
-                         =============== =================================================
-                         rtol            relative tolerance (*float*, 1e-6)
-                         atol            absolute tolerance (*float*, 1e-9)
-                         linsolver       linear solver (``{'dense', 'band'}``, ``'band'``)
-                         lband           width of the lower band (*int*, ``self.lband``)
-                         uband           width of the upper band (*int*, ``self.uband``)
-                         max_step_size   maximum time step (*float*, 0. -> unrestricted)
-                         rootfn          root/event function (*Callable*, ``None``)
-                         nr_rootfns      number of events in ``'rootfn'`` (*int*, 0)
-                         =============== =================================================
+                         ============= =================================================
+                         Key           Description (*type* or {options}, default)
+                         ============= =================================================
+                         rtol          relative tolerance (*float*, 1e-6)
+                         atol          absolute tolerance (*float*, 1e-9)
+                         linsolver     linear solver (``{'dense', 'band'}``, ``'band'``)
+                         lband         width of the lower band (*int*, ``self.lband``)
+                         uband         width of the upper band (*int*, ``self.uband``)
+                         max_t_step    maximum time step (*float*, 0. -> unrestricted)
+                         rootfn        root/event function (*Callable*, ``None``)
+                         nr_rootfns    number of events in ``'rootfn'`` (*int*, 0)
+                         ============= =================================================
       :type \*\*kwargs: dict, optional
 
       :returns: **sol** (*CCSolution object*) -- Solution class with the returned variable values, messages, exit
@@ -166,24 +174,87 @@ Functions
       .. seealso:: :obj:`bmlite.IDASolver`, :obj:`bmlite.P2D.solutions.CCSolution`
 
 
+   .. py:method:: run_CP(exp: dict, **kwargs) -> object
 
-.. py:function:: load(loadname: str) -> tuple[object]
+      Runs a constant power experiment specified by the details given in
+      the experiment dictionary ``exp``.
 
-   Load a previous P2D simulation and solution pair.
+      :param exp: The constant power experimental details. Required keys and
+                  descriptions are listed below:
 
-   The ``Solution`` classes have a save method that create a directory
-   with saved ``.yaml`` and ``.npz`` files which can be used to reconstruct
-   the ``sim`` and ``sol`` objects from a previous experiment.
+                  ======== ========================================================
+                  Key      Value [units] (*type*)
+                  ======== ========================================================
+                  P_ext    external power (+ charge, - discharge) [W/m^2] (*float*)
+                  t_min    minimum time [s] (*float*)
+                  t_max    maximum time [s] (*float*)
+                  Nt       number of time discretizations [-] (*int*)
+                  ======== ========================================================
+      :type exp: dict
+      :param \*\*kwargs: The keyword arguments specify the Sundials IDA solver options. A
+                         partial list of options/defaults is given below:
 
-   :param loadname: The absolute or relative path to a directory with previously saved
-                    solution files.
-   :type loadname: str
+                         ============= =================================================
+                         Key           Description (*type* or {options}, default)
+                         ============= =================================================
+                         rtol          relative tolerance (*float*, 1e-6)
+                         atol          absolute tolerance (*float*, 1e-9)
+                         linsolver     linear solver (``{'dense', 'band'}``, ``'band'``)
+                         lband         width of the lower band (*int*, ``self.lband``)
+                         uband         width of the upper band (*int*, ``self.uband``)
+                         max_t_step    maximum time step (*float*, 0. -> unrestricted)
+                         rootfn        root/event function (*Callable*, ``None``)
+                         nr_rootfns    number of events in ``'rootfn'`` (*int*, 0)
+                         ============= =================================================
+      :type \*\*kwargs: dict, optional
 
-   :returns: * **sim** (*P2D Simulation object*) -- An initialized P2D simulation instance.
-             * **sol** (*P2D Solution object*) -- An initialized and filled P2D solution instance. The solution class is
-               determined from information in the previously saved ``.yaml`` files.
+      :returns: **sol** (*CPSolution object*) -- Solution class with the returned variable values, messages, exit
+                flags, etc. from the IDA solver. The returned ``CPSolution``
+                instance includes post processing, plotting, and saving methods.
 
-   .. seealso:: :obj:`bmlite.P2D.Simulation`, :obj:`bmlite.P2D.solutions.BaseSolution.save`
+      .. seealso:: :obj:`bmlite.IDASolver`, :obj:`bmlite.P2D.solutions.CPSolution`
+
+
+   .. py:method:: run_CV(exp: dict, **kwargs) -> object
+
+      Runs a constant voltage experiment specified by the details given in
+      the experiment dictionary ``exp``.
+
+      :param exp: The constant voltage experimental details. Required keys and
+                  descriptions are listed below:
+
+                  =========== ==========================================
+                  Key         Value [units] (*type*)
+                  =========== ==========================================
+                  V_ext       externally applied voltage [V] (*float*)
+                  t_min       minimum time [s] (*float*)
+                  t_max       maximum time [s] (*float*)
+                  Nt          number of time discretizations [-] (*int*)
+                  =========== ==========================================
+      :type exp: dict
+      :param \*\*kwargs: The keyword arguments specify the Sundials IDA solver options. A
+                         partial list of options/defaults is given below:
+
+                         ============= =================================================
+                         Key           Description (*type* or {options}, default)
+                         ============= =================================================
+                         rtol          relative tolerance (*float*, 1e-6)
+                         atol          absolute tolerance (*float*, 1e-9)
+                         linsolver     linear solver (``{'dense', 'band'}``, ``'band'``)
+                         lband         width of the lower band (*int*, ``self.lband``)
+                         uband         width of the upper band (*int*, ``self.uband``)
+                         max_t_step    maximum time step (*float*, 0. -> unrestricted)
+                         rootfn        root/event function (*Callable*, ``None``)
+                         nr_rootfns    number of events in ``'rootfn'`` (*int*, 0)
+                         ============= =================================================
+      :type \*\*kwargs: dict, optional
+
+      :returns: **sol** (*CVSolution object*) -- Solution class with the returned variable values, messages, exit
+                flags, etc. from the IDA solver. The returned ``CVSolution``
+                instance includes post processing, plotting, and saving methods.
+
+      .. seealso:: :obj:`bmlite.IDASolver`, :obj:`bmlite.P2D.solutions.CVSolution`
+
 
 
 .. py:function:: templates(sim: str | int = None, exp: str | int = None) -> None

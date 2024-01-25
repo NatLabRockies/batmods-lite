@@ -8,17 +8,15 @@ class CPSolution(BaseSolution):
     Base: :class:`~bmlite.SPM.solutions.BaseSolution`
     """
 
-    __slots__ = ['postvars']
+    __slots__ = []
 
     def __init__(self, sim: object, exp: dict) -> None:
         super().__init__(sim, exp)
 
-        self.postvars = {}
-
     @property
     def classname(self) -> str:
         """
-        Class name. Overwrites ``classname()`` from ``BaseSolution``.
+        Class name. Overwrites ``BaseSolution``.
 
         Returns
         -------
@@ -27,14 +25,34 @@ class CPSolution(BaseSolution):
         """
         return 'CPSolution'
 
-    def post(self) -> None:
-        from ..postutils import post
+    def verify(self, plotflag: bool = False, rtol: float = 5e-3,
+               atol: float = 1e-3) -> bool:
+        """
+        Verifies the solution is consistent.
 
-        self._sim._flags['BC'] = 'power'
-        self.postvars = post(self)
-        self._sim._flags['BC'] = None
+        Specifically, for a constant power experiment, this method checks
+        that the calculated power was within tolerance of the boundary
+        condition. In addition, the anodic and cathodic Faradaic currents are
+        checked against the current at each time step.
 
-    def verify(self, plotflag: bool = False) -> bool:
+        Parameters
+        ----------
+        plotflag : bool, optional
+            A flag to see plots showing the verification calculations. The
+            default is ``False``.
+
+        rtol : float, optional
+            The relative tolerance for array comparisons. The default is 5e-3.
+
+        atol : float, optional
+            The relative tolerance for array comparisons. The default is 1e-3.
+
+        Returns
+        -------
+        checks : bool
+            ``True`` is all checks are satisfied, ``False`` otherwise.
+        """
+
         import numpy as np
         import matplotlib.pyplot as plt
 
@@ -55,37 +73,39 @@ class CPSolution(BaseSolution):
         P_mod = self.postvars['i_ext'] * self.y[:, ca.ptr['phi_ed']]
         i_mod = self.postvars['i_ext']
 
-        i_an = -self.postvars['sdot_an'] * an.A_s * an.thick * c.F
+        i_an = self.postvars['sdot_an'] * an.A_s * an.thick * c.F
         i_ca = self.postvars['sdot_ca'] * ca.A_s * ca.thick * c.F
 
         checks = []
-        checks.append(np.min(P_mod / P_ext) >= 0.995)
-        checks.append(np.max(P_mod / P_ext) <= 1.005)
-        checks.append(np.min(i_an / i_mod) >= 0.995)
-        checks.append(np.max(i_an / i_mod) <= 1.005)
-        checks.append(np.min(i_ca / i_mod) >= 0.995)
-        checks.append(np.max(i_ca / i_mod) <= 1.005)
+        checks.append(np.allclose(P_ext, P_mod, rtol=rtol, atol=atol))
+        checks.append(np.allclose(i_mod, -i_an, rtol=rtol, atol=atol))
+        checks.append(np.allclose(i_mod, i_ca, rtol=rtol, atol=atol))
 
         if plotflag:
-            fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[15, 3.5])
+            fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
+                                   layout='constrained')
 
             power(self, ax[0])
 
-            ylims = np.array([0.995 * P_ext, 1.005 * P_ext])
-            ax[0].set_ylim([min(ylims), max(ylims)])
+            if P_mod.mean() != 0.:
+                ylims = np.array([0.995 * P_mod.mean(), 1.005 * P_mod.mean()])
+                ax[0].set_ylim([min(ylims), max(ylims)])
 
-            ax[1].set_ylabel(r'$-i_{\rm an} / i_{\rm ext}$ [$-$]')
-            ax[2].set_ylabel(r'$i_{\rm ca} / i_{\rm ext}$ [$-$]')
+            ax[1].set_ylabel(r'$i_{\rm ext} + i_{\rm an}$ [A/m$^2$]')
+            ax[2].set_ylabel(r'$i_{\rm ext} - i_{\rm ca}$ [A/m$^2$]')
 
-            ax[1].plot(self.t, i_an / i_mod, '-C3')
-            ax[2].plot(self.t, i_ca / i_mod, '-C2')
+            ax[1].plot(self.t, i_mod + i_an, '-C3')
+            ax[2].plot(self.t, i_mod - i_ca, '-C2')
+
+            ymin = min([ax[i].get_ylim()[0] for i in range(1, 3)])
+            ymax = max([ax[i].get_ylim()[1] for i in range(1, 3)])
 
             for i in range(1, 3):
-                ax[i].set_ylim([0.995, 1.005])
+                ax[i].set_ylim([ymin, ymax])
                 ax[i].set_xlabel(r'$t$ [s]')
                 format_ticks(ax[i])
 
-            fig.subplots_adjust(wspace=0.3)
+            fig.get_layout_engine().set(wspace=0.1)
             show(fig)
 
-        return all(checks)
+        return self.success and all(checks)

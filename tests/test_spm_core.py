@@ -1,6 +1,7 @@
 import pytest
 
 import bmlite as bm
+import matplotlib.pyplot as plt
 
 
 @pytest.fixture(scope='session')
@@ -13,9 +14,17 @@ def test_simulation(sim):
     assert sim
 
 
+def test_fake_yaml():
+    with pytest.raises(Exception):
+        sim = bm.SPM.Simulation('fake.yaml')
+
+
 def test_j_pattern(sim):
-    sim.j_pattern()
-    assert True
+    lband, uband = sim.j_pattern()
+    assert sim.lband == lband
+    assert sim.uband == uband
+
+    plt.close('all')
 
 
 def test_copy(sim):

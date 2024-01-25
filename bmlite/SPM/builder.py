@@ -1,6 +1,6 @@
 """
-Battery Builder Module
-----------------------
+Battery Builder
+---------------
 Contains classes to construct the battery for P2D simulations. Each class reads
 in keyword arguments that define parameters relevant to its specific domain.
 For example, the area and temperature are ``Battery`` level parameters because

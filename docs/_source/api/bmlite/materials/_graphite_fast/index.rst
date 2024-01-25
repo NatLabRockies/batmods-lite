@@ -27,8 +27,8 @@ Classes
    
    Computationally fast Graphite kinetic and transport properties.
 
-   Differs from ``GraphiteSlow`` because the equilibrium potential is not
-   piecewise here, making it faster to evaluate.
+   Differs from ``GraphiteSlow`` because the equilibrium potential is
+   not piecewise here, making it less accurate, but faster to evaluate.
 
    :param alpha_a: Anodic symmetry factor in Butler-Volmer expression [-].
    :type alpha_a: float

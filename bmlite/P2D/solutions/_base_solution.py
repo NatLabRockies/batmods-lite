@@ -7,7 +7,7 @@ class BaseSolution(object):
     """
 
     __slots__ = ['_sim', '_exp', '_t', '_y', '_ydot', '_success', '_onroot',
-                 '_message', '_solvetime']
+                 '_message', '_solvetime', 'postvars']
 
     def __init__(self, sim: object, exp: dict) -> None:
         """
@@ -36,6 +36,8 @@ class BaseSolution(object):
         self._onroot = None
         self._message = None
         self._solvetime = None
+
+        self.postvars = {}
 
     @property
     def classname(self) -> str:
@@ -105,7 +107,7 @@ class BaseSolution(object):
         Returns
         -------
         onroot : bool
-            ``True`` if exit on root(event), ``False`` otherwise.
+            ``True`` if exit on root/event, ``False`` otherwise.
         """
         return self._onroot
 
@@ -128,8 +130,8 @@ class BaseSolution(object):
         Parameters
         ----------
         units : str, optional
-            Units for printed time (``'s'``, ``'min'``, or ``'h'``). The
-            default is ``'s'``.
+            Units for printed time ``{'s', 'min', 'h'}``. The default is
+            ``'s'``.
 
         Returns
         -------
@@ -156,16 +158,16 @@ class BaseSolution(object):
         sol : object
             Sundials IDA SolverReturn object with the following attributes:
 
-            =========== =============================================
-            Attribute   Value (type)
-            =========== =============================================
-            t           solution times (1D array)
-            y           solution variables (2D array)
-            ydot        solution variable time derivatives (2D array)
-            success     overall solver exit status (bool)
-            onroot      onroot solver exit status (bool)
-            message     solver exit message (str)
-            =========== =============================================
+            =========== ========================================
+            Attribute   Value [units] (*type*)
+            =========== ========================================
+            t           solution times [s] (*1D array*)
+            y           solution variables [units] (*2D array*)
+            ydot        dy/dt derivatives [units/s] (*2D array*)
+            success     overall solver exit status (*bool*)
+            onroot      onroot solver exit status (*bool*)
+            message     solver exit message (*str*)
+            =========== ========================================
 
         solvetime : float
             Solver integration time, in seconds.
@@ -178,17 +180,9 @@ class BaseSolution(object):
         self._t = sol.values.t
         self._y = sol.values.y
         self._ydot = sol.values.ydot
-
-        self._success = False
-        if sol.flag >= 0:
-            self._success = True
-
-        self._onroot = False
-        if not isinstance(sol.roots.t, type(None)):
-            self._onroot = True
-
+        self._success = bool(sol.flag >= 0)
+        self._onroot = bool(not isinstance(sol.roots.t, type(None)))
         self._message = sol.message
-
         self._solvetime = solvetime
 
     def dict_fill(self, sol: dict) -> None:
@@ -200,17 +194,17 @@ class BaseSolution(object):
         sol : dict
             Solution dictionary with the following key/value pairs:
 
-            =========== =============================================
-            Key         Value (type)
-            =========== =============================================
-            t           solution times (1D array)
-            y           solution variables (2D array)
-            ydot        solution variable time derivatives (2D array)
-            success     overall solver exit status (bool)
-            onroot      onroot solver exit status (bool)
-            message     solver exit message (str)
-            solvetime   solver integration time, in seconds (float)
-            =========== =============================================
+            =========== ========================================
+            Key         Value [units] (*type*)
+            =========== ========================================
+            t           solution times [s] (*1D array*)
+            y           solution variables [units] (*2D array*)
+            ydot        dy/dt derivatives [units/s] (*2D array*)
+            success     overall solver exit status (*bool*)
+            onroot      onroot solver exit status (*bool*)
+            message     solver exit message (*str*)
+            solvetime   solver integration time [s] (*float*)
+            =========== ========================================
 
         Returns
         -------
@@ -261,7 +255,7 @@ class BaseSolution(object):
               f'         success = {self._success},\n'
               f'         onroot = {self._onroot},\n'
               f'         message = {self._message},\n'
-              f'         solvetime = {solvetime})'
+              f'         solvetime = {solvetime})\n'
               )
 
     def to_dict(self) -> dict:
@@ -274,17 +268,17 @@ class BaseSolution(object):
         sol : dict
             Solution dictionary with the following key/value pairs:
 
-            =========== =============================================
-            Key         Value (type)
-            =========== =============================================
-            t           solution times (1D array)
-            y           solution variables (2D array)
-            ydot        solution variable time derivatives (2D array)
-            success     overall solver exit status (bool)
-            onroot      onroot solver exit status (bool)
-            message     solver exit message (str)
-            solvetime   solver integration time, in seconds (float)
-            =========== =============================================
+            =========== ========================================
+            Key         Value [units] (*type*)
+            =========== ========================================
+            t           solution times [s] (*1D array*)
+            y           solution variables [units] (*2D array*)
+            ydot        dy/dt derivatives [units/s] (*2D array*)
+            success     overall solver exit status (*bool*)
+            onroot      onroot solver exit status (*bool*)
+            message     solver exit message (*str*)
+            solvetime   solver integration time [s] (*float*)
+            =========== ========================================
         """
 
         sol = {}
@@ -298,7 +292,41 @@ class BaseSolution(object):
 
         return sol
 
-    def plot(self, *args) -> None:
+    def post(self) -> None:
+        from ..postutils import post
+
+        self.postvars = post(self)
+
+    def plot(self, *args: str) -> None:
+        """
+        Generates requested plots based on ``*args``.
+
+        Parameters
+        ----------
+        *args : str
+            Use any number of the following arguments to see the described
+            plots:
+
+            ================= ===============================================
+            arg               Plot description
+            ================= ===============================================
+            'current'         current density [A/m^2] vs. time [s]
+            'voltage'         cell voltage [V] vs. time [s]
+            'power'           power density [W/m^2] vs. time [s]
+            'ivp'             combined current, voltage, and power plot
+            'potentials'      anode, cathode, and electrolyte potentials [V]
+            'electrolyte'     Li-ion concentration [kmol/m^3] vs. x and t
+            'intercalation'   anode/cathode particle Li fractions vs. r and t
+            'pixels'          pixel plots for most 2D variables
+            ================= ===============================================
+
+        Returns
+        -------
+        None.
+        """
+
+        if len(self.postvars) == 0:
+            self.post()
 
         if 'current' in args:
             from ..postutils import current
@@ -312,9 +340,9 @@ class BaseSolution(object):
             from ..postutils import power
             power(self)
 
-        if 'IVP' in args:
-            from ..postutils import IVP
-            IVP(self)
+        if 'ivp' in args:
+            from ..postutils import ivp
+            ivp(self)
 
         if 'potentials' in args:
             from ..postutils import potentials
@@ -328,9 +356,9 @@ class BaseSolution(object):
             from ..postutils import intercalation
             intercalation(self)
 
-        if 'contours' in args:
-            from ..postutils import contours
-            contours(self)
+        if 'pixels' in args:
+            from ..postutils import pixels
+            pixels(self)
 
     def slice_and_save(self, savename: str, overwrite: bool = False) -> None:
         """
@@ -339,32 +367,32 @@ class BaseSolution(object):
         The index order of the 2D and 3D arrays is given with the value
         descriptions.
 
-        ========= ==========================================================
-        Key       Value [units] (type)
-        ========= ==========================================================
-        x_a       x mesh in anode [m] (1D array)
-        x_s       x mesh in separator [m] (1D array)
-        x_c       x mesh in cathode [m] (1D array)
-        x         stacked x mesh for an, sep, and ca [m] (1D array)
-        r_a       r mesh for anode particles [m] (1D array)
-        r_c       r mesh for cathode particles [m] (1D array)
-        t         saved solution times [s] (1D array)
-        phie_a    electrolyte potentials at t, x_a [V] (2D array)
-        phis_a    electrode potentials at t, x_a [V] (2D array)
-        ce_a      electrolyte Li+ at t, x_a [kmol/m^3] (2D array)
-        cs_a      electrode Li at t, x_a, r_a [kmol/m^3] (3D array)
-        phie_s    electrolyte potentials at t, x_s [V] (2D array)
-        ce_s      electrolyte Li+ at t, x_s [kmol/m^3] (2D array)
-        phie_c    electrolyte potentials at t, x_c [V] (2D array)
-        phis_c    electrode potentials at t, x_c [V] (2D array)
-        ce_c      electrolyte Li+ at t, x_c [kmol/m^3] (2D array)
-        cs_c      electrode Li at t, x_c, r_c [kmol/m^3] (3D array)
-        phie      electrolyte potentials at t, x [V] (2D array)
-        ce        electrolyte Li+ at t, x [kmol/m^3] (2D array)
-        ie        electrolyte current at t, x boundarys [A/m^2] (2D array)
-        j_a       anode Faradaic current at t, x_a [kmol/m^2/s] (2D array)
-        j_c       cathode Faradaic current at t, x_c [kmol/m^2/s] (2D array)
-        ========= ==========================================================
+        ========= ====================================================
+        Key       Value [units] (*type*)
+        ========= ====================================================
+        x_a       x mesh in anode [m] (*1D array*)
+        x_s       x mesh in separator [m] (*1D array*)
+        x_c       x mesh in cathode [m] (*1D array*)
+        x         stacked x mesh for an, sep, and ca [m] (*1D array*)
+        r_a       r mesh for anode particles [m] (*1D array*)
+        r_c       r mesh for cathode particles [m] (*1D array*)
+        t         saved solution times [s] (*1D array*)
+        phie_a    electrolyte potentials at t, x_a [V] (*2D array*)
+        phis_a    electrode potentials at t, x_a [V] (*2D array*)
+        ce_a      electrolyte Li+ at t, x_a [kmol/m^3] (*2D array*)
+        cs_a      electrode Li at t, x_a, r_a [kmol/m^3] (*3D array*)
+        phie_s    electrolyte potentials at t, x_s [V] (*2D array*)
+        ce_s      electrolyte Li+ at t, x_s [kmol/m^3] (*2D array*)
+        phie_c    electrolyte potentials at t, x_c [V] (*2D array*)
+        phis_c    electrode potentials at t, x_c [V] (*2D array*)
+        ce_c      electrolyte Li+ at t, x_c [kmol/m^3] (*2D array*)
+        cs_c      electrode Li at t, x_c, r_c [kmol/m^3] (*3D array*)
+        phie      electrolyte potentials at t, x [V] (*2D array*)
+        ce        electrolyte Li+ at t, x [kmol/m^3] (*2D array*)
+        ie        ``i_el`` at t, x boundarys [A/m^2] (*2D array*)
+        j_a       Faradaic current at t, x_a [kmol/m^2/s] (*2D array*)
+        j_c       Faradaic current at t, x_c [kmol/m^2/s] (*2D array*)
+        ========= ====================================================
 
         Parameters
         ----------
@@ -375,7 +403,7 @@ class BaseSolution(object):
             saved in the user's current working directory.
 
         overwrite : bool, optional
-            A flag to overwrite and existing ``.npz`` file with the same name
+            A flag to overwrite an existing ``.npz`` file with the same name
             if one exists. The default is ``False``.
 
         Returns
@@ -390,8 +418,11 @@ class BaseSolution(object):
         if len(self.postvars) == 0:
             self.post()
 
+        if '.npz' not in savename:
+            savename += '.npz'
+
         if os.path.exists(savename) and not overwrite:
-            raise Exception('save_and_slice file already exists. Overwrite'
+            raise Exception('save_and_slice() file already exists. Overwrite'
                             ' with flag or delete the file and try again.')
 
         sim = self._sim
@@ -423,11 +454,13 @@ class BaseSolution(object):
 
         cs_a = np.zeros([t.size, x_a.size, sim.an.Nr])
         for k in range(sim.an.Nr):
-            cs_a[:, :, k] = self.y[:, sim.an.x_ptr('Li_ed', k)] * sim.an.Li_max
+            cs_a[:, :, k] = self.y[:, sim.an.x_ptr('Li_ed', k)] \
+                          * sim.an.Li_max
 
         cs_c = np.zeros([t.size, x_c.size, sim.ca.Nr])
         for k in range(sim.ca.Nr):
-            cs_c[:, :, k] = self.y[:, sim.ca.x_ptr('Li_ed', k)] * sim.ca.Li_max
+            cs_c[:, :, k] = self.y[:, sim.ca.x_ptr('Li_ed', k)] \
+                          * sim.ca.Li_max
 
         ie = self.postvars['i_el_x']
         j_a = self.postvars['sdot_an']

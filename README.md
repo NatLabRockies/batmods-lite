@@ -8,6 +8,7 @@
   style="text-decoration: none;">
   <img alt="CI badge" src="https://github.com/NREL/BatMods-lite/actions/workflows/ci.yaml/badge.svg">
 </a> &nbsp; 
+<img alt="tests badge" src="./images/tests.svg"> &nbsp; 
 <img alt="coverage badge" src="./images/coverage.svg"> &nbsp; 
 <a href="https://www.python.org/dev/peps/pep-0008">
   <img alt="style badge" src="https://img.shields.io/badge/code%20style-pep8-orange.svg">

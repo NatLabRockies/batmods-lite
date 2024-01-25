@@ -42,47 +42,28 @@ Classes
    .. py:property:: classname
       :type: str
 
-      Class name. Overwrites ``classname()`` from ``BaseSolution``.
+      Class name. Overwrites ``BaseSolution``.
 
       :returns: **classname** (*str*) -- Name of current class.
 
-   .. py:method:: plot(*args) -> None
+   .. py:method:: verify(plotflag: bool = False, rtol: float = 0.005, atol: float = 0.001) -> bool
 
+      Verifies the solution is consistent.
 
-   .. py:method:: post() -> None
+      Specifically, for a constant power experiment, this method checks
+      that the calculated power was within tolerance of the boundary
+      condition. In addition, the anodic and cathodic Faradaic currents are
+      checked against the current at each time step.
 
+      :param plotflag: A flag to see plots showing the verification calculations. The
+                       default is ``False``.
+      :type plotflag: bool, optional
+      :param rtol: The relative tolerance for array comparisons. The default is 5e-3.
+      :type rtol: float, optional
+      :param atol: The relative tolerance for array comparisons. The default is 1e-3.
+      :type atol: float, optional
 
-   .. py:method:: slice_and_save(savename: str, overwrite: bool = False) -> None
-
-      Save a ``.npz`` file with all spatial, time, and state variables
-      separated into 1D and 2D arrays. The keys are given below. The index
-      order of the 2D arrays is given with the value descriptions.
-
-      ========= =====================================================
-      Key       Value [units] (type)
-      ========= =====================================================
-      r_a       r mesh for anode particles [m] (1D array)
-      r_c       r mesh for cathode particles [m] (1D array)
-      t         saved solution times [s] (1D array)
-      phis_a    anode electrode potentials at t [V] (1D array)
-      cs_a      electrode Li at t, r_a [kmol/m^3] (2D array)
-      phis_c    cathode electrode potentials at t [V] (1D array)
-      cs_c      electrode Li at t, r_c [kmol/m^3] (2D array)
-      phie      electrolyte potentials at t [V] (1D array)
-      j_a       anode Faradaic current at t [kmol/m^2/s] (1D array)
-      j_c       cathode Faradaic current at t [kmol/m^2/s] (1D array)
-      ========= =====================================================
-
-      :param savename: Either a file name or the absolute/relative file path. The ``.npz``
-                       extension will be added to the end of the string if it is not
-                       already there. If only the file name is given, the file will be
-                       saved in the user's current working directory.
-      :type savename: str
-      :param overwrite: A flag to overwrite and existing ``.npz`` file with the same name
-                        if one exists. The default is ``False``.
-      :type overwrite: bool, optional
-
-      :returns: *None.*
+      :returns: **checks** (*bool*) -- ``True`` is all checks are satisfied, ``False`` otherwise.
 
 
 

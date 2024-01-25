@@ -1,4 +1,4 @@
-name: BatMods-lite-CI
+name: build
 
 on:
   push:

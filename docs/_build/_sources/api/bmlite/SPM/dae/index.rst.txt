@@ -73,7 +73,7 @@ Functions
                order and description of the arrays is given below:
 
                ========== =======================================================
-               Variable   Description [units] (type)
+               Variable   Description [units] (*type*)
                ========== =======================================================
                res        residuals ``res = M*y' - f(t, y)`` [units] (*1D array*)
                sdot_an    anode Li+ production rate [kmol/m^3/s] (*float*)

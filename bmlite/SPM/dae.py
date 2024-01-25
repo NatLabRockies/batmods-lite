@@ -149,7 +149,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
         order and description of the arrays is given below:
 
         ========== =======================================================
-        Variable   Description [units] (type)
+        Variable   Description [units] (*type*)
         ========== =======================================================
         res        residuals ``res = M*y' - f(t, y)`` [units] (*1D array*)
         sdot_an    anode Li+ production rate [kmol/m^3/s] (*float*)
@@ -275,4 +275,4 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
         return res
 
     elif sim._flags['post']:
-        return res, sdot_an, sdot_ca
+        return sdot_an, sdot_ca

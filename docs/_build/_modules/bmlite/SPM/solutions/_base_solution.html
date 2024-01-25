@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=5fd90a42" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=4bdb038c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -347,7 +347,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_sim&#39;</span><span class="p">,</span> <span class="s1">&#39;_exp&#39;</span><span class="p">,</span> <span class="s1">&#39;_t&#39;</span><span class="p">,</span> <span class="s1">&#39;_y&#39;</span><span class="p">,</span> <span class="s1">&#39;_ydot&#39;</span><span class="p">,</span> <span class="s1">&#39;_success&#39;</span><span class="p">,</span> <span class="s1">&#39;_onroot&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_message&#39;</span><span class="p">,</span> <span class="s1">&#39;_solvetime&#39;</span><span class="p">]</span>
+                 <span class="s1">&#39;_message&#39;</span><span class="p">,</span> <span class="s1">&#39;_solvetime&#39;</span><span class="p">,</span> <span class="s1">&#39;postvars&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">exp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -366,7 +366,7 @@ document.write(`
 <span class="sd">            the experiment that was run.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span> <span class="o">=</span> <span class="n">sim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="kc">None</span>
@@ -375,6 +375,8 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
 <div class="viewcode-block" id="BaseSolution.classname">
@@ -461,7 +463,7 @@ document.write(`
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        onroot : bool</span>
-<span class="sd">            ``True`` if exit on root(event), ``False`` otherwise.</span>
+<span class="sd">            ``True`` if exit on root/event, ``False`` otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span></div>
 
@@ -490,8 +492,8 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        units : str, optional</span>
-<span class="sd">            Units for printed time (``&#39;s&#39;``, ``&#39;min&#39;``, or ``&#39;h&#39;``). The</span>
-<span class="sd">            default is ``&#39;s&#39;``.</span>
+<span class="sd">            Units for printed time ``{&#39;s&#39;, &#39;min&#39;, &#39;h&#39;}``. The default is</span>
+<span class="sd">            ``&#39;s&#39;``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -521,16 +523,16 @@ document.write(`
 <span class="sd">        sol : object</span>
 <span class="sd">            Sundials IDA SolverReturn object with the following attributes:</span>
 
-<span class="sd">            =========== =============================================</span>
-<span class="sd">            Attribute   Value (type)</span>
-<span class="sd">            =========== =============================================</span>
-<span class="sd">            t           solution times (1D array)</span>
-<span class="sd">            y           solution variables (2D array)</span>
-<span class="sd">            ydot        solution variable time derivatives (2D array)</span>
-<span class="sd">            success     overall solver exit status (bool)</span>
-<span class="sd">            onroot      onroot solver exit status (bool)</span>
-<span class="sd">            message     solver exit message (str)</span>
-<span class="sd">            =========== =============================================</span>
+<span class="sd">            =========== ========================================</span>
+<span class="sd">            Attribute   Value [units] (*type*)</span>
+<span class="sd">            =========== ========================================</span>
+<span class="sd">            t           solution times [s] (*1D array*)</span>
+<span class="sd">            y           solution variables [units] (*2D array*)</span>
+<span class="sd">            ydot        dy/dt derivatives [units/s] (*2D array*)</span>
+<span class="sd">            success     overall solver exit status (*bool*)</span>
+<span class="sd">            onroot      onroot solver exit status (*bool*)</span>
+<span class="sd">            message     solver exit message (*str*)</span>
+<span class="sd">            =========== ========================================</span>
 
 <span class="sd">        solvetime : float</span>
 <span class="sd">            Solver integration time, in seconds.</span>
@@ -543,17 +545,9 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">t</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ydot</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ydot</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">sol</span><span class="o">.</span><span class="n">flag</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">roots</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="kc">True</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">flag</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">roots</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">message</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span> <span class="o">=</span> <span class="n">solvetime</span></div>
 
 
@@ -568,17 +562,17 @@ document.write(`
 <span class="sd">        sol : dict</span>
 <span class="sd">            Solution dictionary with the following key/value pairs:</span>
 
-<span class="sd">            =========== =============================================</span>
-<span class="sd">            Key         Value (type)</span>
-<span class="sd">            =========== =============================================</span>
-<span class="sd">            t           solution times (1D array)</span>
-<span class="sd">            y           solution variables (2D array)</span>
-<span class="sd">            ydot        solution variable time derivatives (2D array)</span>
-<span class="sd">            success     overall solver exit status (bool)</span>
-<span class="sd">            onroot      onroot solver exit status (bool)</span>
-<span class="sd">            message     solver exit message (str)</span>
-<span class="sd">            solvetime   solver integration time, in seconds (float)</span>
-<span class="sd">            =========== =============================================</span>
+<span class="sd">            =========== ========================================</span>
+<span class="sd">            Key         Value [units] (*type*)</span>
+<span class="sd">            =========== ========================================</span>
+<span class="sd">            t           solution times [s] (*1D array*)</span>
+<span class="sd">            y           solution variables [units] (*2D array*)</span>
+<span class="sd">            ydot        dy/dt derivatives [units/s] (*2D array*)</span>
+<span class="sd">            success     overall solver exit status (*bool*)</span>
+<span class="sd">            onroot      onroot solver exit status (*bool*)</span>
+<span class="sd">            message     solver exit message (*str*)</span>
+<span class="sd">            solvetime   solver integration time [s] (*float*)</span>
+<span class="sd">            =========== ========================================</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -598,26 +592,27 @@ document.write(`
 <a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.report">[docs]</a>
     <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Prints the experiment detials and solution success report.</span>
+<span class="sd">        Prints the experiment details and solution success report.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">spacer</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                  <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="mi">11</span>
-                  <span class="p">}</span>
-
-        <span class="n">endline</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span>
-                   <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;,</span><span class="se">\n</span><span class="s1">&#39;</span>
-                   <span class="p">}</span>
-
-        <span class="n">last</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-
         <span class="n">experiment</span> <span class="o">=</span> <span class="s1">&#39;Experiment(&#39;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-            <span class="n">experiment</span> <span class="o">+=</span> <span class="n">spacer</span><span class="p">[</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">endline</span><span class="p">[</span><span class="n">i</span> <span class="o">==</span> <span class="n">last</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">spacer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">spacer</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="mi">11</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">endline</span> <span class="o">=</span> <span class="s1">&#39;)&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">endline</span> <span class="o">=</span> <span class="s1">&#39;,</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+            <span class="n">experiment</span> <span class="o">+=</span> <span class="n">spacer</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">endline</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="n">experiment</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
@@ -625,13 +620,13 @@ document.write(`
                      <span class="kc">False</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; s&#39;</span>
                      <span class="p">}</span>
 
-        <span class="n">solvetime</span> <span class="o">=</span> <span class="n">converter</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span> <span class="o">==</span> <span class="kc">None</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span><span class="p">)</span>
+        <span class="n">solvetime</span> <span class="o">=</span> <span class="n">converter</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Solution(classname = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="sa">f</span><span class="s1">&#39;         success = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_success</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="sa">f</span><span class="s1">&#39;         onroot = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_onroot</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="sa">f</span><span class="s1">&#39;         message = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span>
-              <span class="sa">f</span><span class="s1">&#39;         solvetime = </span><span class="si">{</span><span class="n">solvetime</span><span class="si">}</span><span class="s1">)&#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;         solvetime = </span><span class="si">{</span><span class="n">solvetime</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="p">)</span></div>
 
 
@@ -647,17 +642,17 @@ document.write(`
 <span class="sd">        sol : dict</span>
 <span class="sd">            Solution dictionary with the following key/value pairs:</span>
 
-<span class="sd">            =========== =============================================</span>
-<span class="sd">            Key         Value (type)</span>
-<span class="sd">            =========== =============================================</span>
-<span class="sd">            t           solution times (1D array)</span>
-<span class="sd">            y           solution variables (2D array)</span>
-<span class="sd">            ydot        solution variable time derivatives (2D array)</span>
-<span class="sd">            success     overall solver exit status (bool)</span>
-<span class="sd">            onroot      onroot solver exit status (bool)</span>
-<span class="sd">            message     solver exit message (str)</span>
-<span class="sd">            solvetime   solver integration time, in seconds (float)</span>
-<span class="sd">            =========== =============================================</span>
+<span class="sd">            =========== ========================================</span>
+<span class="sd">            Key         Value [units] (*type*)</span>
+<span class="sd">            =========== ========================================</span>
+<span class="sd">            t           solution times [s] (*1D array*)</span>
+<span class="sd">            y           solution variables [units] (*2D array*)</span>
+<span class="sd">            ydot        dy/dt derivatives [units/s] (*2D array*)</span>
+<span class="sd">            success     overall solver exit status (*bool*)</span>
+<span class="sd">            onroot      onroot solver exit status (*bool*)</span>
+<span class="sd">            message     solver exit message (*str*)</span>
+<span class="sd">            solvetime   solver integration time [s] (*float*)</span>
+<span class="sd">            =========== ========================================</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">sol</span> <span class="o">=</span> <span class="p">{}</span>
@@ -670,57 +665,152 @@ document.write(`
         <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;solvetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span>
 
         <span class="k">return</span> <span class="n">sol</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.post">
+<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.post">[docs]</a>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">post</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span> <span class="o">=</span> <span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.plot">
+<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates requested plots based on ``*args``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args : str</span>
+<span class="sd">            Use any number of the following arguments to see the described</span>
+<span class="sd">            plots:</span>
+
+<span class="sd">            ================= ===============================================</span>
+<span class="sd">            arg               Plot description</span>
+<span class="sd">            ================= ===============================================</span>
+<span class="sd">            &#39;current&#39;         current density [A/m^2] vs. time [s]</span>
+<span class="sd">            &#39;voltage&#39;         cell voltage [V] vs. time [s]</span>
+<span class="sd">            &#39;power&#39;           power density [W/m^2] vs. time [s]</span>
+<span class="sd">            &#39;ivp&#39;             combined current, voltage, and power</span>
+<span class="sd">            &#39;potentials&#39;      anode, cathode, and electrolyte potentials [V]</span>
+<span class="sd">            &#39;intercalation&#39;   anode/cathode particle Li fractions vs. r and t</span>
+<span class="sd">            &#39;pixels&#39;          pixel plots for most 2D variables</span>
+<span class="sd">            ================= ===============================================</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s1">&#39;current&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">current</span>
+            <span class="n">current</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;voltage&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">voltage</span>
+            <span class="n">voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;power&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">power</span>
+            <span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;ivp&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">ivp</span>
+            <span class="n">ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;potentials&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">potentials</span>
+            <span class="n">potentials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;intercalation&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">intercalation</span>
+            <span class="n">intercalation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;pixels&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">..postutils</span> <span class="kn">import</span> <span class="n">pixels</span>
+            <span class="n">pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseSolution.slice_and_save">
+<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.slice_and_save">[docs]</a>
+    <span class="k">def</span> <span class="nf">slice_and_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">savename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save a ``.npz`` file with all spatial, time, and state variables</span>
+<span class="sd">        separated into 1D and 2D arrays. The keys are given below. The index</span>
+<span class="sd">        order of the 2D arrays is given with the value descriptions.</span>
+
+<span class="sd">        ========= =======================================================</span>
+<span class="sd">        Key       Value [units] (*type*)</span>
+<span class="sd">        ========= =======================================================</span>
+<span class="sd">        r_a       r mesh for anode particles [m] (*1D array*)</span>
+<span class="sd">        r_c       r mesh for cathode particles [m] (*1D array*)</span>
+<span class="sd">        t         saved solution times [s] (*1D array*)</span>
+<span class="sd">        phis_a    anode electrode potentials at t [V] (*1D array*)</span>
+<span class="sd">        cs_a      electrode Li at t, r_a [kmol/m^3] (*2D array*)</span>
+<span class="sd">        phis_c    cathode electrode potentials at t [V] (*1D array*)</span>
+<span class="sd">        cs_c      electrode Li at t, r_c [kmol/m^3] (*2D array*)</span>
+<span class="sd">        phie      electrolyte potentials at t [V] (*1D array*)</span>
+<span class="sd">        j_a       anode Faradaic current at t [kmol/m^2/s] (*1D array*)</span>
+<span class="sd">        j_c       cathode Faradaic current at t [kmol/m^2/s] (*1D array*)</span>
+<span class="sd">        ========= =======================================================</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        savename : str</span>
+<span class="sd">            Either a file name or the absolute/relative file path. The ``.npz``</span>
+<span class="sd">            extension will be added to the end of the string if it is not</span>
+<span class="sd">            already there. If only the file name is given, the file will be</span>
+<span class="sd">            saved in the user&#39;s current working directory.</span>
+
+<span class="sd">        overwrite : bool, optional</span>
+<span class="sd">            A flag to overwrite an existing ``.npz`` file with the same name</span>
+<span class="sd">            if one exists. The default is ``False``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">import</span> <span class="nn">os</span>
+
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s1">&#39;.npz&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">savename</span><span class="p">:</span>
+            <span class="n">savename</span> <span class="o">+=</span> <span class="s1">&#39;.npz&#39;</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">savename</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;save_and_slice() file already exists. Overwrite&#39;</span>
+                            <span class="s1">&#39; with flag or delete the file and try again.&#39;</span><span class="p">)</span>
+
+        <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span>
+
+        <span class="n">r_a</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r</span>
+        <span class="n">r_c</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">r</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
+
+        <span class="n">phis_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
+        <span class="n">phis_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
+        <span class="n">phie</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_el&#39;</span><span class="p">]]</span>
+
+        <span class="n">cs_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)]</span> <span class="o">*</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">Li_max</span>
+        <span class="n">cs_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)]</span> <span class="o">*</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">Li_max</span>
+
+        <span class="n">j_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_an&#39;</span><span class="p">]</span>
+        <span class="n">j_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_ca&#39;</span><span class="p">]</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">savename</span><span class="p">,</span> <span class="n">r_a</span><span class="o">=</span><span class="n">r_a</span><span class="p">,</span> <span class="n">r_c</span><span class="o">=</span><span class="n">r_c</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">phis_a</span><span class="o">=</span><span class="n">phis_a</span><span class="p">,</span> <span class="n">phie</span><span class="o">=</span><span class="n">phie</span><span class="p">,</span>
+                 <span class="n">phis_c</span><span class="o">=</span><span class="n">phis_c</span><span class="p">,</span> <span class="n">cs_a</span><span class="o">=</span><span class="n">cs_a</span><span class="p">,</span> <span class="n">cs_c</span><span class="o">=</span><span class="n">cs_c</span><span class="p">,</span> <span class="n">j_a</span><span class="o">=</span><span class="n">j_a</span><span class="p">,</span> <span class="n">j_c</span><span class="o">=</span><span class="n">j_c</span><span class="p">)</span></div>
 </div>
 
-
-    <span class="c1"># def save(self, savename, overwrite=0):</span>
-    <span class="c1">#     import os, shutil</span>
-    <span class="c1">#     from pathlib import Path</span>
-
-    <span class="c1">#     import pandas as pd</span>
-    <span class="c1">#     from ruamel.yaml import YAML</span>
-
-    <span class="c1">#     if not hasattr(self, &#39;sol&#39;):</span>
-    <span class="c1">#         raise Exception(&#39;Run experiment before calling save().&#39;)</span>
-
-    <span class="c1">#     if not os.path.exists(&#39;Results/&#39;):</span>
-    <span class="c1">#         os.mkdir(&#39;Results&#39;)</span>
-
-    <span class="c1">#     savepath = Path(&#39;Results/&#39; + savename)</span>
-    <span class="c1">#     if os.path.exists(savepath) and not overwrite:</span>
-    <span class="c1">#         raise Exception(savename + &#39; already in Results folder.&#39;)</span>
-
-    <span class="c1">#     elif os.path.exists(savepath):</span>
-    <span class="c1">#         shutil.rmtree(savepath)</span>
-
-    <span class="c1">#     os.mkdir(savepath)</span>
-
-    <span class="c1">#     yaml = YAML()</span>
-    <span class="c1">#     yaml.indent(mapping=4)</span>
-
-    <span class="c1">#     default_yaml = yaml.load(self.__yamlpath)</span>
-
-    <span class="c1">#     bat_k = default_yaml[&#39;battery&#39;].keys()</span>
-    <span class="c1">#     el_k = default_yaml[&#39;electrolyte&#39;].keys()</span>
-    <span class="c1">#     an_k = default_yaml[&#39;anode&#39;].keys()</span>
-    <span class="c1">#     ca_k = default_yaml[&#39;cathode&#39;].keys()</span>
-
-    <span class="c1">#     data = {}</span>
-    <span class="c1">#     data[&#39;battery&#39;] = dict((k, self.bat.__dict__.get(k)) for k in bat_k)</span>
-    <span class="c1">#     data[&#39;electrolyte&#39;] = dict((k, self.el.__dict__.get(k)) for k in el_k)</span>
-    <span class="c1">#     data[&#39;anode&#39;] = dict((k, self.an.__dict__.get(k)) for k in an_k)</span>
-    <span class="c1">#     data[&#39;cathode&#39;] = dict((k, self.ca.__dict__.get(k)) for k in ca_k)</span>
-
-    <span class="c1">#     yaml.dump(data, Path(savepath.joinpath(savename + &#39;.yaml&#39;)))</span>
-
-    <span class="c1">#     t = pd.DataFrame(self.sol.values.t)</span>
-    <span class="c1">#     y = pd.DataFrame(self.sol.values.y)</span>
-    <span class="c1">#     ydot = pd.DataFrame(self.sol.values.ydot)</span>
-
-    <span class="c1">#     pd_opts = {&#39;index&#39;: False, &#39;header&#39;: False}</span>
-    <span class="c1">#     t.to_csv(savepath.joinpath(&#39;t.csv&#39;), **pd_opts)</span>
-    <span class="c1">#     y.to_csv(savepath.joinpath(&#39;y.csv&#39;), **pd_opts)</span>
-    <span class="c1">#     ydot.to_csv(savepath.joinpath(&#39;ydot.csv&#39;), **pd_opts)</span>
 </pre></div>
 
                 </article>

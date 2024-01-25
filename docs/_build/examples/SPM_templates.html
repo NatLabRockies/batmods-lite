@@ -30,10 +30,10 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=5fd90a42" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4bdb038c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -190,6 +190,10 @@ document.write(`
   
 
   
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
 </div>
 
     </nav>
@@ -284,11 +288,15 @@ document.write(`
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">1. Making Inputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SPM_constant_current.html">2. Constant Current</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SPM_constant_voltage.html">3. Constant Voltage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SPM_constant_power.html">4. Constant Power</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Pseudo-2D (P2D) Model</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="P2D_templates.html">1. Making Inputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="P2D_constant_current.html">2. Constant Current</a></li>
+<li class="toctree-l1"><a class="reference internal" href="P2D_constant_voltage.html">3. Constant Voltage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="P2D_constant_power.html">4. Constant Power</a></li>
 </ul>
 </div>
 </nav></div>
@@ -348,7 +356,12 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="making-inputs">
 <h1><span class="section-number">1. </span>Making Inputs<a class="headerlink" href="#making-inputs" title="Link to this heading">#</a></h1>
-<p>In this tutorial, you will learn how to make the necessary input files to build a SPM simulation that describes your specific battery and experiment. The battery input files are organized as <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> files with sections for <code class="docutils literal notranslate"><span class="pre">battery</span></code>, <code class="docutils literal notranslate"><span class="pre">electrolyte</span></code>, <code class="docutils literal notranslate"><span class="pre">anode</span></code>, and <code class="docutils literal notranslate"><span class="pre">cathode</span></code> parameters. The easiest way to get started is to use the <code class="docutils literal notranslate"><span class="pre">default_SPM.yaml</span></code> file template. This can be accessed using the <code class="docutils literal notranslate"><span class="pre">bmlite.SPM.templates()</span></code> method, as shown below.</p>
+<p>To use any model in BatMods-lite, you need to know how to make inputs. There are two types of inputs for each model:</p>
+<ul class="simple">
+<li><p>simulation inputs -&gt; a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file</p></li>
+<li><p>experiment inputs -&gt; a Python dictionary</p></li>
+</ul>
+<p>Simulation inputs define battery parameters and experimental inputs define the details of an experiment. To get help with either of these inputs, use the <code class="docutils literal notranslate"><span class="pre">templates()</span></code> function. Each BatMods-lite model subpackage has its own <code class="docutils literal notranslate"><span class="pre">templates()</span></code> function, so to see single particle model (SPM) templates, we will call the function from the <code class="docutils literal notranslate"><span class="pre">SPM</span></code> package, as shown below. When no arguments are given to <code class="docutils literal notranslate"><span class="pre">templates()</span></code>, a list of available templates will be printed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">import</span> <span class="nn">bmlite</span> <span class="k">as</span> <span class="nn">bm</span>
@@ -358,26 +371,26 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Available templates list for SPM simulations:
-	- [0] default_SPM
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Templates for SPM simulations:
+- [0] default_SPM
 
-Available templates list for SPM experiments:
-	- [0] constant_current
-	- [1] constant_power
-	- [2] constant_voltage
+Templates for SPM experiments:
+- [0] constant_current
+- [1] constant_power
+- [2] constant_voltage
 </pre></div>
 </div>
 </div>
 </div>
-<p>As you can see from the output above, when no inputs are given to <code class="docutils literal notranslate"><span class="pre">bm.SPM.templates()</span></code>, a list of available template names are printed. Now that we know what is available, we can view their contents by re-running <code class="docutils literal notranslate"><span class="pre">bm.SPM.templates()</span></code> with some inputs to specify which simulation and experiment templates we would like to see. You can  specify the inputs as either string (using the names from the list) or by integers (using the indices from the list). For example,</p>
+<p>You can view the contents of any template by passing arguments to <code class="docutils literal notranslate"><span class="pre">templates()</span></code>. The first argument is the name (<code class="docutils literal notranslate"><span class="pre">str</span></code>) or index (<code class="docutils literal notranslate"><span class="pre">int</span></code>) of the desired simulation template, and the second argument is the name or index of the experiment. For example, to see the “default_SPM” and “constant_current” templates, run either of the following:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bm</span><span class="o">.</span><span class="n">SPM</span><span class="o">.</span><span class="n">templates</span><span class="p">(</span><span class="s1">&#39;default_SPM&#39;</span><span class="p">,</span> <span class="s1">&#39;constant_current&#39;</span><span class="p">)</span>
+<span class="n">bm</span><span class="o">.</span><span class="n">SPM</span><span class="o">.</span><span class="n">templates</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>provides the same output as</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bm</span><span class="o">.</span><span class="n">SPM</span><span class="o">.</span><span class="n">templates</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Note that you do not need to request both the simulation and experimental templates at the same time. You can specify that you only want one or the other by using named parameters, for example <code class="docutils literal notranslate"><span class="pre">bm.SPM.templates(sim=0)</span></code> or <code class="docutils literal notranslate"><span class="pre">bm.SPM.templates(exp=0)</span></code>. Below, let’s take a look at the output for just the <code class="docutils literal notranslate"><span class="pre">'default_SPM'</span></code> simulation template.</p>
+<p>If you don’t need to request both a simulation and experimental template at the same time, you can specify that you only want one or the other by using named arguments, for example <code class="docutils literal notranslate"><span class="pre">templates(sim=0)</span></code> or <code class="docutils literal notranslate"><span class="pre">templates(exp=0)</span></code>.</p>
+<section id="simulation-inputs-yaml-files">
+<h2><span class="section-number">1.1. </span>Simulation inputs (<code class="docutils literal notranslate"><span class="pre">.yaml</span></code> files)<a class="headerlink" href="#simulation-inputs-yaml-files" title="Link to this heading">#</a></h2>
+<p>Let’s take a look at the output for the “default_SPM” simulation template, below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">bm</span><span class="o">.</span><span class="n">SPM</span><span class="o">.</span><span class="n">templates</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="s1">&#39;default_SPM&#39;</span><span class="p">)</span>
@@ -428,13 +441,17 @@ cathode:
 </div>
 </div>
 </div>
-<p>In the output above, you can see the full list of parameters that must be specied in a SPM <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file when constructing a <code class="docutils literal notranslate"><span class="pre">bm.SPM.Simulation</span></code> class. Indents in the <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file are important. You can see that all the indented values under <code class="docutils literal notranslate"><span class="pre">battery</span></code> relate to battery-level parameters, whereas values indented under <code class="docutils literal notranslate"><span class="pre">cathode</span></code> refer to cathode-specific parameters. To make your own <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file, it is recommended to copy these contents into your own file and edit the values as needed. Afterward, you can initialize a simulation with your parameters by using the <code class="docutils literal notranslate"><span class="pre">bm.SPM.Simulation</span></code> class. For example, if your new <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file is named <code class="docutils literal notranslate"><span class="pre">'newfile.yaml'</span></code> and is available in your current working directory, you can construct your simulation with</p>
+<p>The output above shows a full list of parameters that must be specied in a SPM <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file. To make your own <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file, it is recommended to copy the template contents into your own file and then edit the values as needed.</p>
+<p>You can initialize a simulation with your parameters by using the <code class="docutils literal notranslate"><span class="pre">bm.SPM.Simulation</span></code> class. For example, with your new file <code class="docutils literal notranslate"><span class="pre">'newfile.yaml'</span></code>, call</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">SPM</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="s1">&#39;newfile.yaml&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that the <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> extension is optional. Also, the input should be the absolute or relative path to your <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file, so if you save the file to a location outside your current working directory, you will have to modify the code above to point to the actual file location. You can also always construct a simulation with the <code class="docutils literal notranslate"><span class="pre">'default_SPM.yaml'</span></code> parameters by leaving the input blank. You will be presented with a warning in your console when you construct a default simulation.</p>
-<p>You can access more information about any of the parameters above by viewing the <code class="docutils literal notranslate"><span class="pre">bm.SPM.builder</span></code> module. You will likely also want to look at the <code class="docutils literal notranslate"><span class="pre">bm.materials</span></code> package to view all of the available material classes. Specifying an electrode active material that is not avialable in <code class="docutils literal notranslate"><span class="pre">bm.materials</span></code> will result in an error.</p>
-<p>Now, let’s take a look at the <code class="docutils literal notranslate"><span class="pre">'constant_current'</span></code> template below.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> extension is optional. Also, the input should be the absolute or relative path to your <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file, so if you save the file to a location outside your current working directory, you will have to modify the code above to point to the actual file location. You can also always construct a simulation with the <code class="docutils literal notranslate"><span class="pre">'default_SPM.yaml'</span></code> parameters by leaving the input blank, i.e. <code class="docutils literal notranslate"><span class="pre">sim</span> <span class="pre">=</span> <span class="pre">bm.SPM.Simulation()</span></code>. A warning will print if you use the default file.</p>
+<p>You can learn more about any of SPM parameters from the <code class="docutils literal notranslate"><span class="pre">bm.SPM.builder</span></code> module. You will also want to look at the <code class="docutils literal notranslate"><span class="pre">bm.materials</span></code> package to view all of the available material classes. Specifying an electrode active material that is not avialable in <code class="docutils literal notranslate"><span class="pre">bm.materials</span></code> will result in an error.</p>
+</section>
+<section id="experiment-inputs-python-dicionaries">
+<h2><span class="section-number">1.2. </span>Experiment inputs (Python dicionaries)<a class="headerlink" href="#experiment-inputs-python-dicionaries" title="Link to this heading">#</a></h2>
+<p>Now, let’s take a look at the <code class="docutils literal notranslate"><span class="pre">'constant_current'</span></code> template.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">bm</span><span class="o">.</span><span class="n">SPM</span><span class="o">.</span><span class="n">templates</span><span class="p">(</span><span class="n">exp</span><span class="o">=</span><span class="s1">&#39;constant_current&#39;</span><span class="p">)</span>
@@ -455,7 +472,17 @@ exp = {
 </div>
 </div>
 </div>
-<p>You can see that the <code class="docutils literal notranslate"><span class="pre">'constant_current'</span></code> template output is a standard python dictionary and does not have the same indented organization as the <code class="docutils literal notranslate"><span class="pre">'defualt_SPM.yaml'</span></code> template. That is because the experiment templates are not for the <code class="docutils literal notranslate"><span class="pre">bm.SPM.Simulation</span></code> initialization. Instead, they are the inputs for specific experiments that can be run after the simulation has been constructed. All of the experiments are accessed from methods in the <code class="docutils literal notranslate"><span class="pre">sim</span></code> object that start with “run.” Each experiment is covered in more detail in its own tutorial. However, in short, you can copy/paste/edit this <code class="docutils literal notranslate"><span class="pre">exp</span></code> dictionary as necessary and pass it to the appropriate <code class="docutils literal notranslate"><span class="pre">run_CC()</span></code> method to run a constant current experiment. You can access more details (i.e., units and key descriptions) about any of the <code class="docutils literal notranslate"><span class="pre">exp</span></code> templates by calling <code class="docutils literal notranslate"><span class="pre">help()</span></code> on the respective “run” method. For example, to get more information for a constant current experiment, use <code class="docutils literal notranslate"><span class="pre">help(sim.run_CC)</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">'constant_current'</span></code> template above displays a standard Python dictionary. The key/value pairs in each experiment template vary based on the specific experiment.</p>
+</section>
+<section id="important-notes">
+<h2><span class="section-number">1.3. </span>Important notes<a class="headerlink" href="#important-notes" title="Link to this heading">#</a></h2>
+<p>You can modify simulation parameters after you read in a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file, but doing so requires an extra step. A pre-processor automatically runs to determines the mesh, pointers, and bandwidth of the problem during the class initialization. However, if any parameters are changed, the dependent calculations may no longer be consistent with the new values. Therefore, if you change any parameters, you need to manually re-run the pre-processor. For example,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">thick</span> <span class="o">=</span> <span class="mf">40.e-6</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">pre</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>changes the anode thickness, and then calls the <code class="docutils literal notranslate"><span class="pre">pre()</span></code> method to update the mesh, pointers, etc.</p>
+</section>
 </section>
 
 
@@ -468,6 +495,23 @@ exp = {
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-inputs-yaml-files">1.1. Simulation inputs (<code class="docutils literal notranslate"><span class="pre">.yaml</span></code> files)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-inputs-python-dicionaries">1.2. Experiment inputs (Python dicionaries)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#important-notes">1.3. Important notes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

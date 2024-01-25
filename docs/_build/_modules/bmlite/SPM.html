@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=5fd90a42" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=4bdb038c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -342,6 +342,7 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">builder</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dae</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">roots</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">solutions</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">postutils</span>
 
@@ -381,11 +382,11 @@ document.write(`
 <span class="sd">        if they do so. Otherwise, the dependent parameters may not be</span>
 <span class="sd">        consistent with the user-defined inputs.</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        * The ``&#39;default_SPM.yaml&#39;`` file can be accessed via the</span>
-<span class="sd">          ``templates()`` method. Please reference this for help building your</span>
-<span class="sd">          own ``.yaml`` file.</span>
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        bmlite.SPM.templates :</span>
+<span class="sd">            Get help making your own ``.yaml`` file by starting with the</span>
+<span class="sd">            default template.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="kn">import</span> <span class="nn">os</span>
@@ -401,7 +402,8 @@ document.write(`
         <span class="n">defaults</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/default_sims&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">yamlfile</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/default_sims/&#39;</span> <span class="o">+</span> <span class="n">yamlfile</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[BatMods WARNING] SPM Simulation: Using a default yaml</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[BatMods WARNING]</span><span class="se">\n</span><span class="s1">&#39;</span>
+                  <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">SPM Simulation: Using a default yaml</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">yamlpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yamlfile</span><span class="p">):</span>
@@ -454,8 +456,6 @@ document.write(`
 
         <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-        <span class="kn">from</span> <span class="nn">.dae</span> <span class="kn">import</span> <span class="n">bandwidth</span>
-
         <span class="c1"># Update dependent parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bat</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
@@ -497,7 +497,9 @@ document.write(`
                     <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">algidx</span><span class="p">())</span>
 
         <span class="c1"># Determine the bandwidth</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lband</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">uband</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="c1"># self.lband, self.uband, _ = bandwidth(self)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lband</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_el&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uband</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_el&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Simulation.j_pattern">
@@ -511,7 +513,11 @@ document.write(`
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        None.</span>
+<span class="sd">        lband : int</span>
+<span class="sd">            Lower bandwidth from the residual function&#39;s Jacobian pattern.</span>
+
+<span class="sd">        uband : int</span>
+<span class="sd">            Upper bandwidth from the residual function&#39;s Jacobian pattern.</span>
 
 <span class="sd">        See also</span>
 <span class="sd">        --------</span>
@@ -520,21 +526,22 @@ document.write(`
 
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-        <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">format_ax</span>
+        <span class="kn">from</span> <span class="nn">..plotutils</span> <span class="kn">import</span> <span class="n">format_ticks</span><span class="p">,</span> <span class="n">show</span>
         <span class="kn">from</span> <span class="nn">.dae</span> <span class="kn">import</span> <span class="n">bandwidth</span>
 
         <span class="n">lband</span><span class="p">,</span> <span class="n">uband</span><span class="p">,</span> <span class="n">j_pat</span> <span class="o">=</span> <span class="n">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">])</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+                               <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;constrained&#39;</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">spy</span><span class="p">(</span><span class="n">j_pat</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;lband: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lband</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;uband: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uband</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
 
-        <span class="n">format_ax</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">format_ticks</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s1">&#39;inline&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_backend</span><span class="p">():</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">lband</span><span class="p">,</span> <span class="n">uband</span></div>
 
 
 <div class="viewcode-block" id="Simulation.run_CC">
@@ -551,7 +558,7 @@ document.write(`
 <span class="sd">            descriptions are listed below:</span>
 
 <span class="sd">            =========== ==============================================</span>
-<span class="sd">            Key         Value [units] (type)</span>
+<span class="sd">            Key         Value [units] (*type*)</span>
 <span class="sd">            =========== ==============================================</span>
 <span class="sd">            C_rate      C-rate (+ charge, - discharge) [1/h] (*float*)</span>
 <span class="sd">            t_min       minimum time [s] (*float*)</span>
@@ -563,18 +570,18 @@ document.write(`
 <span class="sd">            The keyword arguments specify the Sundials IDA solver options. A</span>
 <span class="sd">            partial list of options/defaults is given below:</span>
 
-<span class="sd">            =============== =================================================</span>
-<span class="sd">            Key             Description (type or options, default)</span>
-<span class="sd">            =============== =================================================</span>
-<span class="sd">            rtol            relative tolerance (*float*, 1e-6)</span>
-<span class="sd">            atol            absolute tolerance (*float*, 1e-9)</span>
-<span class="sd">            linsolver       linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;band&#39;``)</span>
-<span class="sd">            lband           width of the lower band (*int*, ``self.lband``)</span>
-<span class="sd">            uband           width of the upper band (*int*, ``self.uband``)</span>
-<span class="sd">            max_step_size   maximum time step (*float*, 0. -&gt; unrestricted)</span>
-<span class="sd">            rootfn          root/event function (*Callable*, ``None``)</span>
-<span class="sd">            nr_rootfns      number of events in ``&#39;rootfn&#39;`` (*int*, 0)</span>
-<span class="sd">            =============== =================================================</span>
+<span class="sd">            ============= =================================================</span>
+<span class="sd">            Key           Description (*type* or {options}, default)</span>
+<span class="sd">            ============= =================================================</span>
+<span class="sd">            rtol          relative tolerance (*float*, 1e-6)</span>
+<span class="sd">            atol          absolute tolerance (*float*, 1e-9)</span>
+<span class="sd">            linsolver     linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;band&#39;``)</span>
+<span class="sd">            lband         width of the lower band (*int*, ``self.lband``)</span>
+<span class="sd">            uband         width of the upper band (*int*, ``self.uband``)</span>
+<span class="sd">            max_t_step    maximum time step (*float*, 0. -&gt; unrestricted)</span>
+<span class="sd">            rootfn        root/event function (*Callable*, ``None``)</span>
+<span class="sd">            nr_rootfns    number of events in ``&#39;rootfn&#39;`` (*int*, 0)</span>
+<span class="sd">            ============= =================================================</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -608,7 +615,7 @@ document.write(`
                    <span class="s1">&#39;linsolver&#39;</span><span class="p">:</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;lband&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lband</span><span class="p">,</span>
                    <span class="s1">&#39;uband&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">uband</span><span class="p">,</span>
-                   <span class="s1">&#39;algebraic_vars_idx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">algidx</span>
+                   <span class="s1">&#39;algidx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">algidx</span>
                    <span class="p">}</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -645,7 +652,7 @@ document.write(`
 <span class="sd">            descriptions are listed below:</span>
 
 <span class="sd">            =========== ==========================================</span>
-<span class="sd">            Key         Value [units] (type)</span>
+<span class="sd">            Key         Value [units] (*type*)</span>
 <span class="sd">            =========== ==========================================</span>
 <span class="sd">            V_ext       externally applied voltage [V] (*float*)</span>
 <span class="sd">            t_min       minimum time [s] (*float*)</span>
@@ -657,18 +664,18 @@ document.write(`
 <span class="sd">            The keyword arguments specify the Sundials IDA solver options. A</span>
 <span class="sd">            partial list of options/defaults is given below:</span>
 
-<span class="sd">            =============== =================================================</span>
-<span class="sd">            Key             Description (type or options, default)</span>
-<span class="sd">            =============== =================================================</span>
-<span class="sd">            rtol            relative tolerance (*float*, 1e-6)</span>
-<span class="sd">            atol            absolute tolerance (*float*, 1e-9)</span>
-<span class="sd">            linsolver       linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;band&#39;``)</span>
-<span class="sd">            lband           width of the lower band (*int*, ``self.lband``)</span>
-<span class="sd">            uband           width of the upper band (*int*, ``self.uband``)</span>
-<span class="sd">            max_step_size   maximum time step (*float*, 0. -&gt; unrestricted)</span>
-<span class="sd">            rootfn          root/event function (*Callable*, ``None``)</span>
-<span class="sd">            nr_rootfns      number of events in ``&#39;rootfn&#39;`` (*int*, 0)</span>
-<span class="sd">            =============== =================================================</span>
+<span class="sd">            ============= =================================================</span>
+<span class="sd">            Key           Description (*type* or {options}, default)</span>
+<span class="sd">            ============= =================================================</span>
+<span class="sd">            rtol          relative tolerance (*float*, 1e-6)</span>
+<span class="sd">            atol          absolute tolerance (*float*, 1e-9)</span>
+<span class="sd">            linsolver     linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;band&#39;``)</span>
+<span class="sd">            lband         width of the lower band (*int*, ``self.lband``)</span>
+<span class="sd">            uband         width of the upper band (*int*, ``self.uband``)</span>
+<span class="sd">            max_t_step    maximum time step (*float*, 0. -&gt; unrestricted)</span>
+<span class="sd">            rootfn        root/event function (*Callable*, ``None``)</span>
+<span class="sd">            nr_rootfns    number of events in ``&#39;rootfn&#39;`` (*int*, 0)</span>
+<span class="sd">            ============= =================================================</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -702,7 +709,7 @@ document.write(`
                    <span class="s1">&#39;linsolver&#39;</span><span class="p">:</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;lband&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lband</span><span class="p">,</span>
                    <span class="s1">&#39;uband&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">uband</span><span class="p">,</span>
-                   <span class="s1">&#39;algebraic_vars_idx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">algidx</span>
+                   <span class="s1">&#39;algidx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">algidx</span>
                    <span class="p">}</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -720,24 +727,18 @@ document.write(`
         <span class="n">sol</span><span class="o">.</span><span class="n">ida_fill</span><span class="p">(</span><span class="n">idasol</span><span class="p">,</span> <span class="n">solvetime</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[BatMods WARNING] run_CV: bad initstep, trying to resolve</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[BatMods WARNING]</span><span class="se">\n</span><span class="s1">&#39;</span>
+                  <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">run_CV: bad initstep, trying to resolve</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
             <span class="n">V_ext</span> <span class="o">=</span> <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;V_ext&#39;</span><span class="p">]</span>
             <span class="n">V_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sv_0</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
-
-            <span class="n">sv_0</span><span class="p">,</span> <span class="n">svdot_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sv_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">svdot_0</span>
-
-            <span class="k">if</span> <span class="n">V_ext</span> <span class="o">&lt;</span> <span class="n">V_init</span><span class="p">:</span>
-                <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;V_ext&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V_ext</span> <span class="o">+</span> <span class="mf">0.1</span>
-            <span class="k">elif</span> <span class="n">V_ext</span> <span class="o">&gt;</span> <span class="n">V_init</span><span class="p">:</span>
-                <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;V_ext&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V_ext</span> <span class="o">-</span> <span class="mf">0.1</span>
 
             <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
             <span class="k">for</span> <span class="n">wt</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]:</span>
 
-                <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;V_ext&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wt</span><span class="o">*</span><span class="n">V_init</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">wt</span><span class="p">)</span><span class="o">*</span><span class="n">V_ext</span>
-                <span class="n">init</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">init_step</span><span class="p">(</span><span class="n">exp</span><span class="p">[</span><span class="s1">&#39;t_min&#39;</span><span class="p">],</span> <span class="n">sv_0</span><span class="p">,</span> <span class="n">svdot_0</span><span class="p">)</span>
+                <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;V_ext&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wt</span> <span class="o">*</span> <span class="n">V_init</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">wt</span><span class="p">)</span> <span class="o">*</span> <span class="n">V_ext</span>
+                <span class="n">init</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">init_step</span><span class="p">(</span><span class="n">exp</span><span class="p">[</span><span class="s1">&#39;t_min&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">sv_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">svdot_0</span><span class="p">)</span>
 
                 <span class="n">exp</span><span class="p">[</span><span class="s1">&#39;V_ext&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V_ext</span>
                 <span class="n">idasol</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">t_span</span><span class="p">,</span> <span class="n">init</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">init</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ydot</span><span class="p">)</span>
@@ -746,7 +747,11 @@ document.write(`
                     <span class="k">break</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">idasol</span><span class="o">.</span><span class="n">flag</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[BatMods ERROR] run_CV: failed to resolve bad initstep</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[BatMods ERROR]</span><span class="se">\n</span><span class="s1">&#39;</span>
+                      <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">run_CV: failed to resolve bad initstep</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[BatMods NOTE]</span><span class="se">\n</span><span class="s1">&#39;</span>
+                      <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">run_CV: initstep successfully resolved</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
             <span class="n">solvetime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 
@@ -772,7 +777,7 @@ document.write(`
 <span class="sd">            descriptions are listed below:</span>
 
 <span class="sd">            ======== ========================================================</span>
-<span class="sd">            Key      Value [units] (type)</span>
+<span class="sd">            Key      Value [units] (*type*)</span>
 <span class="sd">            ======== ========================================================</span>
 <span class="sd">            P_ext    external power (+ charge, - discharge) [W/m^2] (*float*)</span>
 <span class="sd">            t_min    minimum time [s] (*float*)</span>
@@ -784,18 +789,18 @@ document.write(`
 <span class="sd">            The keyword arguments specify the Sundials IDA solver options. A</span>
 <span class="sd">            partial list of options/defaults is given below:</span>
 
-<span class="sd">            =============== =================================================</span>
-<span class="sd">            Key             Description (type or options, default)</span>
-<span class="sd">            =============== =================================================</span>
-<span class="sd">            rtol            relative tolerance (*float*, 1e-6)</span>
-<span class="sd">            atol            absolute tolerance (*float*, 1e-9)</span>
-<span class="sd">            linsolver       linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;band&#39;``)</span>
-<span class="sd">            lband           width of the lower band (*int*, ``self.lband``)</span>
-<span class="sd">            uband           width of the upper band (*int*, ``self.uband``)</span>
-<span class="sd">            max_step_size   maximum time step (*float*, 0. -&gt; unrestricted)</span>
-<span class="sd">            rootfn          root/event function (*Callable*, ``None``)</span>
-<span class="sd">            nr_rootfns      number of events in ``&#39;rootfn&#39;`` (*int*, 0)</span>
-<span class="sd">            =============== =================================================</span>
+<span class="sd">            ============= =================================================</span>
+<span class="sd">            Key           Description (*type* or {options}, default)</span>
+<span class="sd">            ============= =================================================</span>
+<span class="sd">            rtol          relative tolerance (*float*, 1e-6)</span>
+<span class="sd">            atol          absolute tolerance (*float*, 1e-9)</span>
+<span class="sd">            linsolver     linear solver (``{&#39;dense&#39;, &#39;band&#39;}``, ``&#39;band&#39;``)</span>
+<span class="sd">            lband         width of the lower band (*int*, ``self.lband``)</span>
+<span class="sd">            uband         width of the upper band (*int*, ``self.uband``)</span>
+<span class="sd">            max_t_step    maximum time step (*float*, 0. -&gt; unrestricted)</span>
+<span class="sd">            rootfn        root/event function (*Callable*, ``None``)</span>
+<span class="sd">            nr_rootfns    number of events in ``&#39;rootfn&#39;`` (*int*, 0)</span>
+<span class="sd">            ============= =================================================</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -829,7 +834,7 @@ document.write(`
                    <span class="s1">&#39;linsolver&#39;</span><span class="p">:</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;lband&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lband</span><span class="p">,</span>
                    <span class="s1">&#39;uband&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">uband</span><span class="p">,</span>
-                   <span class="s1">&#39;algebraic_vars_idx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">algidx</span>
+                   <span class="s1">&#39;algidx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">algidx</span>
                    <span class="p">}</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -850,81 +855,25 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="s1">&#39;BC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">sol</span></div>
+
+
+<div class="viewcode-block" id="Simulation.copy">
+<a class="viewcode-back" href="../../api/bmlite/SPM/index.html#bmlite.SPM.Simulation.copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a copy of the Simulation instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sim : SPM Simulation object</span>
+<span class="sd">            A unique copy (stored separately in memory) of the Simulation</span>
+<span class="sd">            instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 </div>
-
-
-
-<div class="viewcode-block" id="load">
-<a class="viewcode-back" href="../../api/bmlite/SPM/index.html#bmlite.SPM.load">[docs]</a>
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">loadname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load a previous SPM simulation and solution pair.</span>
-
-<span class="sd">    The ``Solution`` classes have a save method that create a directory</span>
-<span class="sd">    with saved ``.yaml`` and ``.npz`` files which can be used to reconstruct</span>
-<span class="sd">    the ``sim`` and ``sol`` objects from a previous experiment.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    loadname : str</span>
-<span class="sd">        The absolute or relative path to a directory with previously saved</span>
-<span class="sd">        solution files.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    sim : SPM Simulation object</span>
-<span class="sd">        An initialized SPM simulation instance.</span>
-
-<span class="sd">    sol : SPM Solution object</span>
-<span class="sd">        An initialized and filled SPM solution instance. The solution class is</span>
-<span class="sd">        determined from information in the previously saved ``.yaml`` files.</span>
-
-<span class="sd">    See also</span>
-<span class="sd">    --------</span>
-<span class="sd">    bmlite.SPM.Simulation</span>
-<span class="sd">    bmlite.SPM.solutions.BaseSolution.save</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="kn">import</span> <span class="nn">os</span>
-    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-    <span class="kn">from</span> <span class="nn">ruamel.yaml</span> <span class="kn">import</span> <span class="n">YAML</span>
-
-    <span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
-
-    <span class="n">loadpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">loadname</span><span class="p">)</span>
-
-    <span class="n">simfile</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">loadpath</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;_sim.yaml&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">simpath</span> <span class="o">=</span> <span class="n">loadname</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">simfile</span>
-
-    <span class="n">sim</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">simpath</span><span class="p">)</span>
-
-    <span class="n">expfile</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">loadpath</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;_exp.yaml&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">exppath</span> <span class="o">=</span> <span class="n">loadpath</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">expfile</span><span class="p">)</span>
-
-    <span class="n">exp</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">exppath</span><span class="p">)</span>
-
-    <span class="n">solfile</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">loadpath</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;_sol.yaml&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">solpath</span> <span class="o">=</span> <span class="n">loadpath</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">solfile</span><span class="p">)</span>
-
-    <span class="n">npfile</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">loadpath</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;_sol.npz&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">nppath</span> <span class="o">=</span> <span class="n">loadname</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">npfile</span>
-
-    <span class="n">soldict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">solpath</span><span class="p">)</span>
-
-    <span class="n">Solution</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">soldict</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">])</span>
-    <span class="n">sol</span> <span class="o">=</span> <span class="n">Solution</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
-
-    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">nppath</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;ydot&#39;</span><span class="p">]:</span>
-        <span class="n">soldict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-
-    <span class="n">data</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="n">sol</span><span class="o">.</span><span class="n">dict_fill</span><span class="p">(</span><span class="n">soldict</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">sim</span><span class="p">,</span> <span class="n">sol</span></div>
 
 
 
@@ -949,58 +898,9 @@ document.write(`
 <span class="sd">    None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">json</span>
-    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+    <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">_templates</span>
 
-    <span class="kn">from</span> <span class="nn">ruamel.yaml</span> <span class="kn">import</span> <span class="n">YAML</span>
-
-    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
-
-    <span class="n">simlist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_sims/&#39;</span><span class="p">)</span>
-    <span class="n">explist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_exps/&#39;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">sim</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exp</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Available templates list for SPM simulations:&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">simlist</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">- [&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span>  <span class="n">file</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">))</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Available templates list for SPM experiments:&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">explist</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">- [&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span> <span class="n">file</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="s1">&#39;.yaml&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sim</span><span class="p">:</span>
-            <span class="n">sim</span> <span class="o">+=</span> <span class="s1">&#39;.yaml&#39;</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">sim</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_sims/&#39;</span> <span class="o">+</span> <span class="n">sim</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-
-    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">simlist</span><span class="p">[</span><span class="n">sim</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_sims/&#39;</span> <span class="o">+</span> <span class="n">simlist</span><span class="p">[</span><span class="n">sim</span><span class="p">]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-
-    <span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="s1">&#39;.yaml&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">:</span>
-            <span class="n">exp</span> <span class="o">+=</span> <span class="s1">&#39;.yaml&#39;</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">exp</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_exps/&#39;</span> <span class="o">+</span> <span class="n">exp</span>
-        <span class="n">expdict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;exp = &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">expdict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
-
-    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">explist</span><span class="p">[</span><span class="n">exp</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/default_exps/&#39;</span> <span class="o">+</span> <span class="n">explist</span><span class="p">[</span><span class="n">exp</span><span class="p">]</span>
-        <span class="n">expdict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;exp = &#39;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">expdict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
+    <span class="n">_templates</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="s1">&#39;SPM&#39;</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span></div>
 
 </pre></div>
 

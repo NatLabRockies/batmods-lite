@@ -76,12 +76,15 @@ napoleon_use_rtype = False
 napoleon_custom_sections = ['BatMods-lite', 
                             'How to use the documentation', 
                             'Viewing documentation using IPython',
-                            'Pseudo-2D Model Package',
-                            'Single Particle Model Package',
                             'Material Properties Package',
-                            'Battery Builder Module',
+                            'Plotting Utilities',
+                            'Single Particle Model Package',
+                            'Pseudo-2D Model Package',
+                            'Battery Builder',
                             'DAE Module',
-                            'Plotting Utilities'
+                            'Root Functions',
+                            'Post-processing Utilities',
+                            'Solution Classes'
                             ]
 
 
@@ -89,8 +92,8 @@ napoleon_custom_sections = ['BatMods-lite',
 # https://sphinx-autoapi.readthedocs.io/en/latest/reference/config.html
 
 autoapi_type = 'python'
-autoapi_ignore = ['*/tests/*', '*/examples/*', '*/docs/*', '*/__pycache__/*']
-autoapi_dirs = ['../../']
+autoapi_ignore = ['*/__pycache__/*']
+autoapi_dirs = ['../../bmlite']
 autoapi_keep_files = True 
 autoapi_root = 'api'
 autoapi_member_order = 'groupwise'

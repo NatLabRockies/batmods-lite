@@ -1,6 +1,6 @@
 """
-Post-processing Utilities Module
---------------------------------
+Post-processing Utilities
+-------------------------
 This module contains all post-processing functions for the P2D package. The
 available post-processing options for a given experiment are specific to that
 experiment. Therefore, not all ``Solution`` classes may have access to all of
@@ -9,6 +9,35 @@ the following functions.
 
 
 def post(sol: object) -> dict:
+    """
+    Run post processing to determine secondary variables.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    Returns
+    -------
+    postvars : dict
+        Post processed variables, as described below.
+
+        =========== ========================================================
+        Key         Value [units] (*type*)
+        =========== ========================================================
+        res         DAE residual at t (row) for y (col) [units] (*2D array*)
+        div_i_an    divergence of current at t, x_a [A/m^3] (*2D array*)
+        div_i_sep   divergence of current at t, x_s [A/m^3] (*2D array*)
+        div_i_ca    divergence of current at t, x_c [A/m^3] (*2D array*)
+        sdot_an     Faradaic current at t, x_a [kmol/m^2/s] (*1D array*)
+        sdot_ca     Faradaic current at t, x_c [kmol/m^2/s] (*1D array*)
+        sum_ip      ``i_ed + i_el`` at t, xp interfaces [A/m^2] (*2D array*)
+        i_el_x      ``i_el`` at t, x interfaces [A/m^2] (*2D array*)
+        i_ext       external current density at t [A/m^2] (*1D array*)
+        A*h/m^2     areal capacity at t [A*h/m^2] (*1D array*)
+        =========== ========================================================
+    """
+
     import numpy as np
     from scipy.integrate import cumtrapz
 
@@ -21,7 +50,9 @@ def post(sol: object) -> dict:
     an, sep, ca = sim.an, sim.sep, sim.ca
 
     # Extract desired variables for each time
-    res = np.zeros_like(sol.y)
+    div_i_an = np.zeros([sol.t.size, an.Nx])
+    div_i_sep = np.zeros([sol.t.size, sep.Nx])
+    div_i_ca = np.zeros([sol.t.size, ca.Nx])
 
     sdot_an = np.zeros([sol.t.size, an.Nx])
     sdot_ca = np.zeros([sol.t.size, ca.Nx])
@@ -37,14 +68,12 @@ def post(sol: object) -> dict:
     for i, t in enumerate(sol.t):
         sv, svdot = sol.y[i, :], sol.ydot[i, :]
 
-        (res[i, :], sdot_an[i, :], sdot_ca[i, :], sum_ip[i, :],
-         i_el_x[i, :]) = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
+        output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
+
+        (div_i_an[i, :], div_i_sep[i, :], div_i_ca[i, :], sdot_an[i, :],
+         sdot_ca[i, :], sum_ip[i, :], i_el_x[i, :]) = output
 
         i_ext[i] = exp['i_ext']
-
-    div_i_an = res[:, an.x_ptr('phi_ed')] + res[:, an.x_ptr('phi_el')]
-    div_i_sep = res[:, sep.x_ptr('phi_el')]
-    div_i_ca = res[:, ca.x_ptr('phi_ed')] + res[:, ca.x_ptr('phi_el')]
 
     # Turn off output from residuals
     sim._flags['post'] = False
@@ -54,7 +83,6 @@ def post(sol: object) -> dict:
 
     # Store outputs
     postvars = {}
-    postvars['res'] = res
 
     postvars['div_i_an'] = div_i_an
     postvars['div_i_sep'] = div_i_sep
@@ -73,18 +101,33 @@ def post(sol: object) -> dict:
 
 
 def current(sol: object, ax: object = None) -> None:
+    """
+    Plot current density vs. time.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    ax : object, optional
+        An ``axis`` instance from a ``matplotlib`` figure. The default is
+        ``None``. If not specified, a new figure is made.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import format_ticks, show
 
-    if len(sol.postvars) == 0:
-        sol.post()
-
     if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
+                               layout='constrained')
 
     ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'Current density, $i_{\rm ext}$ [A/m$^2$]')
+    ax.set_ylabel(r'$i_{\rm ext}$ [A/m$^2$]')
 
     ax.plot(sol.t, sol.postvars['i_ext'], '-k')
     format_ticks(ax)
@@ -94,15 +137,33 @@ def current(sol: object, ax: object = None) -> None:
 
 
 def voltage(sol: object, ax: object = None) -> None:
+    """
+    Plot cell voltage vs. time.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    ax : object, optional
+        An ``axis`` instance from a ``matplotlib`` figure. The default is
+        ``None``. If not specified, a new figure is made.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import format_ticks, show
 
     if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
+                               layout='constrained')
 
     ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel('Cell voltage [V]')
+    ax.set_ylabel(r'$\phi_{\rm ca} - \phi_{\rm an}$ [V]')
 
     sim = sol._sim
 
@@ -114,18 +175,33 @@ def voltage(sol: object, ax: object = None) -> None:
 
 
 def power(sol: object, ax: object = None) -> None:
+    """
+    Plot power density vs. time.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    ax : object, optional
+        An ``axis`` instance from a ``matplotlib`` figure. The default is
+        ``None``. If not specified, a new figure is made.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import format_ticks, show
 
-    if len(sol.postvars) == 0:
-        sol.post()
-
     if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 3.5])
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
+                               layout='constrained')
 
     ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'Power density, $P_{\rm ext}$ [W/m$^2$]')
+    ax.set_ylabel(r'$p_{\rm ext}$ [W/m$^2$]')
 
     sim = sol._sim
 
@@ -139,22 +215,48 @@ def power(sol: object, ax: object = None) -> None:
         show(fig)
 
 
-def IVP(sol: object) -> None:
+def ivp(sol: object) -> None:
+    """
+    Subplots for current, voltage, and power.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import matplotlib.pyplot as plt
 
     from ..plotutils import show
 
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[15, 3.5])
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
+                           layout='constrained')
 
     current(sol, ax[0])
     voltage(sol, ax[1])
     power(sol, ax[2])
 
-    fig.subplots_adjust(wspace=0.3)
     show(fig)
 
 
 def potentials(sol: object) -> None:
+    """
+    Plots anode, electrolyte, and cathode potentials vs. time and space.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib.colors as clrs
@@ -228,6 +330,19 @@ def potentials(sol: object) -> None:
 
 
 def electrolyte(sol: object) -> None:
+    """
+    Plots electrolyte Li-ion concentration profiles vs. time.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib.colors as clrs
@@ -275,6 +390,19 @@ def electrolyte(sol: object) -> None:
 
 
 def intercalation(sol: object) -> None:
+    """
+    Plots anode and cathode particle intercalation profiles vs. time.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib.colors as clrs
@@ -291,7 +419,8 @@ def intercalation(sol: object) -> None:
     sm = plt.cm.ScalarMappable(cmap='jet', norm=norm)
 
     # Solid-phase Li intercalation fracs [-]
-    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=[8, 6])
+    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=[8, 6],
+                           layout='constrained')
 
     ax[0, 0].text(0.1, 0.1, r'$x$ = an/sep', transform=ax[0, 0].transAxes)
     ax[0, 1].text(0.1, 0.1, r'$x$ = sep/ca', transform=ax[0, 1].transAxes)
@@ -335,23 +464,31 @@ def intercalation(sol: object) -> None:
     show(fig)
 
 
-def contours(sol: object) -> None:
+def pixels(sol: object) -> None:
+    """
+    Makes pixel plots for most 2D (space/time) variables.
+
+    Parameters
+    ----------
+    sol : P2D Solution object
+        A pseudo-2D model solution object.
+
+    Returns
+    -------
+    None.
+    """
+
     import numpy as np
     import matplotlib.pyplot as plt
 
-    from ..plotutils import contour, show
-
-    # Check for postvars
-    if len(sol.postvars) == 0:
-        sol.postvars = post(sol)
-
-    postvars = sol.postvars
+    from ..plotutils import pixel, show
 
     # Get needed domains
     an, sep, ca = sol._sim.an, sol._sim.sep, sol._sim.ca
 
     # Make figure
-    fig, ax = plt.subplots(nrows=3, ncols=3, figsize=[8, 10])
+    fig, ax = plt.subplots(nrows=3, ncols=3, figsize=[8, 10],
+                           layout='constrained')
 
     # Li-ion conc. [kmol/m^3]
     xlims = [an.xm[0] * 1e6, ca.xp[-1] * 1e6]
@@ -360,7 +497,7 @@ def contours(sol: object) -> None:
                    sol.y[:, sep.x_ptr('Li_el')],
                    sol.y[:, ca.x_ptr('Li_el')]])
 
-    contour(ax[0, 0], xlims, ylims, z, r'[kmol/m$^3$]')
+    pixel(ax[0, 0], xlims, ylims, z, r'[kmol/m$^3$]')
 
     ax[0, 0].set_ylabel(r'$t$ [s]')
     ax[0, 0].set_title(r'$C_{\rm Li+}$')
@@ -372,7 +509,7 @@ def contours(sol: object) -> None:
                    sol.y[:, sep.x_ptr('phi_el')],
                    sol.y[:, ca.x_ptr('phi_el')]])
 
-    contour(ax[0, 1], xlims, ylims, z, r'[V]')
+    pixel(ax[0, 1], xlims, ylims, z, r'[V]')
 
     ax[0, 1].set_yticks([])
     ax[0, 1].set_title(r'$\phi_{\rm el}$')
@@ -380,9 +517,9 @@ def contours(sol: object) -> None:
     # Ionic current [A/m^2]
     xlims = [an.xm[0] * 1e6, ca.xp[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = postvars['i_el_x']
+    z = sol.postvars['i_el_x']
 
-    contour(ax[0, 2], xlims, ylims, z, r'[A/m$^2$]')
+    pixel(ax[0, 2], xlims, ylims, z, r'[A/m$^2$]')
 
     ax[0, 2].set_yticks([])
     ax[0, 2].set_title(r'$i_{\rm el}$')
@@ -392,7 +529,7 @@ def contours(sol: object) -> None:
     ylims = [sol.t.min(), sol.t.max()]
     z = sol.y[:, an.x_ptr('Li_ed', an.Nr - 1)] * an.Li_max
 
-    contour(ax[1, 0], xlims, ylims, z, r'[kmol/m$^3$]')
+    pixel(ax[1, 0], xlims, ylims, z, r'[kmol/m$^3$]')
 
     ax[1, 0].set_ylabel(r'$t$ [s]')
     ax[1, 0].set_title(r'$C_{\rm s, an}$')
@@ -402,7 +539,7 @@ def contours(sol: object) -> None:
     ylims = [sol.t.min(), sol.t.max()]
     z = sol.y[:, an.x_ptr('phi_ed')]
 
-    contour(ax[1, 1], xlims, ylims, z * 1e3, r'[mV]')
+    pixel(ax[1, 1], xlims, ylims, z * 1e3, r'[mV]')
 
     ax[1, 1].set_yticks([])
     ax[1, 1].set_title(r'$\phi_{\rm s, an}$')
@@ -410,9 +547,9 @@ def contours(sol: object) -> None:
     # Faradaic current in anode [kmol/m^2/s]
     xlims = [an.x[0] * 1e6, an.x[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = postvars['sdot_an']
+    z = sol.postvars['sdot_an']
 
-    contour(ax[1, 2], xlims, ylims, z, r'[kmol/m$^2$/s]')
+    pixel(ax[1, 2], xlims, ylims, z, r'[kmol/m$^2$/s]')
 
     ax[1, 2].set_yticks([])
     ax[1, 2].set_title(r'$j_{\rm Far, an}$')
@@ -422,7 +559,7 @@ def contours(sol: object) -> None:
     ylims = [sol.t.min(), sol.t.max()]
     z = sol.y[:, ca.x_ptr('Li_ed', ca.Nr - 1)] * ca.Li_max
 
-    contour(ax[2, 0], xlims, ylims, z, r'[kmol/m$^3$]')
+    pixel(ax[2, 0], xlims, ylims, z, r'[kmol/m$^3$]')
 
     ax[2, 0].set_ylabel(r'$t$ [s]')
     ax[2, 0].set_xlabel(r'$x$ [$\mu$m]')
@@ -433,7 +570,7 @@ def contours(sol: object) -> None:
     ylims = [sol.t.min(), sol.t.max()]
     z = sol.y[:, ca.x_ptr('phi_ed')]
 
-    contour(ax[2, 1], xlims, ylims, z, r'[V]')
+    pixel(ax[2, 1], xlims, ylims, z, r'[V]')
 
     ax[2, 1].set_yticks([])
     ax[2, 1].set_xlabel(r'$x$ [$\mu$m]')
@@ -442,15 +579,14 @@ def contours(sol: object) -> None:
     # Faradaic current in cathode [kmol/m^2/s]
     xlims = [ca.x[0] * 1e6, ca.x[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = postvars['sdot_ca']
+    z = sol.postvars['sdot_ca']
 
-    contour(ax[2, 2], xlims, ylims, z, r'[kmol/m$^2$/s]')
+    pixel(ax[2, 2], xlims, ylims, z, r'[kmol/m$^2$/s]')
 
     ax[2, 2].set_yticks([])
     ax[2, 2].set_xlabel(r'$x$ [$\mu$m]')
     ax[2, 2].set_title(r'$j_{\rm Far, ca}$')
 
     # Adjust spacing
-    fig.subplots_adjust(wspace=0.7, hspace=0.2)
-
+    fig.get_layout_engine().set(hspace=0.1, wspace=0.1)
     show(fig)

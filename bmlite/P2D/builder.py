@@ -1,6 +1,6 @@
 """
-Battery Builder Module
-----------------------
+Battery Builder
+---------------
 Contains classes to construct the battery for P2D simulations. Each class reads
 in keyword arguments that define parameters relevant to its specific domain.
 For example, the area and temperature are ``Battery`` level parameters because
@@ -250,11 +250,12 @@ class Electrode(object):
 
         self.eps_s = 1 - self.eps_el
         self.eps_AM = 1 - self.eps_el - self.eps_CBD
-        self.sigma_s = 10*self.eps_s
-        self.A_s = 3*self.eps_AM / self.R_s
+        self.sigma_s = 10 * self.eps_s
+        self.A_s = 3 * self.eps_AM / self.R_s
 
         ActiveMaterial = getattr(materials, self.material)
-        self._material = ActiveMaterial(self.alpha_a, self.alpha_c, self.Li_max)
+        self._material = ActiveMaterial(
+            self.alpha_a, self.alpha_c, self.Li_max)
 
     def get_Ds(self, x: float | _ndarray, T: float) -> float | _ndarray:
         """
@@ -275,7 +276,7 @@ class Electrode(object):
             Lithium diffusivity in the solid phase [m^2/s].
         """
 
-        return self.Ds_deg*self._material.get_Ds(x, T)
+        return self.Ds_deg * self._material.get_Ds(x, T)
 
     def get_i0(self, x: float | _ndarray, C_Li: float | _ndarray,
                T: float) -> float | _ndarray:
@@ -303,7 +304,7 @@ class Electrode(object):
             Exchange current density [A/m^2].
         """
 
-        return self.i0_deg*self._material.get_i0(x, C_Li, T)
+        return self.i0_deg * self._material.get_i0(x, C_Li, T)
 
     def get_Eeq(self, x: float | _ndarray, T: float) -> float | _ndarray:
         """
@@ -352,16 +353,16 @@ class Electrode(object):
 
         import numpy as np
 
-        self.x = np.linspace(self.thick/self.Nx/2,
-                             self.thick*(1-1/self.Nx/2), self.Nx)
+        self.x = np.linspace(self.thick / self.Nx / 2,
+                             self.thick * (1 - 1 / self.Nx / 2), self.Nx)
 
-        self.xm = np.hstack([0, 0.5*(self.x[:-1]+self.x[1:])])
+        self.xm = np.hstack([0, 0.5 * (self.x[:-1] + self.x[1:])])
         self.xp = np.hstack([self.xm[1:], self.thick])
 
-        self.r = np.linspace(self.R_s/self.Nr/2,
-                             self.R_s*(1-1/self.Nr/2), self.Nr)
+        self.r = np.linspace(self.R_s / self.Nr / 2,
+                             self.R_s * (1 - 1 / self.Nr / 2), self.Nr)
 
-        self.rm = np.hstack([0, 0.5*(self.r[:-1]+self.r[1:])])
+        self.rm = np.hstack([0, 0.5 * (self.r[:-1] + self.r[1:])])
         self.rp = np.hstack([self.rm[1:], self.R_s])
 
     def make_ptr(self) -> None:
@@ -369,20 +370,20 @@ class Electrode(object):
         # ptr_an and ptr_ca -> [[Li_ed(0->R_s)], phi_ed, Li_el, phi_el, ...]
 
         self.ptr = {}
-        self.ptr['Li_ed']  = 0
-        self.ptr['r_off']  = 1
+        self.ptr['Li_ed'] = 0
+        self.ptr['r_off'] = 1
 
         self.ptr['phi_ed'] = self.ptr['Li_ed'] + self.Nr
         self.ptr['Li_el'] = self.ptr['phi_ed'] + 1
         self.ptr['phi_el'] = self.ptr['Li_el'] + 1
         self.ptr['x_off'] = self.Nr + 3
 
-        self.ptr['shift'] = self.Nx*self.ptr['x_off']
+        self.ptr['shift'] = self.Nx * self.ptr['x_off']
 
     def sv_0(self, el: object) -> _ndarray:
         import numpy as np
 
-        return np.tile(np.hstack([self.x_0*np.ones(self.Nr),
+        return np.tile(np.hstack([self.x_0 * np.ones(self.Nr),
                                   self.phi_0, el.Li_0, el.phi_0]), self.Nx)
 
     def algidx(self) -> _ndarray:
@@ -391,7 +392,7 @@ class Electrode(object):
         return np.hstack([self.x_ptr('phi_ed'), self.x_ptr('phi_el')])
 
     def x_ptr(self, key: str, shift: int = 0) -> list[int]:
-        return [self.ptr[key] + i*self.ptr['x_off'] + shift
+        return [self.ptr[key] + i * self.ptr['x_off'] + shift
                 for i in range(self.Nx)]
 
 
@@ -461,10 +462,10 @@ class Separator(object):
 
         import numpy as np
 
-        self.x = np.linspace(self.thick/self.Nx/2,
-                             self.thick*(1-1/self.Nx/2), self.Nx)
+        self.x = np.linspace(self.thick / self.Nx / 2,
+                             self.thick * (1 - 1 / self.Nx / 2), self.Nx)
 
-        self.xm = np.hstack([0, 0.5*(self.x[:-1]+self.x[1:])])
+        self.xm = np.hstack([0, 0.5 * (self.x[:-1] + self.x[1:])])
         self.xp = np.hstack([self.xm[1:], self.thick])
 
     def make_ptr(self) -> None:
@@ -475,7 +476,7 @@ class Separator(object):
         self.ptr['phi_el'] = self.ptr['Li_el'] + 1
         self.ptr['x_off'] = 2
 
-        self.ptr['shift'] = self.Nx*self.ptr['x_off']
+        self.ptr['shift'] = self.Nx * self.ptr['x_off']
 
     def sv_0(self, el: object) -> _ndarray:
         import numpy as np
@@ -488,5 +489,5 @@ class Separator(object):
         return np.array(self.x_ptr('phi_el'))
 
     def x_ptr(self, key: str, shift: int = 0) -> list[int]:
-        return [self.ptr[key] + i*self.ptr['x_off'] + shift
+        return [self.ptr[key] + i * self.ptr['x_off'] + shift
                 for i in range(self.Nx)]
