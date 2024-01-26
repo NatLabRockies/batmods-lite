@@ -345,6 +345,8 @@ document.write(`
 <span class="sd">the following functions.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">_ndarray</span>
+
 
 <div class="viewcode-block" id="post">
 <a class="viewcode-back" href="../../../api/bmlite/P2D/postutils/index.html#bmlite.P2D.postutils.post">[docs]</a>
@@ -439,6 +441,106 @@ document.write(`
 
     <span class="k">return</span> <span class="n">postvars</span></div>
 
+
+
+<span class="k">def</span> <span class="nf">_liquid_phase_Li</span><span class="p">(</span><span class="n">sol</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the liquid-phase lithium vs. time.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sol : SPM Solution object</span>
+<span class="sd">        A single particle model solution object.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Li_ed_0 : float</span>
+<span class="sd">        liquid-phase lithium [kmol/m^2] based on ``el.Li_0``.</span>
+
+<span class="sd">    Li_ed_t : 1D array</span>
+<span class="sd">        Solution&#39;s liquid-phase lithium [kmol/m^2] vs. time [s].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">el</span><span class="p">,</span> <span class="n">an</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">ca</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">el</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">an</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">ca</span>
+
+    <span class="c1"># Initial total liquid-phase lithium [kmol/m^2]</span>
+    <span class="n">Li_el_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">an</span><span class="o">.</span><span class="n">eps_el</span> <span class="o">*</span> <span class="n">el</span><span class="o">.</span><span class="n">Li_0</span> <span class="o">*</span> <span class="p">(</span><span class="n">an</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">an</span><span class="o">.</span><span class="n">xm</span><span class="p">),</span>
+                                <span class="n">sep</span><span class="o">.</span><span class="n">eps_el</span> <span class="o">*</span> <span class="n">el</span><span class="o">.</span><span class="n">Li_0</span> <span class="o">*</span> <span class="p">(</span><span class="n">sep</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">sep</span><span class="o">.</span><span class="n">xm</span><span class="p">),</span>
+                                <span class="n">ca</span><span class="o">.</span><span class="n">eps_el</span> <span class="o">*</span> <span class="n">el</span><span class="o">.</span><span class="n">Li_0</span> <span class="o">*</span> <span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">ca</span><span class="o">.</span><span class="n">xm</span><span class="p">)]))</span>
+
+    <span class="c1"># Total liquid-phase lithium [kmol/m^2] vs. time [s]</span>
+    <span class="n">Li_an</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">an</span><span class="o">.</span><span class="n">x_ptr</span><span class="p">(</span><span class="s1">&#39;Li_el&#39;</span><span class="p">)]</span>
+    <span class="n">Li_sep</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sep</span><span class="o">.</span><span class="n">x_ptr</span><span class="p">(</span><span class="s1">&#39;Li_el&#39;</span><span class="p">)]</span>
+    <span class="n">Li_ca</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">ca</span><span class="o">.</span><span class="n">x_ptr</span><span class="p">(</span><span class="s1">&#39;Li_el&#39;</span><span class="p">)]</span>
+
+    <span class="n">Li_el_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">an</span><span class="o">.</span><span class="n">eps_el</span> <span class="o">*</span> <span class="n">Li_an</span> <span class="o">*</span> <span class="p">(</span><span class="n">an</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">an</span><span class="o">.</span><span class="n">xm</span><span class="p">),</span>
+                                <span class="n">sep</span><span class="o">.</span><span class="n">eps_el</span> <span class="o">*</span> <span class="n">Li_sep</span> <span class="o">*</span> <span class="p">(</span><span class="n">sep</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">sep</span><span class="o">.</span><span class="n">xm</span><span class="p">),</span>
+                                <span class="n">ca</span><span class="o">.</span><span class="n">eps_el</span> <span class="o">*</span> <span class="n">Li_ca</span> <span class="o">*</span> <span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">ca</span><span class="o">.</span><span class="n">xm</span><span class="p">)]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Li_el_0</span><span class="p">,</span> <span class="n">Li_el_t</span>
+
+
+<span class="k">def</span> <span class="nf">_solid_phase_Li</span><span class="p">(</span><span class="n">sol</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the solid-phase lithium vs. time.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sol : SPM Solution object</span>
+<span class="sd">        A single particle model solution object.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Li_ed_0 : float</span>
+<span class="sd">        Solid-phase lithium [kmol/m^2] based on ``an.x_0`` and ``ca.x_0``.</span>
+
+<span class="sd">    Li_ed_t : 1D array</span>
+<span class="sd">        Solution&#39;s solid-phase lithium [kmol/m^2] vs. time [s].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">an</span><span class="p">,</span> <span class="n">ca</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">an</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">ca</span>
+
+    <span class="c1"># Initial total solid-phase lithium [kmol/m^2]</span>
+    <span class="n">Li_ed_0</span> <span class="o">=</span> <span class="n">an</span><span class="o">.</span><span class="n">x_0</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">Li_max</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">eps_AM</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">thick</span> \
+            <span class="o">+</span> <span class="n">ca</span><span class="o">.</span><span class="n">x_0</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">Li_max</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">eps_AM</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">thick</span>
+
+    <span class="c1"># Anode/cathode lithium [kmol/m^2] vs. time [s]</span>
+    <span class="n">V_an</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">R_s</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">3</span>
+    <span class="n">V_ca</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">R_s</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">3</span>
+
+    <span class="n">cs_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">an</span><span class="o">.</span><span class="n">Nx</span><span class="p">,</span> <span class="n">an</span><span class="o">.</span><span class="n">Nr</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">an</span><span class="o">.</span><span class="n">Nr</span><span class="p">):</span>
+        <span class="n">cs_a</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">an</span><span class="o">.</span><span class="n">x_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">Li_max</span>
+
+    <span class="n">cs_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">ca</span><span class="o">.</span><span class="n">Nx</span><span class="p">,</span> <span class="n">ca</span><span class="o">.</span><span class="n">Nr</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">Nr</span><span class="p">):</span>
+        <span class="n">cs_c</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">ca</span><span class="o">.</span><span class="n">x_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">Li_max</span>
+
+    <span class="n">Li_an</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">Li_ca</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+
+        <span class="n">Li_ed_xr</span> <span class="o">=</span> <span class="n">cs_a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">Li_ed_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">an</span><span class="o">.</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Li_ed_xr</span> <span class="o">*</span> <span class="p">(</span><span class="n">an</span><span class="o">.</span><span class="n">rp</span> <span class="o">-</span> <span class="n">an</span><span class="o">.</span><span class="n">rm</span><span class="p">),</span>
+                         <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">V_an</span>
+
+        <span class="n">Li_an</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">an</span><span class="o">.</span><span class="n">eps_AM</span> <span class="o">*</span> <span class="n">Li_ed_x</span> <span class="o">*</span> <span class="p">(</span><span class="n">an</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">an</span><span class="o">.</span><span class="n">xm</span><span class="p">))</span>
+
+        <span class="n">Li_ed_xr</span> <span class="o">=</span> <span class="n">cs_c</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">Li_ed_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ca</span><span class="o">.</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Li_ed_xr</span> <span class="o">*</span> <span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">rp</span> <span class="o">-</span> <span class="n">ca</span><span class="o">.</span><span class="n">rm</span><span class="p">),</span>
+                         <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">V_ca</span>
+
+        <span class="n">Li_ca</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">eps_AM</span> <span class="o">*</span> <span class="n">Li_ed_x</span> <span class="o">*</span> <span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">xp</span> <span class="o">-</span> <span class="n">ca</span><span class="o">.</span><span class="n">xm</span><span class="p">))</span>
+
+    <span class="c1"># Total solid-phase lithium [kmol/m^2] vs. time [s]</span>
+    <span class="n">Li_ed_t</span> <span class="o">=</span> <span class="n">Li_an</span> <span class="o">+</span> <span class="n">Li_ca</span>
+
+    <span class="k">return</span> <span class="n">Li_ed_0</span><span class="p">,</span> <span class="n">Li_ed_t</span>
 
 
 <div class="viewcode-block" id="current">
@@ -592,6 +694,7 @@ document.write(`
     <span class="n">voltage</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">power</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
+    <span class="n">fig</span><span class="o">.</span><span class="n">get_layout_engine</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
     <span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
 
 

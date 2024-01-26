@@ -30,7 +30,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=4bdb038c" />
@@ -389,6 +389,29 @@ from constant-current to constant-voltage at a specified voltage.</p>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>To use a root function, you will have to create an instance, and then
+pass both the root function, and the number of root functions to the
+solver. The number of roots is stored as the property <code class="docutils literal notranslate"><span class="pre">size</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">P2D</span><span class="o">.</span><span class="n">Simulation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;V_ext&#39;</span><span class="p">:</span> <span class="mf">3.8</span><span class="p">,</span> <span class="s1">&#39;t_min&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span> <span class="s1">&#39;t_max&#39;</span><span class="p">:</span> <span class="mf">1350.</span><span class="p">,</span> <span class="s1">&#39;Nt&#39;</span><span class="p">:</span> <span class="mi">1351</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rootfn</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">P2D</span><span class="o">.</span><span class="n">roots</span><span class="o">.</span><span class="n">ILimits</span><span class="p">(</span><span class="o">-</span><span class="mf">0.45</span> <span class="o">*</span> <span class="n">sim</span><span class="o">.</span><span class="n">bat</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run_CV</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">rootfn</span><span class="o">=</span><span class="n">rootfn</span><span class="p">,</span> <span class="n">nr_rootfns</span><span class="o">=</span><span class="n">rootfn</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;ivp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="bmlite.P2D.roots.ILimits.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="reference internal" href="../../../../_modules/bmlite/P2D/roots.html#ILimits.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.P2D.roots.ILimits.size" title="Link to this definition">#</a></dt>
+<dd><p>Number of roots in the root function instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>size</strong> (<em>int</em>) – The size of the events array in the root function.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -403,6 +426,29 @@ from constant-current to constant-voltage at a specified voltage.</p>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>To use a root function, you will have to create an instance, and then
+pass both the root function, and the number of root functions to the
+solver. The number of roots is stored as the property <code class="docutils literal notranslate"><span class="pre">size</span></code>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">P2D</span><span class="o">.</span><span class="n">Simulation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;C_rate&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="s1">&#39;t_min&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span> <span class="s1">&#39;t_max&#39;</span><span class="p">:</span> <span class="mf">3600.</span><span class="p">,</span> <span class="s1">&#39;Nt&#39;</span><span class="p">:</span> <span class="mi">3601</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rootfn</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">P2D</span><span class="o">.</span><span class="n">roots</span><span class="o">.</span><span class="n">VLimits</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run_CC</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">rootfn</span><span class="o">=</span><span class="n">rootfn</span><span class="p">,</span> <span class="n">nr_rootfns</span><span class="o">=</span><span class="n">rootfn</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;ivp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="bmlite.P2D.roots.VLimits.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="reference internal" href="../../../../_modules/bmlite/P2D/roots.html#VLimits.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.P2D.roots.VLimits.size" title="Link to this definition">#</a></dt>
+<dd><p>Number of roots in the root function instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>size</strong> (<em>int</em>) – The size of the events array in the root function.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -431,8 +477,14 @@ from constant-current to constant-voltage at a specified voltage.</p>
     <ul class="nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.P2D.roots.ILimits"><code class="docutils literal notranslate"><span class="pre">ILimits</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.P2D.roots.VLimits"><code class="docutils literal notranslate"><span class="pre">VLimits</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.P2D.roots.ILimits"><code class="docutils literal notranslate"><span class="pre">ILimits</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.P2D.roots.ILimits.size"><code class="docutils literal notranslate"><span class="pre">ILimits.size</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.P2D.roots.VLimits"><code class="docutils literal notranslate"><span class="pre">VLimits</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#bmlite.P2D.roots.VLimits.size"><code class="docutils literal notranslate"><span class="pre">VLimits.size</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

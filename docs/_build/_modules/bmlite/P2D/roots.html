@@ -352,7 +352,7 @@ document.write(`
 <a class="viewcode-back" href="../../../api/bmlite/P2D/roots/index.html#bmlite.P2D.roots.VLimits">[docs]</a>
 <span class="k">class</span> <span class="nc">VLimits</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;V_low&#39;</span><span class="p">,</span> <span class="s1">&#39;V_high&#39;</span><span class="p">,</span> <span class="s1">&#39;nr_rootfns&#39;</span><span class="p">]</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;V_low&#39;</span><span class="p">,</span> <span class="s1">&#39;V_high&#39;</span><span class="p">,</span> <span class="s1">&#39;_size&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">V_low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">V_high</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -365,11 +365,40 @@ document.write(`
 
 <span class="sd">        V_high : float</span>
 <span class="sd">            The desired high voltage limit [V].</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        To use a root function, you will have to create an instance, and then</span>
+<span class="sd">        pass both the root function, and the number of root functions to the</span>
+<span class="sd">        solver. The number of roots is stored as the property ``size``.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        &gt;&gt;&gt; sim = bm.P2D.Simulation()</span>
+<span class="sd">        &gt;&gt;&gt; exp = {&#39;C_rate&#39;: -2., &#39;t_min&#39;: 0., &#39;t_max&#39;: 3600., &#39;Nt&#39;: 3601}</span>
+<span class="sd">        &gt;&gt;&gt; rootfn = bm.P2D.roots.VLimits(3.0, np.nan)</span>
+<span class="sd">        &gt;&gt;&gt; sol = sim.run_CC(exp, rootfn=rootfn, nr_rootfns=rootfn.size)</span>
+<span class="sd">        &gt;&gt;&gt; sol.plot(&#39;ivp&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">V_low</span> <span class="o">=</span> <span class="n">V_low</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">V_high</span> <span class="o">=</span> <span class="n">V_high</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nr_rootfns</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="VLimits.size">
+<a class="viewcode-back" href="../../../api/bmlite/P2D/roots/index.html#bmlite.P2D.roots.VLimits.size">[docs]</a>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of roots in the root function instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        size : int</span>
+<span class="sd">            The size of the events array in the root function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sv</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span> <span class="n">svdot</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span>
                  <span class="n">events</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -391,7 +420,7 @@ document.write(`
 
 <span class="sd">        events : 1D array</span>
 <span class="sd">            An empty array with a length equal to the number of root functions,</span>
-<span class="sd">            here ``nr_rootfns = 2``.</span>
+<span class="sd">            here ``size = 2``.</span>
 
 <span class="sd">        inputs : (sim : P2D Simulation object, exp : experiment dict)</span>
 <span class="sd">            The simulation object and experimental details dictionary inputs</span>
@@ -413,7 +442,7 @@ document.write(`
 <a class="viewcode-back" href="../../../api/bmlite/P2D/roots/index.html#bmlite.P2D.roots.ILimits">[docs]</a>
 <span class="k">class</span> <span class="nc">ILimits</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;I_low&#39;</span><span class="p">,</span> <span class="s1">&#39;I_high&#39;</span><span class="p">,</span> <span class="s1">&#39;nr_rootfns&#39;</span><span class="p">]</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;I_low&#39;</span><span class="p">,</span> <span class="s1">&#39;I_high&#39;</span><span class="p">,</span> <span class="s1">&#39;_size&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">I_low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">I_high</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -426,11 +455,40 @@ document.write(`
 
 <span class="sd">        I_high : float</span>
 <span class="sd">            The desired high current limit [A], + for charge, - for discharge.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        To use a root function, you will have to create an instance, and then</span>
+<span class="sd">        pass both the root function, and the number of root functions to the</span>
+<span class="sd">        solver. The number of roots is stored as the property ``size``.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        &gt;&gt;&gt; sim = bm.P2D.Simulation()</span>
+<span class="sd">        &gt;&gt;&gt; exp = {&#39;V_ext&#39;: 3.8, &#39;t_min&#39;: 0., &#39;t_max&#39;: 1350., &#39;Nt&#39;: 1351}</span>
+<span class="sd">        &gt;&gt;&gt; rootfn = bm.P2D.roots.ILimits(-0.45 * sim.bat.area, np.nan)</span>
+<span class="sd">        &gt;&gt;&gt; sol = sim.run_CV(exp, rootfn=rootfn, nr_rootfns=rootfn.size)</span>
+<span class="sd">        &gt;&gt;&gt; sol.plot(&#39;ivp&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">I_low</span> <span class="o">=</span> <span class="n">I_low</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">I_high</span> <span class="o">=</span> <span class="n">I_high</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nr_rootfns</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ILimits.size">
+<a class="viewcode-back" href="../../../api/bmlite/P2D/roots/index.html#bmlite.P2D.roots.ILimits.size">[docs]</a>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of roots in the root function instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        size : int</span>
+<span class="sd">            The size of the events array in the root function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sv</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span> <span class="n">svdot</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span>
                  <span class="n">events</span><span class="p">:</span> <span class="n">_ndarray</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -452,7 +510,7 @@ document.write(`
 
 <span class="sd">        events : 1D array</span>
 <span class="sd">            An empty array with a length equal to the number of root functions,</span>
-<span class="sd">            here ``nr_rootfns = 2``.</span>
+<span class="sd">            here ``size = 2``.</span>
 
 <span class="sd">        inputs : (sim : P2D Simulation object, exp : experiment dict)</span>
 <span class="sd">            The simulation object and experimental details dictionary inputs</span>

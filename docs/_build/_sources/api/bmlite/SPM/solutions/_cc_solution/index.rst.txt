@@ -48,19 +48,26 @@ Classes
 
    .. py:method:: verify(plotflag: bool = False, rtol: float = 0.005, atol: float = 0.001) -> bool
 
-      Verifies the solution is consistent.
+      Verifies the solution is mathematically consistent.
 
       Specifically, for a constant current experiment, this method checks
       that the calculated current was within tolerance of the boundary
-      condition. In addition, the anodic and cathodic Faradaic currents are
-      checked against the current at each time step.
+      condition. In addition, this method checks the anodic and cathodic
+      Faradaic currents against the current at each time step and the
+      solid-phase lithium conservation.
+
+      If the verificaion returns ``False``, you can see which checks failed
+      using ``plotflag``. Any subplots shaded grey failed their test.
+      Failures generally suggest that the solver's relative and/or absolute
+      tolerance should be adjusted, and/or that the discretization should be
+      modified to adjust the mesh.
 
       :param plotflag: A flag to see plots showing the verification calculations. The
                        default is ``False``.
       :type plotflag: bool, optional
-      :param rtol: The relative tolerance for array comparisons. The default is 5e-3.
+      :param rtol: Relative tolerance for comparisons. The default is 5e-3.
       :type rtol: float, optional
-      :param atol: The relative tolerance for array comparisons. The default is 1e-3.
+      :param atol: Absolute tolerance for comparisons. The default is 1e-3.
       :type atol: float, optional
 
       :returns: **checks** (*bool*) -- ``True`` is all checks are satisfied, ``False`` otherwise.

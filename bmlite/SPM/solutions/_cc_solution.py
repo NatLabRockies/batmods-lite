@@ -28,12 +28,19 @@ class CCSolution(BaseSolution):
     def verify(self, plotflag: bool = False, rtol: float = 5e-3,
                atol: float = 1e-3) -> bool:
         """
-        Verifies the solution is consistent.
+        Verifies the solution is mathematically consistent.
 
         Specifically, for a constant current experiment, this method checks
         that the calculated current was within tolerance of the boundary
-        condition. In addition, the anodic and cathodic Faradaic currents are
-        checked against the current at each time step.
+        condition. In addition, this method checks the anodic and cathodic
+        Faradaic currents against the current at each time step and the 
+        solid-phase lithium conservation.
+
+        If the verificaion returns ``False``, you can see which checks failed
+        using ``plotflag``. Any subplots shaded grey failed their test.
+        Failures generally suggest that the solver's relative and/or absolute
+        tolerance should be adjusted, and/or that the discretization should be
+        modified to adjust the mesh.
 
         Parameters
         ----------
@@ -42,10 +49,10 @@ class CCSolution(BaseSolution):
             default is ``False``.
 
         rtol : float, optional
-            The relative tolerance for array comparisons. The default is 5e-3.
+            Relative tolerance for comparisons. The default is 5e-3.
 
         atol : float, optional
-            The relative tolerance for array comparisons. The default is 1e-3.
+            Absolute tolerance for comparisons. The default is 1e-3.
 
         Returns
         -------
@@ -58,7 +65,7 @@ class CCSolution(BaseSolution):
 
         from ... import Constants
         from ...plotutils import format_ticks, show
-        from ..postutils import current
+        from ..postutils import _solid_phase_Li, current
 
         c = Constants()
 
@@ -72,39 +79,56 @@ class CCSolution(BaseSolution):
         i_ext = exp['C_rate'] * sim.bat.cap / sim.bat.area
         i_mod = self.postvars['i_ext']
 
-        i_an = self.postvars['sdot_an'] * an.A_s * an.thick * c.F
-        i_ca = self.postvars['sdot_ca'] * ca.A_s * ca.thick * c.F
+        Li_ed_0, Li_ed_t = _solid_phase_Li(self)
+
+        j_an_tot = self.postvars['sdot_an'] * an.A_s * an.thick * c.F
+        j_ca_tot = self.postvars['sdot_ca'] * ca.A_s * ca.thick * c.F
 
         checks = []
         checks.append(np.allclose(i_ext, i_mod, rtol=rtol, atol=atol))
-        checks.append(np.allclose(i_ext, -i_an, rtol=rtol, atol=atol))
-        checks.append(np.allclose(i_ext, i_ca, rtol=rtol, atol=atol))
+        checks.append(np.allclose(1., Li_ed_t / Li_ed_0, rtol=rtol, atol=atol))
+        checks.append(np.allclose(i_ext, -j_an_tot, rtol=rtol, atol=atol))
+        checks.append(np.allclose(i_ext, j_ca_tot, rtol=rtol, atol=atol))
 
         if plotflag:
-            fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
+            fig, ax = plt.subplots(nrows=2, ncols=2, figsize=[8, 6],
                                    layout='constrained')
 
-            current(self, ax[0])
+            current(self, ax[0, 0])
 
             if i_mod.mean() != 0.:
                 ylims = np.array([0.995 * i_mod.mean(), 1.005 * i_mod.mean()])
-                ax[0].set_ylim([min(ylims), max(ylims)])
+                ax[0, 0].set_ylim([min(ylims), max(ylims)])
 
-            ax[1].set_ylabel(r'$i_{\rm ext} + i_{\rm an}$ [A/m$^2$]')
-            ax[2].set_ylabel(r'$i_{\rm ext} - i_{\rm ca}$ [A/m$^2$]')
+            # Lithium conservation
+            ax[0, 1].set_ylabel(r'$C_{\rm Li,s} \ / \ C_{\rm Li,s}^{0}$ [$-$]')
+            ax[0, 1].plot(self.t, Li_ed_t / Li_ed_0, '-k')
 
-            ax[1].plot(self.t, i_ext + i_an, '-C3')
-            ax[2].plot(self.t, i_ext - i_ca, '-C2')
+            # Faradaic currents
+            ax[1, 0].set_ylabel(r'$i_{\rm ext} + j_{\rm an, tot}$ [A/m$^2$]')
+            ax[1, 1].set_ylabel(r'$i_{\rm ext} - j_{\rm ca, tot}$ [A/m$^2$]')
 
-            ymin = min([ax[i].get_ylim()[0] for i in range(1, 3)])
-            ymax = max([ax[i].get_ylim()[1] for i in range(1, 3)])
+            ax[1, 0].plot(self.t, i_ext + j_an_tot, '-C3')
+            ax[1, 1].plot(self.t, i_ext - j_ca_tot, '-C2')
 
-            for i in range(1, 3):
-                ax[i].set_ylim([ymin, ymax])
-                ax[i].set_xlabel(r'$t$ [s]')
-                format_ticks(ax[i])
+            ymin = min([ax[1, j].get_ylim()[0] for j in range(2)])
+            ymax = max([ax[1, j].get_ylim()[1] for j in range(2)])
 
-            fig.get_layout_engine().set(wspace=0.1)
+            for j in range(2):
+                ax[1, j].set_ylim([ymin, ymax])
+
+            for i in range(2):
+                for j in range(2):
+                    ax[i, j].set_xlabel(r'$t$ [s]')
+                    format_ticks(ax[i, j])
+
+            for i in range(2):
+                for j in range(2):
+                    if not checks[2 * i + j]:
+                        ax[i, j].patch.set_facecolor('grey')
+                        ax[i, j].patch.set_alpha(0.5)
+
+            fig.get_layout_engine().set(wspace=0.1, hspace=0.1)
             show(fig)
 
         return self.success and all(checks)

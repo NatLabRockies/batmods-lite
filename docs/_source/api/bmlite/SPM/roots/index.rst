@@ -41,6 +41,26 @@ Classes
    :param I_high: The desired high current limit [A], + for charge, - for discharge.
    :type I_high: float
 
+   .. rubric:: Notes
+
+   To use a root function, you will have to create an instance, and then
+   pass both the root function, and the number of root functions to the
+   solver. The number of roots is stored as the property ``size``.
+
+   .. rubric:: Example
+
+   >>> sim = bm.SPM.Simulation()
+   >>> exp = {'V_ext': 3.8, 't_min': 0., 't_max': 1350., 'Nt': 1351}
+   >>> rootfn = bm.SPM.roots.ILimits(-0.45 * sim.bat.area, np.nan)
+   >>> sol = sim.run_CV(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
+   >>> sol.plot('ivp')
+
+   .. py:property:: size
+
+      Number of roots in the root function instance.
+
+      :returns: **size** (*int*) -- The size of the events array in the root function.
+
 
 .. py:class:: VLimits(V_low: float, V_high: float)
 
@@ -54,5 +74,25 @@ Classes
    :type V_low: float
    :param V_high: The desired high voltage limit [V].
    :type V_high: float
+
+   .. rubric:: Notes
+
+   To use a root function, you will have to create an instance, and then
+   pass both the root function, and the number of root functions to the
+   solver. The number of roots is stored as the property ``size``.
+
+   .. rubric:: Example
+
+   >>> sim = bm.SPM.Simulation()
+   >>> exp = {'C_rate': -2., 't_min': 0., 't_max': 3600., 'Nt': 3601}
+   >>> rootfn = bm.SPM.roots.VLimits(3.0, np.nan)
+   >>> sol = sim.run_CC(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
+   >>> sol.plot('ivp')
+
+   .. py:property:: size
+
+      Number of roots in the root function instance.
+
+      :returns: **size** (*int*) -- The size of the events array in the root function.
 
 

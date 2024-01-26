@@ -1,6 +1,7 @@
 import os, pytest
 from pathlib import Path
 
+import numpy as np
 import bmlite as bm
 from ruamel.yaml import YAML
 import matplotlib.pyplot as plt
@@ -30,10 +31,8 @@ def sol(sim, exp):
 
 @pytest.fixture(scope='session')
 def rootsol(sim, exp):
-    rootfn = bm.SPM.roots.VLimits(3.7, 4.2)
-    nr_rootfns = rootfn.nr_rootfns
-
-    rootsol = sim.run_CC(exp, rootfn=rootfn, nr_rootfns=nr_rootfns)
+    rootfn = bm.SPM.roots.VLimits(3.7, np.nan)
+    rootsol = sim.run_CC(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
     return rootsol
 
 

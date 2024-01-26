@@ -7,6 +7,8 @@ experiment. Therefore, not all ``Solution`` classes may have access to all of
 the following functions.
 """
 
+from numpy import ndarray as _ndarray
+
 
 def post(sol: object) -> dict:
     """
@@ -98,6 +100,106 @@ def post(sol: object) -> dict:
     postvars['A*h/m^2'] = cap_m2
 
     return postvars
+
+
+def _liquid_phase_Li(sol: object) -> _ndarray:
+    """
+    Calculate the liquid-phase lithium vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    Returns
+    -------
+    Li_ed_0 : float
+        liquid-phase lithium [kmol/m^2] based on ``el.Li_0``.
+
+    Li_ed_t : 1D array
+        Solution's liquid-phase lithium [kmol/m^2] vs. time [s].
+    """
+
+    import numpy as np
+
+    el, an, sep, ca = sol._sim.el, sol._sim.an, sol._sim.sep, sol._sim.ca
+
+    # Initial total liquid-phase lithium [kmol/m^2]
+    Li_el_0 = np.sum(np.hstack([an.eps_el * el.Li_0 * (an.xp - an.xm),
+                                sep.eps_el * el.Li_0 * (sep.xp - sep.xm),
+                                ca.eps_el * el.Li_0 * (ca.xp - ca.xm)]))
+
+    # Total liquid-phase lithium [kmol/m^2] vs. time [s]
+    Li_an = sol.y[:, an.x_ptr('Li_el')]
+    Li_sep = sol.y[:, sep.x_ptr('Li_el')]
+    Li_ca = sol.y[:, ca.x_ptr('Li_el')]
+
+    Li_el_t = np.sum(np.hstack([an.eps_el * Li_an * (an.xp - an.xm),
+                                sep.eps_el * Li_sep * (sep.xp - sep.xm),
+                                ca.eps_el * Li_ca * (ca.xp - ca.xm)]), axis=1)
+
+    return Li_el_0, Li_el_t
+
+
+def _solid_phase_Li(sol: object) -> _ndarray:
+    """
+    Calculate the solid-phase lithium vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    Returns
+    -------
+    Li_ed_0 : float
+        Solid-phase lithium [kmol/m^2] based on ``an.x_0`` and ``ca.x_0``.
+
+    Li_ed_t : 1D array
+        Solution's solid-phase lithium [kmol/m^2] vs. time [s].
+    """
+
+    import numpy as np
+
+    an, ca = sol._sim.an, sol._sim.ca
+
+    # Initial total solid-phase lithium [kmol/m^2]
+    Li_ed_0 = an.x_0 * an.Li_max * an.eps_AM * an.thick \
+            + ca.x_0 * ca.Li_max * ca.eps_AM * ca.thick
+
+    # Anode/cathode lithium [kmol/m^2] vs. time [s]
+    V_an = 4 * np.pi * an.R_s**3 / 3
+    V_ca = 4 * np.pi * ca.R_s**3 / 3
+
+    cs_a = np.zeros([sol.t.size, an.Nx, an.Nr])
+    for k in range(an.Nr):
+        cs_a[:, :, k] = sol.y[:, an.x_ptr('Li_ed', k)] * an.Li_max
+
+    cs_c = np.zeros([sol.t.size, ca.Nx, ca.Nr])
+    for k in range(ca.Nr):
+        cs_c[:, :, k] = sol.y[:, ca.x_ptr('Li_ed', k)] * ca.Li_max
+
+    Li_an = np.zeros_like(sol.t)
+    Li_ca = np.zeros_like(sol.t)
+
+    for i in range(sol.t.size):
+
+        Li_ed_xr = cs_a[i, :, :]
+        Li_ed_x = np.sum(4 * np.pi * an.r**2 * Li_ed_xr * (an.rp - an.rm),
+                         axis=1) / V_an
+
+        Li_an[i] = np.sum(an.eps_AM * Li_ed_x * (an.xp - an.xm))
+
+        Li_ed_xr = cs_c[i, :, :]
+        Li_ed_x = np.sum(4 * np.pi * ca.r**2 * Li_ed_xr * (ca.rp - ca.rm),
+                         axis=1) / V_ca
+
+        Li_ca[i] = np.sum(ca.eps_AM * Li_ed_x * (ca.xp - ca.xm))
+
+    # Total solid-phase lithium [kmol/m^2] vs. time [s]
+    Li_ed_t = Li_an + Li_ca
+
+    return Li_ed_0, Li_ed_t
 
 
 def current(sol: object, ax: object = None) -> None:
@@ -240,6 +342,7 @@ def ivp(sol: object) -> None:
     voltage(sol, ax[1])
     power(sol, ax[2])
 
+    fig.get_layout_engine().set(wspace=0.1)
     show(fig)
 
 

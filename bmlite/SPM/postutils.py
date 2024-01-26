@@ -7,6 +7,8 @@ experiment. Therefore, not all ``Solution`` classes may have access to all of
 the following functions.
 """
 
+from numpy import ndarray as _ndarray
+
 
 def post(sol: object) -> dict:
     """
@@ -74,6 +76,55 @@ def post(sol: object) -> dict:
     postvars['A*h/m^2'] = cap_m2
 
     return postvars
+
+
+def _solid_phase_Li(sol: object) -> _ndarray:
+    """
+    Calculate the solid-phase lithium vs. time.
+
+    Parameters
+    ----------
+    sol : SPM Solution object
+        A single particle model solution object.
+
+    Returns
+    -------
+    Li_ed_0 : float
+        Solid-phase lithium [kmol/m^2] based on ``an.x_0`` and ``ca.x_0``.
+
+    Li_ed_t : 1D array
+        Solution's solid-phase lithium [kmol/m^2] vs. time [s].
+    """
+
+    import numpy as np
+
+    an, ca = sol._sim.an, sol._sim.ca
+
+    # Initial total solid-phase lithium [kmol/m^2]
+    Li_ed_0 = an.x_0 * an.Li_max * an.eps_AM * an.thick \
+            + ca.x_0 * ca.Li_max * ca.eps_AM * ca.thick
+
+    # Anode/cathode lithium [kmol/m^2] vs. time [s]
+    V_an = 4 * np.pi * an.R_s**3 / 3
+    V_ca = 4 * np.pi * ca.R_s**3 / 3
+
+    Li_an = np.zeros_like(sol.t)
+    Li_ca = np.zeros_like(sol.t)
+
+    for i in range(sol.t.size):
+
+        Li_ed = sol.y[i, an.r_ptr('Li_ed')] * an.Li_max
+        Li_an[i] = an.thick * an.eps_AM / V_an \
+                 * np.sum(4 * np.pi * an.r**2 * Li_ed * (an.rp - an.rm))
+
+        Li_ed = sol.y[i, ca.r_ptr('Li_ed')] * ca.Li_max
+        Li_ca[i] = ca.thick * ca.eps_AM / V_ca \
+                 * np.sum(4 * np.pi * ca.r**2 * Li_ed * (ca.rp - ca.rm))
+
+    # Total solid-phase lithium [kmol/m^2] vs. time [s]
+    Li_ed_t = Li_an + Li_ca
+
+    return Li_ed_0, Li_ed_t
 
 
 def current(sol: object, ax: object = None) -> None:

@@ -105,5 +105,6 @@ autoapi_options = ['members', 'inerited-members', 'undoc-members', 'show-module-
 # -- Options for myst --------------------------------------------------------
 # https://myst-nb.readthedocs.io/en/latest/configuration.html
 
+nb_execution_timeout = 300
 nb_number_source_lines = True
 myst_enable_extensions = ["amsmath", "dollarmath"]

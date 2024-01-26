@@ -12,7 +12,7 @@ from numpy import ndarray as _ndarray
 
 class VLimits(object):
 
-    __slots__ = ['V_low', 'V_high', 'nr_rootfns']
+    __slots__ = ['V_low', 'V_high', '_size']
 
     def __init__(self, V_low: float, V_high: float) -> None:
         """
@@ -25,11 +25,37 @@ class VLimits(object):
 
         V_high : float
             The desired high voltage limit [V].
+
+        Notes
+        -----
+        To use a root function, you will have to create an instance, and then
+        pass both the root function, and the number of root functions to the
+        solver. The number of roots is stored as the property ``size``.
+
+        Example
+        -------
+        >>> sim = bm.P2D.Simulation()
+        >>> exp = {'C_rate': -2., 't_min': 0., 't_max': 3600., 'Nt': 3601}
+        >>> rootfn = bm.P2D.roots.VLimits(3.0, np.nan)
+        >>> sol = sim.run_CC(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
+        >>> sol.plot('ivp')
         """
 
         self.V_low = V_low
         self.V_high = V_high
-        self.nr_rootfns = 2
+        self._size = 2
+
+    @property
+    def size(self):
+        """
+        Number of roots in the root function instance.
+
+        Returns
+        -------
+        size : int
+            The size of the events array in the root function.
+        """
+        return self._size
 
     def __call__(self, t: float, sv: _ndarray, svdot: _ndarray,
                  events: _ndarray, inputs: tuple) -> None:
@@ -51,7 +77,7 @@ class VLimits(object):
 
         events : 1D array
             An empty array with a length equal to the number of root functions,
-            here ``nr_rootfns = 2``.
+            here ``size = 2``.
 
         inputs : (sim : P2D Simulation object, exp : experiment dict)
             The simulation object and experimental details dictionary inputs
@@ -70,7 +96,7 @@ class VLimits(object):
 
 class ILimits(object):
 
-    __slots__ = ['I_low', 'I_high', 'nr_rootfns']
+    __slots__ = ['I_low', 'I_high', '_size']
 
     def __init__(self, I_low: float, I_high: float) -> None:
         """
@@ -83,11 +109,37 @@ class ILimits(object):
 
         I_high : float
             The desired high current limit [A], + for charge, - for discharge.
+
+        Notes
+        -----
+        To use a root function, you will have to create an instance, and then
+        pass both the root function, and the number of root functions to the
+        solver. The number of roots is stored as the property ``size``.
+
+        Example
+        -------
+        >>> sim = bm.P2D.Simulation()
+        >>> exp = {'V_ext': 3.8, 't_min': 0., 't_max': 1350., 'Nt': 1351}
+        >>> rootfn = bm.P2D.roots.ILimits(-0.45 * sim.bat.area, np.nan)
+        >>> sol = sim.run_CV(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
+        >>> sol.plot('ivp')
         """
 
         self.I_low = I_low
         self.I_high = I_high
-        self.nr_rootfns = 2
+        self._size = 2
+
+    @property
+    def size(self):
+        """
+        Number of roots in the root function instance.
+
+        Returns
+        -------
+        size : int
+            The size of the events array in the root function.
+        """
+        return self._size
 
     def __call__(self, t: float, sv: _ndarray, svdot: _ndarray,
                  events: _ndarray, inputs: tuple) -> None:
@@ -109,7 +161,7 @@ class ILimits(object):
 
         events : 1D array
             An empty array with a length equal to the number of root functions,
-            here ``nr_rootfns = 2``.
+            here ``size = 2``.
 
         inputs : (sim : P2D Simulation object, exp : experiment dict)
             The simulation object and experimental details dictionary inputs

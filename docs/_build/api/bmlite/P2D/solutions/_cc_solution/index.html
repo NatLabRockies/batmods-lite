@@ -30,7 +30,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=4bdb038c" />
@@ -374,27 +374,28 @@ the experiment that was run.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="bmlite.P2D.solutions._cc_solution.CCSolution.verify">
 <span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plotflag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../../../_modules/bmlite/P2D/solutions/_cc_solution.html#CCSolution.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.P2D.solutions._cc_solution.CCSolution.verify" title="Link to this definition">#</a></dt>
-<dd><p>Verifies the solution is consistent.</p>
+<dd><p>Verifies the solution is mathematically consistent.</p>
 <p>Specifically, for a constant current experiment, this method checks
 that the calculated current was within tolerance of the boundary
 condition. In addition, this method checks the anodic and cathodic
 Faradaic currents against the current at each time step, the
 through-current in each control volume, and the Li-ion and solid-phase
 lithium conservation.</p>
-<p>You can see which checks failed using the <code class="docutils literal notranslate"><span class="pre">plotflag</span></code>. Any subplots
-shaded grey failed their test. Note that the third row of the figure
+<p>If the verificaion returns <code class="docutils literal notranslate"><span class="pre">False</span></code>, you can see which checks failed
+using <code class="docutils literal notranslate"><span class="pre">plotflag</span></code>. Any subplots shaded grey failed their test.
+Failures generally suggest that the solver’s relative and/or absolute
+tolerance should be adjusted, and/or that the discretization should be
+modified to adjust the mesh. Note that the third row of the figure
 shows conservation of charge in each control volume in each domain.
 This row is not included in the checks and will never shade grey, but
-is useful in debugging. Notably, high divergence terms generally
-suggest that the solver’s relative and/or absolute tolerance should
-be adjusted.</p>
+is useful in debugging.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>plotflag</strong> (<em>bool</em><em>, </em><em>optional</em>) – A flag to see plots showing the verification calculations. The
 default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>rtol</strong> (<em>float</em><em>, </em><em>optional</em>) – The relative tolerance for array comparisons. The default is 5e-3.</p></li>
-<li><p><strong>atol</strong> (<em>float</em><em>, </em><em>optional</em>) – The relative tolerance for array comparisons. The default is 1e-3.</p></li>
+<li><p><strong>rtol</strong> (<em>float</em><em>, </em><em>optional</em>) – Relative tolerance for comparisons. The default is 5e-3.</p></li>
+<li><p><strong>atol</strong> (<em>float</em><em>, </em><em>optional</em>) – Absolute tolerance for comparisons. The default is 1e-3.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
