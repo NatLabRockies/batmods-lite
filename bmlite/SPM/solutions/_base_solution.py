@@ -354,6 +354,60 @@ class BaseSolution(object):
             from ..postutils import pixels
             pixels(self)
 
+    def slice(self) -> dict:
+        """
+        Creates a dict with all spatial, time, and state variables
+        separated into 1D and 2D arrays. The keys are given below. 
+
+        ========= =======================================================
+        Key       Value [units] (*type*)
+        ========= =======================================================
+        r_a       r mesh for anode particles [m] (*1D array*)
+        r_c       r mesh for cathode particles [m] (*1D array*)
+        t         saved solution times [s] (*1D array*)
+        phis_a    anode electrode potentials at t [V] (*1D array*)
+        cs_a      electrode Li at t, r_a [kmol/m^3] (*2D array*)
+        phis_c    cathode electrode potentials at t [V] (*1D array*)
+        cs_c      electrode Li at t, r_c [kmol/m^3] (*2D array*)
+        phie      electrolyte potentials at t [V] (*1D array*)
+        j_a       anode Faradaic current at t [kmol/m^2/s] (*1D array*)
+        j_c       cathode Faradaic current at t [kmol/m^2/s] (*1D array*)
+        ========= =======================================================
+
+        Parameters
+        -------
+        None.
+
+        Returns
+        -------
+        sol_dict : dict
+            A dictionary containing the solution
+        """
+
+        if len(self.postvars) == 0:
+            self.post()
+
+        sim = self._sim
+
+        sol_dict = {}
+     
+        sol_dict['r_a'] = sim.an.r
+        sol_dict['r_c'] = sim.ca.r
+
+        sol_dict['t'] = self.t
+
+        sol_dict['phis_a'] = self.y[:, sim.an.ptr['phi_ed']]
+        sol_dict['phis_c'] = self.y[:, sim.ca.ptr['phi_ed']]
+        sol_dict['phie'] = self.y[:, sim.el.ptr['phi_el']]
+
+        sol_dict['cs_a'] = self.y[:, sim.an.r_ptr('Li_ed')] * sim.an.Li_max
+        sol_dict['cs_c'] = self.y[:, sim.ca.r_ptr('Li_ed')] * sim.ca.Li_max
+
+        sol_dict['j_a'] = self.postvars['sdot_an']
+        sol_dict['j_c'] = self.postvars['sdot_ca']
+
+        return sol_dict
+
     def slice_and_save(self, savename: str, overwrite: bool = False) -> None:
         """
         Save a ``.npz`` file with all spatial, time, and state variables
@@ -396,9 +450,6 @@ class BaseSolution(object):
 
         import numpy as np
 
-        if len(self.postvars) == 0:
-            self.post()
-
         if '.npz' not in savename:
             savename += '.npz'
 
@@ -408,20 +459,6 @@ class BaseSolution(object):
 
         sim = self._sim
 
-        r_a = sim.an.r
-        r_c = sim.ca.r
+        sol_dict = self.slice()
 
-        t = self.t
-
-        phis_a = self.y[:, sim.an.ptr['phi_ed']]
-        phis_c = self.y[:, sim.ca.ptr['phi_ed']]
-        phie = self.y[:, sim.el.ptr['phi_el']]
-
-        cs_a = self.y[:, sim.an.r_ptr('Li_ed')] * sim.an.Li_max
-        cs_c = self.y[:, sim.ca.r_ptr('Li_ed')] * sim.ca.Li_max
-
-        j_a = self.postvars['sdot_an']
-        j_c = self.postvars['sdot_ca']
-
-        np.savez(savename, r_a=r_a, r_c=r_c, t=t, phis_a=phis_a, phie=phie,
-                 phis_c=phis_c, cs_a=cs_a, cs_c=cs_c, j_a=j_a, j_c=j_c)
+        np.savez(savename, **sol_dict)
