@@ -417,7 +417,9 @@ class BaseSolution(object):
         sol_dict['x_s'] = sim.sep.x
         sol_dict['x_c'] = sim.ca.x
 
-        sol_dict['x'] = np.hstack([x_a, x_s, x_c])
+        sol_dict['x'] = np.hstack([sol_dict['x_a'],
+                                   sol_dict['x_s'],
+                                   sol_dict['x_c']])
 
         sol_dict['r_a'] = sim.an.r
         sol_dict['r_c'] = sim.ca.r
@@ -435,15 +437,23 @@ class BaseSolution(object):
         sol_dict['phis_c'] = self.y[:, sim.ca.x_ptr('phi_ed')]
         sol_dict['ce_c'] = self.y[:, sim.ca.x_ptr('Li_el')]
 
-        sol_dict['phie'] = np.hstack([phie_a, phie_s, phie_c])
-        sol_dict['ce'] = np.hstack([ce_a, ce_s, ce_c])
+        sol_dict['phie'] = np.hstack([sol_dict['phie_a'],
+                                      sol_dict['phie_s'],
+                                      sol_dict['phie_c']])
+        sol_dict['ce'] = np.hstack([sol_dict['ce_a'],
+                                    sol_dict['ce_s'],
+                                    sol_dict['ce_c']])
 
-        sol_dict['cs_a'] = np.zeros([t.size, x_a.size, sim.an.Nr])
+        sol_dict['cs_a'] = np.zeros([sol_dict['t'].size,
+                                     sol_dict['x_a'].size,
+                                     sim.an.Nr])
         for k in range(sim.an.Nr):
             sol_dict['cs_a'][:, :, k] = self.y[:, sim.an.x_ptr('Li_ed', k)] \
                           * sim.an.Li_max
 
-        sol_dict['cs_c'] = np.zeros([t.size, x_c.size, sim.ca.Nr])
+        sol_dict['cs_c'] = np.zeros([sol_dict['t'].size,
+                                     sol_dict['x_c'].size,
+                                     sim.ca.Nr])
         for k in range(sim.ca.Nr):
             sol_dict['cs_c'][:, :, k] = self.y[:, sim.ca.x_ptr('Li_ed', k)] \
                           * sim.ca.Li_max
