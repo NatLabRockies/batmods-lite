@@ -98,8 +98,8 @@ class GraphiteFast(object):
 
     def get_Eeq(self, x: float | _ndarray, T: float) -> float | _ndarray:
         """
-        Calculate the equilibrium potential given the intercalation
-        fraction ``x`` at the particle surface and temperature ``T``.
+        Calculate the equilibrium potential given the intercalation fraction
+        ``x`` at the particle surface and temperature ``T``.
 
         Parameters
         ----------

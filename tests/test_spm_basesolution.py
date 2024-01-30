@@ -167,7 +167,7 @@ def test_slice_and_save(sol, plotsol):
     data = np.load(directory + '/scrap_data/test_spm.npz')
     data.close()
 
-    with pytest.raises(Exception):
+    with pytest.raises(FileExistsError):
         sol.slice_and_save(directory + '/scrap_data/test_spm')
 
     sol.slice_and_save(directory + '/scrap_data/test_spm', overwrite=True)

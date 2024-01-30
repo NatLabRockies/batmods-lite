@@ -523,8 +523,8 @@ class BaseSolution(object):
             savename += '.npz'
 
         if os.path.exists(savename) and not overwrite:
-            raise Exception('save_and_slice() file already exists. Overwrite'
-                            ' with flag or delete the file and try again.')
+            raise FileExistsError(savename + ' already exists. Use overwrite'
+                                  ' flag or delete the file and try again.')
 
         sol_dict = self.slice()
  

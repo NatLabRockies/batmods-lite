@@ -120,23 +120,27 @@ class IDASolver(object):
 
     def __init__(self, residuals, **kwargs) -> None:
 
+        # Overwrite scikits.odes defaults w/ some keys renamed
         options = {}
-        options['rtol'] = kwargs.get('rtol', 1e-6)
-        options['atol'] = kwargs.get('atol', 1e-9)
-        options['user_data'] = kwargs.get('user_data', None)
+        options['rtol'] = kwargs.pop('rtol', 1e-6)
+        options['atol'] = kwargs.pop('atol', 1e-9)
+        options['user_data'] = kwargs.pop('user_data', None)
 
-        options['linsolver'] = kwargs.get('linsolver', 'dense')
-        options['lband'] = kwargs.get('lband', 0)
-        options['uband'] = kwargs.get('uband', 0)
+        options['linsolver'] = kwargs.pop('linsolver', 'dense')
+        options['lband'] = kwargs.pop('lband', 0)
+        options['uband'] = kwargs.pop('uband', 0)
 
-        options['rootfn'] = kwargs.get('rootfn', None)
-        options['nr_rootfns'] = kwargs.get('nr_rootfns', 0)
+        options['rootfn'] = kwargs.pop('rootfn', None)
+        options['nr_rootfns'] = kwargs.pop('nr_rootfns', 0)
 
-        options['compute_initcond'] = kwargs.get('initcond', 'yp0')
-        options['algebraic_vars_idx'] = kwargs.get('algidx', None)
-        options['max_step_size'] = kwargs.get('max_t_step', 0.)
+        options['compute_initcond'] = kwargs.pop('initcond', 'yp0')
+        options['algebraic_vars_idx'] = kwargs.pop('algidx', None)
+        options['max_step_size'] = kwargs.pop('max_t_step', 0.)
 
         options['old_api'] = False
+
+        # Collect new defaults and any extra user kwargs
+        options = {**options, **kwargs}
 
         _DAE.__init__(self, 'ida', residuals, **options)
 

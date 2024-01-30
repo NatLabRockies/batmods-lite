@@ -74,6 +74,9 @@ class Simulation(object):
         elif os.path.exists(yamlfile):
             yamlpath = Path(yamlfile)
 
+        else:
+            raise FileNotFoundError(yamlfile)
+
         self._yamlfile = yamlfile
         self._yamlpath = yamlpath
 

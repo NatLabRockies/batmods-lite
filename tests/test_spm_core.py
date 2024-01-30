@@ -15,7 +15,7 @@ def test_simulation(sim):
 
 
 def test_fake_yaml():
-    with pytest.raises(Exception):
+    with pytest.raises(FileNotFoundError):
         sim = bm.SPM.Simulation('fake.yaml')
 
 

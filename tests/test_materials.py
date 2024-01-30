@@ -74,6 +74,12 @@ def test_graphite_slow(args):
 
     data.close()
 
+    with pytest.raises(ValueError):
+        gr.get_Eeq(gr.x_min - 0.01, T)
+
+    with pytest.raises(ValueError):
+        gr.get_Eeq(gr.x_max * np.ones(5) + 0.01, T)
+
 
 def test_nmc_532_fast(args):
     nmc = bm.materials.NMC532Fast(args[0], args[1], args[2])
@@ -113,3 +119,9 @@ def test_nmc_532_slow(args):
     assert np.allclose(Eeq / max(Eeq), data['Eeq'] / max(Eeq))
 
     data.close()
+
+    with pytest.raises(ValueError):
+        nmc.get_Eeq(nmc.x_min - 0.01, T)
+
+    with pytest.raises(ValueError):
+        nmc.get_Eeq(nmc.x_max * np.ones(5) + 0.01, T)
