@@ -354,10 +354,10 @@ class BaseSolution(object):
             from ..postutils import pixels
             pixels(self)
 
-    def slice(self) -> dict:
+    def to_sliced_dict(self) -> dict:
         """
         Creates a dict with all spatial, time, and state variables
-        separated into 1D and 2D arrays. The keys are given below. 
+        separated into 1D and 2D arrays. The keys are given below.
 
         ========= =======================================================
         Key       Value [units] (*type*)
@@ -375,7 +375,7 @@ class BaseSolution(object):
         ========= =======================================================
 
         Parameters
-        -------
+        ----------
         None.
 
         Returns
@@ -390,7 +390,7 @@ class BaseSolution(object):
         sim = self._sim
 
         sol_dict = {}
-     
+
         sol_dict['r_a'] = sim.an.r
         sol_dict['r_c'] = sim.ca.r
 
@@ -457,8 +457,6 @@ class BaseSolution(object):
             raise FileExistsError(savename + ' already exists. Use overwrite'
                                   ' flag or delete the file and try again.')
 
-        sim = self._sim
-
-        sol_dict = self.slice()
+        sol_dict = self.to_sliced_dict()
 
         np.savez(savename, **sol_dict)

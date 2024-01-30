@@ -360,7 +360,7 @@ class BaseSolution(object):
             from ..postutils import pixels
             pixels(self)
 
-    def slice(self) -> dict:
+    def to_sliced_dict(self) -> dict:
         """
         Creates a dict with all spatial, time, and state variables
         separated into 1D, 2D, and 3D arrays. The keys are given below.
@@ -395,7 +395,7 @@ class BaseSolution(object):
         ========= ====================================================
 
         Parameters
-        -------
+        ----------
         None.
 
         Returns
@@ -412,13 +412,12 @@ class BaseSolution(object):
         sim = self._sim
 
         sol_dict = {}
-    
+
         sol_dict['x_a'] = sim.an.x
         sol_dict['x_s'] = sim.sep.x
         sol_dict['x_c'] = sim.ca.x
 
-        sol_dict['x'] = np.hstack([sol_dict['x_a'],
-                                   sol_dict['x_s'],
+        sol_dict['x'] = np.hstack([sol_dict['x_a'], sol_dict['x_s'],
                                    sol_dict['x_c']])
 
         sol_dict['r_a'] = sim.an.r
@@ -437,26 +436,21 @@ class BaseSolution(object):
         sol_dict['phis_c'] = self.y[:, sim.ca.x_ptr('phi_ed')]
         sol_dict['ce_c'] = self.y[:, sim.ca.x_ptr('Li_el')]
 
-        sol_dict['phie'] = np.hstack([sol_dict['phie_a'],
-                                      sol_dict['phie_s'],
+        sol_dict['phie'] = np.hstack([sol_dict['phie_a'], sol_dict['phie_s'],
                                       sol_dict['phie_c']])
-        sol_dict['ce'] = np.hstack([sol_dict['ce_a'],
-                                    sol_dict['ce_s'],
+
+        sol_dict['ce'] = np.hstack([sol_dict['ce_a'], sol_dict['ce_s'],
                                     sol_dict['ce_c']])
 
-        sol_dict['cs_a'] = np.zeros([sol_dict['t'].size,
-                                     sol_dict['x_a'].size,
-                                     sim.an.Nr])
+        sol_dict['cs_a'] = np.zeros([self.t.size, sim.an.Nx, sim.an.Nr])
         for k in range(sim.an.Nr):
             sol_dict['cs_a'][:, :, k] = self.y[:, sim.an.x_ptr('Li_ed', k)] \
-                          * sim.an.Li_max
+                                      * sim.an.Li_max
 
-        sol_dict['cs_c'] = np.zeros([sol_dict['t'].size,
-                                     sol_dict['x_c'].size,
-                                     sim.ca.Nr])
+        sol_dict['cs_c'] = np.zeros([self.t.size, sim.ca.Nx, sim.ca.Nr])
         for k in range(sim.ca.Nr):
             sol_dict['cs_c'][:, :, k] = self.y[:, sim.ca.x_ptr('Li_ed', k)] \
-                          * sim.ca.Li_max
+                                      * sim.ca.Li_max
 
         sol_dict['ie'] = self.postvars['i_el_x']
         sol_dict['j_a'] = self.postvars['sdot_an']
@@ -526,6 +520,6 @@ class BaseSolution(object):
             raise FileExistsError(savename + ' already exists. Use overwrite'
                                   ' flag or delete the file and try again.')
 
-        sol_dict = self.slice()
- 
+        sol_dict = self.to_sliced_dict()
+
         np.savez(savename, **sol_dict)
