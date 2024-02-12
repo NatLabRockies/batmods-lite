@@ -28,7 +28,7 @@ Functions
 
 
 
-.. py:function:: format_ticks(ax: object) -> None
+.. py:function:: format_ticks(ax)
 
    Formats an ``axis`` object by adjusting the ticks.
 
@@ -41,7 +41,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: pixel(ax: object, xlims: list[float], ylims: list[float], z: numpy.ndarray, cblabel: str) -> None
+.. py:function:: pixel(ax, xlims, ylims, z, cblabel)
 
    Fill an axis instance with a pixel plot defined by the inputs.
 
@@ -60,7 +60,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: show(fig: object) -> None
+.. py:function:: show(fig)
 
    Display a figure according to the backend.
 

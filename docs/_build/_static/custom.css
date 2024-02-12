@@ -23,6 +23,23 @@ html[data-theme=dark] .sd-card img[src*='.svg'] {
   filter: invert(0.82) brightness(0.8) contrast(1.2);
 }
 
+/* Toggle main page logo for dark/light modes */
+html[data-theme=dark] .ondark {
+  display: block;
+}
+
+html[data-theme=dark] .onlight {
+  display: None;
+}
+
+html[data-theme=light] .ondark {
+  display: None;
+}
+
+html[data-theme=light] .onlight {
+  display: block;
+}
+
 /* Main index page overview cards */
 /* html[data-theme=dark] .sd-card {
   background-color:var(--pst-color-background);

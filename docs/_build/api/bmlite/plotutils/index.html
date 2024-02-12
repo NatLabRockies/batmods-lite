@@ -30,10 +30,10 @@
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=4bdb038c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=96227a4f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -48,8 +48,10 @@
     <script src="../../../_static/design-tabs.js?v=36754332"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/bmlite/plotutils/index';</script>
     <script src="../../../_static/custom.js?v=e2d01366"></script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="bmlite.math" href="../math/index.html" />
     <link rel="prev" title="bmlite.materials" href="../materials/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -126,8 +128,8 @@
     
     
     
-    <img src="../../../_static/light.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/dark.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
+    <img src="../../../_static/light_notag.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/dark_notag.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -289,6 +291,10 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="../materials/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.materials</span></code></a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.plotutils</span></code></a></li>
 </ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../math/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.math</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.mesh</span></code></a></li>
+</ul>
 </div>
 </nav></div>
     </div>
@@ -357,20 +363,20 @@ are written within the <code class="docutils literal notranslate"><span class="p
 <h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bmlite.plotutils.format_ticks" title="bmlite.plotutils.format_ticks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_ticks</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bmlite.plotutils.format_ticks" title="bmlite.plotutils.format_ticks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_ticks</span></code></a>(ax)</p></td>
 <td><p>Formats an <code class="docutils literal notranslate"><span class="pre">axis</span></code> object by adjusting the ticks.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bmlite.plotutils.pixel" title="bmlite.plotutils.pixel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pixel</span></code></a>(→ None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bmlite.plotutils.pixel" title="bmlite.plotutils.pixel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pixel</span></code></a>(ax, xlims, ylims, z, cblabel)</p></td>
 <td><p>Fill an axis instance with a pixel plot defined by the inputs.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bmlite.plotutils.show" title="bmlite.plotutils.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bmlite.plotutils.show" title="bmlite.plotutils.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(fig)</p></td>
 <td><p>Display a figure according to the backend.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="bmlite.plotutils.format_ticks">
-<span class="sig-prename descclassname"><span class="pre">bmlite.plotutils.</span></span><span class="sig-name descname"><span class="pre">format_ticks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/bmlite/plotutils.html#format_ticks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.plotutils.format_ticks" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bmlite.plotutils.</span></span><span class="sig-name descname"><span class="pre">format_ticks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bmlite/plotutils.html#format_ticks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.plotutils.format_ticks" title="Link to this definition">#</a></dt>
 <dd><p>Formats an <code class="docutils literal notranslate"><span class="pre">axis</span></code> object by adjusting the ticks.</p>
 <p>Specifically, the top and right ticks are added, minor ticks are turned
 on, and all ticks are set to face inward.</p>
@@ -386,7 +392,7 @@ on, and all ticks are set to face inward.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bmlite.plotutils.pixel">
-<span class="sig-prename descclassname"><span class="pre">bmlite.plotutils.</span></span><span class="sig-name descname"><span class="pre">pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cblabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/bmlite/plotutils.html#pixel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.plotutils.pixel" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bmlite.plotutils.</span></span><span class="sig-name descname"><span class="pre">pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cblabel</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bmlite/plotutils.html#pixel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.plotutils.pixel" title="Link to this definition">#</a></dt>
 <dd><p>Fill an axis instance with a pixel plot defined by the inputs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -407,7 +413,7 @@ and <code class="docutils literal notranslate"><span class="pre">z[-1,</span> <s
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bmlite.plotutils.show">
-<span class="sig-prename descclassname"><span class="pre">bmlite.plotutils.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/bmlite/plotutils.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.plotutils.show" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bmlite.plotutils.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bmlite/plotutils.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.plotutils.show" title="Link to this definition">#</a></dt>
 <dd><p>Display a figure according to the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

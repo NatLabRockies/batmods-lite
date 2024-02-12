@@ -37,7 +37,7 @@ Classes
    
    Gen 2 Electrolyte transport and material properties.
 
-   .. py:method:: get_D(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_D(C_Li, T)
 
       Calculate the lithium ion diffusivity in the electrolyte solution at
       concentration ``C_Li`` and temperature ``T``.
@@ -50,7 +50,7 @@ Classes
       :returns: **D** (*float | 1D array*) -- Lithium ion diffusivity in the electrolyte [m^2/s].
 
 
-   .. py:method:: get_gamma(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_gamma(C_Li, T)
 
       Calculate the electrolyte thermodynamic factor at concentration
       ``C_Li`` and temperature ``T``.
@@ -63,7 +63,7 @@ Classes
       :returns: **gamma** (*float | 1D array*) -- Thermodynamic factor [-].
 
 
-   .. py:method:: get_kappa(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_kappa(C_Li, T)
 
       Calculate the electrolyte conductivity at concentration ``C_Li`` and
       temperature ``T``.
@@ -76,7 +76,7 @@ Classes
       :returns: **kappa** (*float | 1D array*) -- Electrolyte conductivity [S/m].
 
 
-   .. py:method:: get_t0(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_t0(C_Li, T)
 
       Calculate the lithium ion transference number at concentration ``C_Li``
       and temperature ``T``.
@@ -90,7 +90,7 @@ Classes
 
 
 
-.. py:class:: GraphiteFast(alpha_a: float, alpha_c: float, Li_max: float)
+.. py:class:: GraphiteFast(alpha_a, alpha_c, Li_max)
 
 
 
@@ -108,7 +108,7 @@ Classes
    :param Li_max: Maximum lithium concentration in solid phase [kmol/m^3].
    :type Li_max: float
 
-   .. py:method:: get_Ds(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Ds(x, T)
 
       Calculate the lithium diffusivity in the solid phase given the local
       intercalation fraction ``x`` and temperature ``T``.
@@ -121,7 +121,7 @@ Classes
       :returns: **Ds** (*float | 1D array*) -- Lithium diffusivity in the solid phase [m^2/s].
 
 
-   .. py:method:: get_Eeq(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Eeq(x, T)
 
       Calculate the equilibrium potential given the intercalation fraction
       ``x`` at the particle surface and temperature ``T``.
@@ -134,7 +134,7 @@ Classes
       :returns: **Eeq** (*float | 1D array*) -- Equilibrium potential [V].
 
 
-   .. py:method:: get_i0(x: float | numpy.ndarray, C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_i0(x, C_Li, T)
 
       Calculate the exchange current density given the intercalation
       fraction ``x`` at the particle surface, the local lithium ion
@@ -153,7 +153,7 @@ Classes
 
 
 
-.. py:class:: GraphiteSlow(alpha_a: float, alpha_c: float, Li_max: float)
+.. py:class:: GraphiteSlow(alpha_a, alpha_c, Li_max)
 
 
 
@@ -171,7 +171,7 @@ Classes
    :param Li_max: Maximum lithium concentration in solid phase [kmol/m^3].
    :type Li_max: float
 
-   .. py:method:: get_Ds(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Ds(x, T)
 
       Calculate the lithium diffusivity in the solid phase given the local
       intercalation fraction ``x`` and temperature ``T``.
@@ -184,7 +184,7 @@ Classes
       :returns: **Ds** (*float | 1D array*) -- Lithium diffusivity in the solid phase [m^2/s].
 
 
-   .. py:method:: get_Eeq(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Eeq(x, T)
 
       Calculate the equilibrium potential given the intercalation fraction
       ``x`` at the particle surface and temperature ``T``.
@@ -199,7 +199,7 @@ Classes
       :raises ValueError :: x is out of bounds [x_min, x_max].
 
 
-   .. py:method:: get_i0(x: float | numpy.ndarray, C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_i0(x, C_Li, T)
 
       Calculate the exchange current density given the intercalation
       fraction ``x`` at the particle surface, the local lithium ion
@@ -218,7 +218,7 @@ Classes
 
 
 
-.. py:class:: NMC532Fast(alpha_a: float, alpha_c: float, Li_max: float)
+.. py:class:: NMC532Fast(alpha_a, alpha_c, Li_max)
 
 
 
@@ -236,7 +236,7 @@ Classes
    :param Li_max: Maximum lithium concentration in solid phase [kmol/m^3].
    :type Li_max: float
 
-   .. py:method:: get_Ds(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Ds(x, T)
 
       Calculate the lithium diffusivity in the solid phase given the local
       intercalation fraction ``x`` and temperature ``T``.
@@ -249,7 +249,7 @@ Classes
       :returns: **Ds** (*float | 1D array*) -- Lithium diffusivity in the solid phase [m^2/s].
 
 
-   .. py:method:: get_Eeq(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Eeq(x, T)
 
       Calculate the equilibrium potential given the intercalation fraction
       ``x`` at the particle surface and temperature ``T``.
@@ -262,7 +262,7 @@ Classes
       :returns: **Eeq** (*float | 1D array*) -- Equilibrium potential [V].
 
 
-   .. py:method:: get_i0(x: float | numpy.ndarray, C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_i0(x, C_Li, T)
 
       Calculate the exchange current density given the intercalation
       fraction ``x`` at the particle surface, the local lithium ion
@@ -281,7 +281,7 @@ Classes
 
 
 
-.. py:class:: NMC532Slow(alpha_a: float, alpha_c: float, Li_max: float)
+.. py:class:: NMC532Slow(alpha_a, alpha_c, Li_max)
 
 
 
@@ -299,7 +299,7 @@ Classes
    :param Li_max: Maximum lithium concentration in solid phase [kmol/m^3].
    :type Li_max: float
 
-   .. py:method:: get_Ds(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Ds(x, T)
 
       Calculate the lithium diffusivity in the solid phase given the local
       intercalation fraction ``x`` and temperature ``T``.
@@ -312,7 +312,7 @@ Classes
       :returns: **Ds** (*float | 1D array*) -- Lithium diffusivity in the solid phase [m^2/s].
 
 
-   .. py:method:: get_Eeq(x: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_Eeq(x, T)
 
       Calculate the equilibrium potential given the intercalation fraction
       ``x`` at the particle surface and temperature ``T``.
@@ -327,7 +327,7 @@ Classes
       :raises ValueError :: x is out of bounds [x_min, x_max].
 
 
-   .. py:method:: get_i0(x: float | numpy.ndarray, C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_i0(x, C_Li, T)
 
       Calculate the exchange current density given the intercalation
       fraction ``x`` at the particle surface, the local lithium ion

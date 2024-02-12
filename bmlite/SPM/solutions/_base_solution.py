@@ -257,7 +257,7 @@ class BaseSolution(object):
               f'         solvetime = {solvetime})\n'
               )
 
-    def to_dict(self) -> dict:
+    def _save_dict(self) -> dict:
         """
         Output a dictionary with key/value pairs corresponding to the instance
         attributes and values listed below.
@@ -354,10 +354,10 @@ class BaseSolution(object):
             from ..postutils import pixels
             pixels(self)
 
-    def to_sliced_dict(self) -> dict:
+    def to_dict(self) -> dict:
         """
-        Creates a dict with all spatial, time, and state variables
-        separated into 1D and 2D arrays. The keys are given below.
+        Creates a dict with all spatial, time, and state variables separated
+        into 1D and 2D arrays. The keys are given below.
 
         ========= =======================================================
         Key       Value [units] (*type*)
@@ -389,6 +389,10 @@ class BaseSolution(object):
 
         sim = self._sim
 
+        an_sol = sim.an.to_dict(self)
+        ca_sol = sim.ca.to_dict(self)
+        el_sol = sim.el.to_dict(self)
+
         sol_dict = {}
 
         sol_dict['r_a'] = sim.an.r
@@ -396,19 +400,19 @@ class BaseSolution(object):
 
         sol_dict['t'] = self.t
 
-        sol_dict['phis_a'] = self.y[:, sim.an.ptr['phi_ed']]
-        sol_dict['phis_c'] = self.y[:, sim.ca.ptr['phi_ed']]
-        sol_dict['phie'] = self.y[:, sim.el.ptr['phi_el']]
+        sol_dict['phis_a'] = an_sol['phis']
+        sol_dict['phis_c'] = ca_sol['phis']
+        sol_dict['phie'] = el_sol['phie']
 
-        sol_dict['cs_a'] = self.y[:, sim.an.r_ptr('Li_ed')] * sim.an.Li_max
-        sol_dict['cs_c'] = self.y[:, sim.ca.r_ptr('Li_ed')] * sim.ca.Li_max
+        sol_dict['cs_a'] = an_sol['cs']
+        sol_dict['cs_c'] = ca_sol['xs']
 
         sol_dict['j_a'] = self.postvars['sdot_an']
         sol_dict['j_c'] = self.postvars['sdot_ca']
 
         return sol_dict
 
-    def slice_and_save(self, savename: str, overwrite: bool = False) -> None:
+    def save_sliced(self, savename: str, overwrite: bool = False) -> None:
         """
         Save a ``.npz`` file with all spatial, time, and state variables
         separated into 1D and 2D arrays. The keys are given below. The index
@@ -457,6 +461,6 @@ class BaseSolution(object):
             raise FileExistsError(savename + ' already exists. Use overwrite'
                                   ' flag or delete the file and try again.')
 
-        sol_dict = self.to_sliced_dict()
+        sol_dict = self.to_dict()
 
         np.savez(savename, **sol_dict)

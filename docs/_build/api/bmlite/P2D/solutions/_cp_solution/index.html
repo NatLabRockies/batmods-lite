@@ -30,10 +30,10 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=4bdb038c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=96227a4f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -48,6 +48,7 @@
     <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/bmlite/P2D/solutions/_cp_solution/index';</script>
     <script src="../../../../../_static/custom.js?v=e2d01366"></script>
+    <link rel="icon" href="../../../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -125,8 +126,8 @@
     
     
     
-    <img src="../../../../../_static/light.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/dark.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/light_notag.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/dark_notag.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -344,7 +345,7 @@ document.write(`
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="bmlite.P2D.solutions._cp_solution.CPSolution">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bmlite.P2D.solutions._cp_solution.</span></span><span class="sig-name descname"><span class="pre">CPSolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/bmlite/P2D/solutions/_cp_solution.html#CPSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.P2D.solutions._cp_solution.CPSolution" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bmlite.P2D.solutions._cp_solution.</span></span><span class="sig-name descname"><span class="pre">CPSolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/bmlite/P2D/solutions/_cp_solution.html#CPSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.P2D.solutions._cp_solution.CPSolution" title="Link to this definition">#</a></dt>
 <dd><p>Constant power solution for P2D simuations.</p>
 <p>Base: <a class="reference internal" href="../index.html#bmlite.P2D.solutions.BaseSolution" title="bmlite.P2D.solutions.BaseSolution"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseSolution</span></code></a></p>
 <p>When initialized, a copy of the P2D simulation object and experimental
@@ -373,7 +374,7 @@ the experiment that was run.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bmlite.P2D.solutions._cp_solution.CPSolution.verify">
-<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plotflag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../../../_modules/bmlite/P2D/solutions/_cp_solution.html#CPSolution.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.P2D.solutions._cp_solution.CPSolution.verify" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plotflag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/bmlite/P2D/solutions/_cp_solution.html#CPSolution.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.P2D.solutions._cp_solution.CPSolution.verify" title="Link to this definition">#</a></dt>
 <dd><p>Verifies the solution is mathematically consistent.</p>
 <p>Specifically, for a constant power experiment, this method checks
 that the calculated power was within tolerance of the boundary

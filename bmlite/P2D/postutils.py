@@ -130,9 +130,9 @@ def _liquid_phase_Li(sol: object) -> _ndarray:
                                 ca.eps_el * el.Li_0 * (ca.xp - ca.xm)]))
 
     # Total liquid-phase lithium [kmol/m^2] vs. time [s]
-    Li_an = sol.y[:, an.x_ptr('Li_el')]
-    Li_sep = sol.y[:, sep.x_ptr('Li_el')]
-    Li_ca = sol.y[:, ca.x_ptr('Li_el')]
+    Li_an = sol.y[:, an.x_ptr['Li_el']]
+    Li_sep = sol.y[:, sep.x_ptr['Li_el']]
+    Li_ca = sol.y[:, ca.x_ptr['Li_el']]
 
     Li_el_t = np.sum(np.hstack([an.eps_el * Li_an * (an.xp - an.xm),
                                 sep.eps_el * Li_sep * (sep.xp - sep.xm),
@@ -172,12 +172,13 @@ def _solid_phase_Li(sol: object) -> _ndarray:
     V_ca = 4 * np.pi * ca.R_s**3 / 3
 
     cs_a = np.zeros([sol.t.size, an.Nx, an.Nr])
-    for k in range(an.Nr):
-        cs_a[:, :, k] = sol.y[:, an.x_ptr('Li_ed', k)] * an.Li_max
-
     cs_c = np.zeros([sol.t.size, ca.Nx, ca.Nr])
-    for k in range(ca.Nr):
-        cs_c[:, :, k] = sol.y[:, ca.x_ptr('Li_ed', k)] * ca.Li_max
+    for i in range(sol.t.size):
+        xs_a = sol.y[i, an.xr_ptr['Li_ed'].flatten()]
+        cs_a[i, :, :] = xs_a.reshape([an.Nx, an.Nr]) * an.Li_max
+
+        xs_c = sol.y[i, ca.xr_ptr['Li_ed'].flatten()]
+        cs_c[i, :, :] = xs_c.reshape([ca.Nx, ca.Nr]) * ca.Li_max
 
     Li_an = np.zeros_like(sol.t)
     Li_ca = np.zeros_like(sol.t)
@@ -269,7 +270,7 @@ def voltage(sol: object, ax: object = None) -> None:
 
     sim = sol._sim
 
-    ax.plot(sol.t, sol.y[:, sim.ca.x_ptr('phi_ed')[-1]], '-k')
+    ax.plot(sol.t, sol.y[:, sim.ca.x_ptr['phi_ed'][-1]], '-k')
     format_ticks(ax)
 
     if ax is None:
@@ -308,7 +309,7 @@ def power(sol: object, ax: object = None) -> None:
     sim = sol._sim
 
     i_ext = sol.postvars['i_ext']
-    V_cell = sol.y[:, sim.ca.x_ptr('phi_ed')[-1]]
+    V_cell = sol.y[:, sim.ca.x_ptr['phi_ed'][-1]]
 
     ax.plot(sol.t, i_ext * V_cell, '-k')
     format_ticks(ax)
@@ -385,13 +386,13 @@ def potentials(sol: object) -> None:
         else:
             label = r'$\phi_{\rm an}$'
 
-        ax.plot(an.x * 1e6, sol.y[it, an.x_ptr('phi_ed')], color=cmap(i),
+        ax.plot(an.x * 1e6, sol.y[it, an.x_ptr['phi_ed']], color=cmap(i),
                 label=label)
 
     x_el = np.hstack([an.x, sep.x, ca.x])
-    phi_el = np.hstack([sol.y[:, an.x_ptr('phi_el')],
-                        sol.y[:, sep.x_ptr('phi_el')],
-                        sol.y[:, ca.x_ptr('phi_el')]])
+    phi_el = np.hstack([sol.y[:, an.x_ptr['phi_el']],
+                        sol.y[:, sep.x_ptr['phi_el']],
+                        sol.y[:, ca.x_ptr['phi_el']]])
 
     cmap = plt.get_cmap('Blues', len(t_inds))
     for i, it in enumerate(t_inds):
@@ -409,7 +410,7 @@ def potentials(sol: object) -> None:
         else:
             label = r'$\phi_{\rm ca}$'
 
-        ax.plot(ca.x * 1e6, sol.y[it, ca.x_ptr('phi_ed')], color=cmap(i),
+        ax.plot(ca.x * 1e6, sol.y[it, ca.x_ptr['phi_ed']], color=cmap(i),
                 label=label)
 
     cb = plt.colorbar(sm, ax=ax, ticks=sol.t[t_inds])
@@ -467,9 +468,9 @@ def electrolyte(sol: object) -> None:
 
     x_el = np.hstack([an.x, sep.x, ca.x])
 
-    Li_el = np.hstack([sol.y[:, an.x_ptr('Li_el')],
-                       sol.y[:, sep.x_ptr('Li_el')],
-                       sol.y[:, ca.x_ptr('Li_el')]])
+    Li_el = np.hstack([sol.y[:, an.x_ptr['Li_el']],
+                       sol.y[:, sep.x_ptr['Li_el']],
+                       sol.y[:, ca.x_ptr['Li_el']]])
 
     for i, it in enumerate(t_inds):
         ax.plot(x_el * 1e6, Li_el[it, :], color=cmap(i))
@@ -531,20 +532,16 @@ def intercalation(sol: object) -> None:
     ax[1, 1].text(0.1, 0.1, r'$x$ = ca/cc', transform=ax[1, 1].transAxes)
 
     for i, it in enumerate(t_inds):
-        an_sep = an.x_ptr('Li_ed')[-1]
-        ax[0, 0].plot(an.r * 1e6, sol.y[it, an_sep:an_sep + an.Nr],
+        ax[0, 0].plot(an.r * 1e6, sol.y[it, an.xr_ptr['Li_ed'][-1, :]],
                       color=cmap(i))
 
-        sep_ca = ca.x_ptr('Li_ed')[0]
-        ax[0, 1].plot(ca.r * 1e6, sol.y[it, sep_ca:sep_ca + ca.Nr],
+        ax[0, 1].plot(ca.r * 1e6, sol.y[it, ca.xr_ptr['Li_ed'][0, :]],
                       color=cmap(i))
 
-        cc_an = an.x_ptr('Li_ed')[0]
-        ax[1, 0].plot(an.r * 1e6, sol.y[it, cc_an:cc_an + an.Nr],
+        ax[1, 0].plot(an.r * 1e6, sol.y[it, an.xr_ptr['Li_ed'][0, :]],
                       color=cmap(i))
 
-        ca_cc = ca.x_ptr('Li_ed')[-1]
-        ax[1, 1].plot(ca.r * 1e6, sol.y[it, ca_cc:ca_cc + ca.Nr],
+        ax[1, 1].plot(ca.r * 1e6, sol.y[it, ca.xr_ptr['Li_ed'][-1, :]],
                       color=cmap(i))
 
     cax = ax.ravel().tolist()
@@ -596,9 +593,9 @@ def pixels(sol: object) -> None:
     # Li-ion conc. [kmol/m^3]
     xlims = [an.xm[0] * 1e6, ca.xp[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = np.hstack([sol.y[:, an.x_ptr('Li_el')],
-                   sol.y[:, sep.x_ptr('Li_el')],
-                   sol.y[:, ca.x_ptr('Li_el')]])
+    z = np.hstack([sol.y[:, an.x_ptr['Li_el']],
+                   sol.y[:, sep.x_ptr['Li_el']],
+                   sol.y[:, ca.x_ptr['Li_el']]])
 
     pixel(ax[0, 0], xlims, ylims, z, r'[kmol/m$^3$]')
 
@@ -608,9 +605,9 @@ def pixels(sol: object) -> None:
     # Electrolyte potential [V]
     xlims = [an.xm[0] * 1e6, ca.xp[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = np.hstack([sol.y[:, an.x_ptr('phi_el')],
-                   sol.y[:, sep.x_ptr('phi_el')],
-                   sol.y[:, ca.x_ptr('phi_el')]])
+    z = np.hstack([sol.y[:, an.x_ptr['phi_el']],
+                   sol.y[:, sep.x_ptr['phi_el']],
+                   sol.y[:, ca.x_ptr['phi_el']]])
 
     pixel(ax[0, 1], xlims, ylims, z, r'[V]')
 
@@ -630,7 +627,7 @@ def pixels(sol: object) -> None:
     # Surface conc. for anode [kmol/m^3]
     xlims = [an.x[0] * 1e6, an.x[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = sol.y[:, an.x_ptr('Li_ed', an.Nr - 1)] * an.Li_max
+    z = sol.y[:, an.xr_ptr['Li_ed'][:, -1]] * an.Li_max
 
     pixel(ax[1, 0], xlims, ylims, z, r'[kmol/m$^3$]')
 
@@ -640,7 +637,7 @@ def pixels(sol: object) -> None:
     # Anode potential [mV]
     xlims = [an.x[0] * 1e6, an.x[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = sol.y[:, an.x_ptr('phi_ed')]
+    z = sol.y[:, an.x_ptr['phi_ed']]
 
     pixel(ax[1, 1], xlims, ylims, z * 1e3, r'[mV]')
 
@@ -660,7 +657,7 @@ def pixels(sol: object) -> None:
     # Surface conc. for cathode [kmol/m^3]
     xlims = [ca.x[0] * 1e6, ca.x[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = sol.y[:, ca.x_ptr('Li_ed', ca.Nr - 1)] * ca.Li_max
+    z = sol.y[:, ca.xr_ptr['Li_ed'][:, -1]] * ca.Li_max
 
     pixel(ax[2, 0], xlims, ylims, z, r'[kmol/m$^3$]')
 
@@ -671,7 +668,7 @@ def pixels(sol: object) -> None:
     # Cathode potential [V]
     xlims = [ca.x[0] * 1e6, ca.x[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = sol.y[:, ca.x_ptr('phi_ed')]
+    z = sol.y[:, ca.x_ptr['phi_ed']]
 
     pixel(ax[2, 1], xlims, ylims, z, r'[V]')
 

@@ -30,10 +30,10 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=4bdb038c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=96227a4f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -48,6 +48,7 @@
     <script src="../../../../_static/design-tabs.js?v=36754332"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/bmlite/materials/_gen2_electrolyte/index';</script>
     <script src="../../../../_static/custom.js?v=e2d01366"></script>
+    <link rel="icon" href="../../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -125,8 +126,8 @@
     
     
     
-    <img src="../../../../_static/light.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/dark.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
+    <img src="../../../../_static/light_notag.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/dark_notag.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -348,7 +349,7 @@ document.write(`
 <dd><p>Gen 2 Electrolyte transport and material properties.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_D">
-<span class="sig-name descname"><span class="pre">get_D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_D" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_D" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the lithium ion diffusivity in the electrolyte solution at
 concentration <code class="docutils literal notranslate"><span class="pre">C_Li</span></code> and temperature <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p>
 <dl class="field-list simple">
@@ -366,7 +367,7 @@ concentration <code class="docutils literal notranslate"><span class="pre">C_Li<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_gamma">
-<span class="sig-name descname"><span class="pre">get_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_gamma" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_gamma" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the electrolyte thermodynamic factor at concentration
 <code class="docutils literal notranslate"><span class="pre">C_Li</span></code> and temperature <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p>
 <dl class="field-list simple">
@@ -384,7 +385,7 @@ concentration <code class="docutils literal notranslate"><span class="pre">C_Li<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_kappa">
-<span class="sig-name descname"><span class="pre">get_kappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_kappa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_kappa" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_kappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_kappa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_kappa" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the electrolyte conductivity at concentration <code class="docutils literal notranslate"><span class="pre">C_Li</span></code> and
 temperature <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p>
 <dl class="field-list simple">
@@ -402,7 +403,7 @@ temperature <code class="docutils literal notranslate"><span class="pre">T</span
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_t0">
-<span class="sig-name descname"><span class="pre">get_t0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_t0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_t0" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_t0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_Li</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/bmlite/materials/_gen2_electrolyte.html#Gen2Electrolyte.get_t0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.materials._gen2_electrolyte.Gen2Electrolyte.get_t0" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the lithium ion transference number at concentration <code class="docutils literal notranslate"><span class="pre">C_Li</span></code>
 and temperature <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p>
 <dl class="field-list simple">

@@ -90,8 +90,8 @@ class VLimits(object):
 
         sim, _ = inputs
 
-        events[0] = sv[sim.ca.x_ptr('phi_ed')[-1]] - self.V_low
-        events[1] = sv[sim.ca.x_ptr('phi_ed')[-1]] - self.V_high
+        events[0] = sv[sim.ca.x_ptr['phi_ed'][-1]] - self.V_low
+        events[1] = sv[sim.ca.x_ptr['phi_ed'][-1]] - self.V_high
 
 
 class ILimits(object):

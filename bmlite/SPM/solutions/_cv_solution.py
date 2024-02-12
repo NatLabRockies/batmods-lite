@@ -33,7 +33,7 @@ class CVSolution(BaseSolution):
         Specifically, for a constant voltage experiment, this method checks
         that the calculated voltage was within tolerance of the boundary
         condition. In addition, this method checks the anodic and cathodic
-        Faradaic currents against the current at each time step and the 
+        Faradaic currents against the current at each time step and the
         solid-phase lithium conservation.
 
         If the verificaion returns ``False``, you can see which checks failed

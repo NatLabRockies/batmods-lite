@@ -1,11 +1,14 @@
 """
 BatMods-lite
 ============
+Battery Analysis and Training Models for Optimization and Degradation Studies
+(BATMODS) is a Python package with an API for pre-built battery models. The
+original purpose of the package was to quickly generate synthetic data for
+machine learning models to train with. However, the models are generally useful
+for any battery simulation or analysis. BATMODS-lite includes the following:
 
-Provides:
-
-1. A library and API for pre-built battery models
-2. Kinetic/transport properties for common battery materials
+1) A library and API for pre-built battery models
+2) Kinetic/transport properties for common battery materials
 
 How to use the documentation
 ----------------------------
@@ -24,15 +27,16 @@ key). To view the type hints and brief descriptions, type an open parenthesis
 ``(`` after any function, method, class, etc. (e.g., ``bm.Constants(``).
 """
 
-
-from bmlite.version import __version__
 from numpy import ndarray as _ndarray
 from scikits.odes import dae as _DAE
 
+from . import math
+from . import mesh
 from . import materials
 from . import P2D
 from . import plotutils
 from . import SPM
+
 
 class Constants(object):
 

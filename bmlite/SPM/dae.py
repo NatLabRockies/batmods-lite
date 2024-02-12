@@ -176,8 +176,8 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     phi_el = sv[el.ptr['phi_el']]
     phi_ca = sv[ca.ptr['phi_ed']]
 
-    Li_an = sv[an.r_ptr('Li_ed')] * an.Li_max
-    Li_ca = sv[ca.r_ptr('Li_ed')] * ca.Li_max
+    Li_an = sv[an.r_ptr['Li_ed']] * an.Li_max
+    Li_ca = sv[ca.r_ptr['Li_ed']] * ca.Li_max
 
     # Anode -------------------------------------------------------------------
 
@@ -204,7 +204,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     Np_ed[-1] = -sdot_an
 
-    res[an.r_ptr('Li_ed')] = an.Li_max * svdot[an.r_ptr('Li_ed')] \
+    res[an.r_ptr['Li_ed']] = an.Li_max * svdot[an.r_ptr['Li_ed']] \
                            - ( an.rp**2 * Np_ed - an.rm**2 * Nm_ed ) \
                              / an.r**2 / (an.rp - an.rm)
 
@@ -236,7 +236,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     Np_ed[-1] = -sdot_ca
 
-    res[ca.r_ptr('Li_ed')] = ca.Li_max * svdot[ca.r_ptr('Li_ed')] \
+    res[ca.r_ptr['Li_ed']] = ca.Li_max * svdot[ca.r_ptr['Li_ed']] \
                            - ( ca.rp**2 * Np_ed - ca.rm**2 * Nm_ed ) \
                              / ca.r**2 / (ca.rp - ca.rm)
 

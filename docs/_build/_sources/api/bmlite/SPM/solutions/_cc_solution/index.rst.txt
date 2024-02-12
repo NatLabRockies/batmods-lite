@@ -19,7 +19,7 @@ Classes
 
 
 
-.. py:class:: CCSolution(sim: object, exp: dict)
+.. py:class:: CCSolution(sim, exp)
 
 
 
@@ -46,7 +46,7 @@ Classes
 
       :returns: **classname** (*str*) -- Name of current class.
 
-   .. py:method:: verify(plotflag: bool = False, rtol: float = 0.005, atol: float = 0.001) -> bool
+   .. py:method:: verify(plotflag = False, rtol = 0.005, atol = 0.001)
 
       Verifies the solution is mathematically consistent.
 

@@ -1,6 +1,8 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./images/dark.svg">
-  <img alt="BatMods-lite logo" src="./images/light.svg">
+  <source media='(prefers-color-scheme: dark)' srcset='./images/dark.svg'
+  style='width: 75%; min-width: 250px; max-width: 500px;'>
+  <img alt='BatMods-lite logo' src='./images/light.svg'
+  style='width: 75%; min-width: 250px; max-width: 500px;'>
 </picture> 
 
 [![CI][ci-b]][ci-l] ![tests][test-b] ![coverage][cov-b] [![pep8][pep-b]][pep-l]
@@ -14,7 +16,8 @@
 [pep-b]: https://img.shields.io/badge/code%20style-pep8-orange.svg
 [pep-l]: https://www.python.org/dev/peps/pep-0008
 
-BatMods-lite is a Python package that includes: 
+## Summary
+Battery Analysis and Training Models for Optimization and Degradation Studies (BATMODS) is a Python package with an API for pre-built battery models. The original purpose of the package was to quickly generate synthetic data for machine learning models to train with. However, the models are generally useful for any battery simulations or analysis. BATMODS-lite includes the following: 
 
 1) A library and API for pre-built battery models
 2) Kinetic/transport properties for common battery materials
@@ -22,7 +25,7 @@ BatMods-lite is a Python package that includes:
 ## Installing
 We recommend using [Anaconda](https://www.anaconda.com/download) to create and manage your Python virtual environments. The following directions assume you are using Anaconda. 
 
-After downloading or cloning the BatMods-lite repo files onto your local machine, open Anaconda Prompt (Windows) or Terminal (MacOS/Linux) and run the following to: (1) create an environment named "batmods," (2) activate your new environment, (3) install scikits.odes, and (4) install batmods-lite. 
+After downloading or cloning the BATMODS-lite repo files onto your local machine, open Anaconda Prompt (Windows) or Terminal (MacOS/Linux) and run the following to: (1) create an environment named "batmods," (2) activate your new environment, (3) install scikits.odes, and (4) install BATMODS-lite. 
 
 1) ``conda create -n batmods python=3.10``
 2) ``conda activate batmods``
@@ -32,11 +35,13 @@ After downloading or cloning the BatMods-lite repo files onto your local machine
 **Notes:**
 * You can replace "batmods" in steps (1) and (2) with your preferred environment name.
 
+* Step (1) specifies Python 3.10 for your new environment. BATMODS-lite is continuously tested using 3.10. However, the package generally works with versions >=3.8 and <= 3.11. The newest version (3.12) is not yet supported due to the scikits.odes dependency.
+
 * Step (3) installs scikits.odes separately using  ``conda install`` on purpose. Installing scikits.odes via ``pip`` complicates the setup by requiring extra pre-installed softwares and compilers, as covered in the [scikits.odes documenation](https://scikits-odes.readthedocs.io/en/latest/).
 
-* The ``-e`` flag in step (4) installs BatMods-lite in "editable" mode. Use this if you plan to make changes to the package.
+* The ``-e`` flag in step (4) installs BATMODS-lite in "editable" mode. Use this if you plan to make changes to the package.
 
-* The path in step (4) assumes you already used ``cd`` to move into the directory that includes the BatMods-lite "setup.py" file. If this is not true, please ``cd`` into the correct directory, or change the path accordingly.
+* The path in step (4) assumes you already used ``cd`` to move into the directory that includes the BATMODS-lite "setup.py" file. If this is not true, please ``cd`` into the correct directory, or change the path accordingly.
 
 ## Get Started
 You are now ready to start running models. Run the following from your favorite terminal/IDE to see helpful documentation, examples, and more:
@@ -65,12 +70,12 @@ sol.plot('ivp')
 ```
 
 **Notes:**
-* If you are new to Python, check out [Spyder IDE](https://www.spyder-ide.org/). Spyder is a powerful interactive development environment (IDE). BatMods-lite is programmed almost entirely using the Spyder IDE. 
+* If you are new to Python, check out [Spyder IDE](https://www.spyder-ide.org/). Spyder is a powerful interactive development environment (IDE). BATMODS-lite is programmed almost entirely using the Spyder IDE. 
 
 * You can install Spyder using ``conda install spyder``. Afterward, you can find the application on your system, or run ``spyder`` in Anaconda Prompt or Terminal to open an instance.
 
 ## Formatting
-BatMods-lite code mostly follows the [PEP8 style guide](https://www.python.org/dev/peps/pep-0008). However, we allow adding extra spaces around parentheses or brackets, and under- or over-indenting multi-line expressions when it improves readability or avoids the 80-character line limit. 
+BATMODS-lite code mostly follows the [PEP8 style guide](https://www.python.org/dev/peps/pep-0008). However, we allow adding extra spaces around parentheses or brackets, and under- or over-indenting multi-line expressions when it improves readability or avoids the 80-character line limit. 
 
 Be aware that it is the authors' preference to not adopt the more opinionated [black formatting style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html). Please avoid autoformatting any files in this style if you plan to contribute.
 

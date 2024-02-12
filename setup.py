@@ -1,19 +1,15 @@
-from setuptools import setup
 import os
+from setuptools import setup
 
-here = os.path.abspath(os.path.dirname(__file__))
+from bmlite import __version__
 
-with open(os.path.join(here, "requirements.txt")) as f:
-    install_requires = f.readlines()
-
-with open(os.path.join(here, "bmlite", "version.py"), encoding="utf-8") as f:
-    version = f.read()
-
-version = version.split('=')[-1].strip().strip('"').strip("'")
+here = os.path.dirname(__file__)
+with open(here + './requirements.txt') as f:
+      install_requires = f.readlines()
 
 setup(
       name='batmods-lite',
-      version=version,
+      version=__version__,
       description='Pre-built physics-based battery models',
       author='Corey R. Randall',
       package_dir={'bmlite': 'bmlite'},

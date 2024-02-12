@@ -36,13 +36,13 @@ class IDASol(object):
         self.message = 'Successful solve.'
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def sim():
     sim = bm.P2D.Simulation()
     return sim
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def exp():
     directory = os.path.dirname(__file__) + '/../bmlite/P2D/default_exps/'
     path = Path(directory + 'constant_current.yaml')
@@ -52,19 +52,19 @@ def exp():
     return exp
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def sol(sim, exp):
     sol = bm.P2D.solutions.BaseSolution(sim, exp)
     return sol
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def idasol():
     idasol = IDASol()
     return idasol
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def dictsol():
     dictsol = {'t': np.linspace(0., 1350., 150),
                'y': np.ones([10, 10]),
@@ -78,7 +78,7 @@ def dictsol():
     return dictsol
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def plotsol(sim):
 
     N = sim.sv_0.size
@@ -137,9 +137,9 @@ def test_report(sol):
     assert True
 
 
-def test_to_dict(sol, dictsol):
+def test_save_dict(sol, dictsol):
     sol.dict_fill(dictsol)
-    testdict = sol.to_dict()
+    testdict = sol._save_dict()
 
     assert testdict == dictsol
 
@@ -157,18 +157,18 @@ def test_plot(sol, plotsol):
         plt.close('all')
 
 
-def test_slice_and_save(sol, plotsol):
+def test_save_sliced(sol, plotsol):
     sol.dict_fill(plotsol)
 
     directory = os.path.dirname(__file__)
-    sol.slice_and_save(directory + '/scrap_data/test_p2d')
+    sol.save_sliced(directory + '/scrap_data/test_p2d')
     assert os.path.exists(directory + '/scrap_data/test_p2d.npz')
 
     data = np.load(directory + '/scrap_data/test_p2d.npz')
     data.close()
 
     with pytest.raises(FileExistsError):
-        sol.slice_and_save(directory + '/scrap_data/test_p2d')
+        sol.save_sliced(directory + '/scrap_data/test_p2d')
 
-    sol.slice_and_save(directory + '/scrap_data/test_p2d', overwrite=True)
+    sol.save_sliced(directory + '/scrap_data/test_p2d', overwrite=True)
     os.remove(directory + '/scrap_data/test_p2d.npz')

@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=4bdb038c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=96227a4f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -47,6 +47,7 @@
     <script src="../../../../_static/design-tabs.js?v=36754332"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/bmlite/SPM/solutions/_base_solution';</script>
     <script src="../../../../_static/custom.js?v=e2d01366"></script>
+    <link rel="icon" href="../../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -124,8 +125,8 @@
     
     
     
-    <img src="../../../../_static/light.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/dark.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
+    <img src="../../../../_static/light_notag.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/dark_notag.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -630,9 +631,7 @@ document.write(`
               <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="BaseSolution.to_dict">
-<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.to_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_save_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Output a dictionary with key/value pairs corresponding to the instance</span>
 <span class="sd">        attributes and values listed below.</span>
@@ -664,8 +663,7 @@ document.write(`
         <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message</span>
         <span class="n">sol</span><span class="p">[</span><span class="s1">&#39;solvetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solvetime</span>
 
-        <span class="k">return</span> <span class="n">sol</span></div>
-
+        <span class="k">return</span> <span class="n">sol</span>
 
 <div class="viewcode-block" id="BaseSolution.post">
 <a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.post">[docs]</a>
@@ -736,12 +734,12 @@ document.write(`
             <span class="n">pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="BaseSolution.to_sliced_dict">
-<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.to_sliced_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_sliced_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="BaseSolution.to_dict">
+<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a dict with all spatial, time, and state variables</span>
-<span class="sd">        separated into 1D and 2D arrays. The keys are given below.</span>
+<span class="sd">        Creates a dict with all spatial, time, and state variables separated</span>
+<span class="sd">        into 1D and 2D arrays. The keys are given below.</span>
 
 <span class="sd">        ========= =======================================================</span>
 <span class="sd">        Key       Value [units] (*type*)</span>
@@ -773,6 +771,10 @@ document.write(`
 
         <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span>
 
+        <span class="n">an_sol</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">ca_sol</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">el_sol</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
         <span class="n">sol_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;r_a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r</span>
@@ -780,12 +782,12 @@ document.write(`
 
         <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
 
-        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;phis_a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
-        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;phis_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_ed&#39;</span><span class="p">]]</span>
-        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;phie&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">ptr</span><span class="p">[</span><span class="s1">&#39;phi_el&#39;</span><span class="p">]]</span>
+        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;phis_a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">an_sol</span><span class="p">[</span><span class="s1">&#39;phis&#39;</span><span class="p">]</span>
+        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;phis_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ca_sol</span><span class="p">[</span><span class="s1">&#39;phis&#39;</span><span class="p">]</span>
+        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;phie&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">el_sol</span><span class="p">[</span><span class="s1">&#39;phie&#39;</span><span class="p">]</span>
 
-        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;cs_a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)]</span> <span class="o">*</span> <span class="n">sim</span><span class="o">.</span><span class="n">an</span><span class="o">.</span><span class="n">Li_max</span>
-        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;cs_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">r_ptr</span><span class="p">(</span><span class="s1">&#39;Li_ed&#39;</span><span class="p">)]</span> <span class="o">*</span> <span class="n">sim</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">Li_max</span>
+        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;cs_a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">an_sol</span><span class="p">[</span><span class="s1">&#39;cs&#39;</span><span class="p">]</span>
+        <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;cs_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ca_sol</span><span class="p">[</span><span class="s1">&#39;xs&#39;</span><span class="p">]</span>
 
         <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;j_a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_an&#39;</span><span class="p">]</span>
         <span class="n">sol_dict</span><span class="p">[</span><span class="s1">&#39;j_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postvars</span><span class="p">[</span><span class="s1">&#39;sdot_ca&#39;</span><span class="p">]</span>
@@ -793,9 +795,9 @@ document.write(`
         <span class="k">return</span> <span class="n">sol_dict</span></div>
 
 
-<div class="viewcode-block" id="BaseSolution.slice_and_save">
-<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.slice_and_save">[docs]</a>
-    <span class="k">def</span> <span class="nf">slice_and_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">savename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="BaseSolution.save_sliced">
+<a class="viewcode-back" href="../../../../api/bmlite/SPM/solutions/index.html#bmlite.SPM.solutions._base_solution.BaseSolution.save_sliced">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_sliced</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">savename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save a ``.npz`` file with all spatial, time, and state variables</span>
 <span class="sd">        separated into 1D and 2D arrays. The keys are given below. The index</span>
@@ -844,7 +846,7 @@ document.write(`
             <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">savename</span> <span class="o">+</span> <span class="s1">&#39; already exists. Use overwrite&#39;</span>
                                   <span class="s1">&#39; flag or delete the file and try again.&#39;</span><span class="p">)</span>
 
-        <span class="n">sol_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_sliced_dict</span><span class="p">()</span>
+        <span class="n">sol_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 
         <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">savename</span><span class="p">,</span> <span class="o">**</span><span class="n">sol_dict</span><span class="p">)</span></div>
 </div>

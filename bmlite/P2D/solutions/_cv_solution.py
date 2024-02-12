@@ -81,7 +81,7 @@ class CVSolution(BaseSolution):
         an, sep, ca = sim.an, sim.sep, sim.ca
 
         V_ext = exp['V_ext']
-        V_mod = self.y[:, ca.x_ptr('phi_ed')[-1]]
+        V_mod = self.y[:, ca.x_ptr['phi_ed'][-1]]
         i_mod = self.postvars['i_ext']
         i_sum = np.tile(i_mod, (an.Nx + sep.Nx + ca.Nx, 1)).T
 

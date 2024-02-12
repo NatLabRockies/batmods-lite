@@ -7,8 +7,8 @@ The experiments return ``Solution`` class instances with post processing,
 plotting, and saving methods.
 """
 
-from . import builder
 from . import dae
+from . import domains
 from . import roots
 from . import solutions
 from . import postutils
@@ -59,7 +59,7 @@ class Simulation(object):
 
         from ruamel.yaml import YAML
 
-        from .builder import Battery, Electrolyte, Electrode, Separator
+        from .domains import Battery, Electrolyte, Electrode, Separator
 
         if '.yaml' not in yamlfile:
             yamlfile += '.yaml'
@@ -130,32 +130,11 @@ class Simulation(object):
         self.sep.update()
         self.ca.update()
 
-        # Make meshes
+        # Make meshes/pointers
         self.an.make_mesh()
-
-        self.sep.make_mesh()
-        self.sep.x = self.an.thick + self.sep.x
-        self.sep.xm = self.an.thick + self.sep.xm
-        self.sep.xp = self.an.thick + self.sep.xp
-
-        self.ca.make_mesh()
-        self.ca.x = self.an.thick + self.sep.thick + self.ca.x
-        self.ca.xm = self.an.thick + self.sep.thick + self.ca.xm
-        self.ca.xp = self.an.thick + self.sep.thick + self.ca.xp
-
-        # Make pointers
-        self.an.make_ptr()
-
-        self.sep.make_ptr()
-        for key, val in self.sep.ptr.items():
-            if 'shift' not in key and 'off' not in key:
-                self.sep.ptr[key] += self.an.ptr['shift']
-
-        self.ca.make_ptr()
-        for key, val in self.ca.ptr.items():
-            if 'shift' not in key and 'off' not in key:
-                self.ca.ptr[key] += self.an.ptr['shift'] + \
-                    self.sep.ptr['shift']
+        self.sep.make_mesh(xshift=self.an.thick, pshift=self.an.ptr['shift'])
+        self.ca.make_mesh(xshift=self.an.thick + self.sep.thick,
+                          pshift=self.an.ptr['shift'] + self.sep.ptr['shift'])
 
         # Initialize potentials [V]
         self.an.phi_0 = 0.

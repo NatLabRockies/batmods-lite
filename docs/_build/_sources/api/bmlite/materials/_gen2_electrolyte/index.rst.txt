@@ -27,7 +27,7 @@ Classes
    
    Gen 2 Electrolyte transport and material properties.
 
-   .. py:method:: get_D(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_D(C_Li, T)
 
       Calculate the lithium ion diffusivity in the electrolyte solution at
       concentration ``C_Li`` and temperature ``T``.
@@ -40,7 +40,7 @@ Classes
       :returns: **D** (*float | 1D array*) -- Lithium ion diffusivity in the electrolyte [m^2/s].
 
 
-   .. py:method:: get_gamma(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_gamma(C_Li, T)
 
       Calculate the electrolyte thermodynamic factor at concentration
       ``C_Li`` and temperature ``T``.
@@ -53,7 +53,7 @@ Classes
       :returns: **gamma** (*float | 1D array*) -- Thermodynamic factor [-].
 
 
-   .. py:method:: get_kappa(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_kappa(C_Li, T)
 
       Calculate the electrolyte conductivity at concentration ``C_Li`` and
       temperature ``T``.
@@ -66,7 +66,7 @@ Classes
       :returns: **kappa** (*float | 1D array*) -- Electrolyte conductivity [S/m].
 
 
-   .. py:method:: get_t0(C_Li: float | numpy.ndarray, T: float) -> float | numpy.ndarray
+   .. py:method:: get_t0(C_Li, T)
 
       Calculate the lithium ion transference number at concentration ``C_Li``
       and temperature ``T``.

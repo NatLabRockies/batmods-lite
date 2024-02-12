@@ -29,8 +29,8 @@ Submodules
    :titlesonly:
    :maxdepth: 1
 
-   builder/index.rst
    dae/index.rst
+   domains/index.rst
    postutils/index.rst
    roots/index.rst
 
@@ -56,7 +56,7 @@ Functions
 
 
 
-.. py:class:: Simulation(yamlfile: str = 'default_P2D')
+.. py:class:: Simulation(yamlfile = 'default_P2D')
 
 
 
@@ -91,7 +91,7 @@ Functions
       :obj:`bmlite.P2D.templates`
           Get help making your own ``.yaml`` file by starting with the default template.
 
-   .. py:method:: copy() -> object
+   .. py:method:: copy()
 
       Create a copy of the Simulation instance.
 
@@ -99,7 +99,7 @@ Functions
                 instance.
 
 
-   .. py:method:: j_pattern() -> None
+   .. py:method:: j_pattern()
 
       Plot the Jacobian pattern.
 
@@ -112,7 +112,7 @@ Functions
       .. seealso:: :obj:`bmlite.P2D.dae.bandwidth`
 
 
-   .. py:method:: pre() -> None
+   .. py:method:: pre()
 
       Pre-process the dependent parameters.
 
@@ -133,7 +133,7 @@ Functions
          consistent with the user-defined inputs.
 
 
-   .. py:method:: run_CC(exp: dict, **kwargs) -> object
+   .. py:method:: run_CC(exp, **kwargs)
 
       Runs a constant current experiment specified by the details given in
       the experiment dictionary ``exp``.
@@ -174,7 +174,7 @@ Functions
       .. seealso:: :obj:`bmlite.IDASolver`, :obj:`bmlite.P2D.solutions.CCSolution`
 
 
-   .. py:method:: run_CP(exp: dict, **kwargs) -> object
+   .. py:method:: run_CP(exp, **kwargs)
 
       Runs a constant power experiment specified by the details given in
       the experiment dictionary ``exp``.
@@ -215,7 +215,7 @@ Functions
       .. seealso:: :obj:`bmlite.IDASolver`, :obj:`bmlite.P2D.solutions.CPSolution`
 
 
-   .. py:method:: run_CV(exp: dict, **kwargs) -> object
+   .. py:method:: run_CV(exp, **kwargs)
 
       Runs a constant voltage experiment specified by the details given in
       the experiment dictionary ``exp``.
@@ -257,7 +257,7 @@ Functions
 
 
 
-.. py:function:: templates(sim: str | int = None, exp: str | int = None) -> None
+.. py:function:: templates(sim = None, exp = None)
 
    Print simulation and/or experiment templates. If both ``sim`` and ``exp``
    are ``None``, a list of available templates will be printed. Otherwise, if

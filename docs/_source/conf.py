@@ -18,6 +18,7 @@ release = '0.0.1'
 extensions = ['sphinx.ext.todo',
               'sphinx.ext.viewcode',
               'sphinx.ext.napoleon', 
+              'sphinx.ext.autodoc',
               'autoapi.extension', 
               'myst_nb', 
               'sphinx_design',
@@ -46,16 +47,18 @@ source_suffix = {'.rst': 'restructuredtext',
 
 html_theme = 'pydata_sphinx_theme'
 
+html_favicon = '_static/favicon.ico'
+
 html_static_path = ['_static']
 html_js_files = ['custom.js']
 html_css_files = ['custom.css']
 
 html_context = {'default_mode': 'light'}
 
-html_sidebars = {"**": ["search-field.html", "sidebar-nav-bs.html"]}
+html_sidebars = {'**': ['search-field.html', 'sidebar-nav-bs.html']}
 
-html_theme_options = {'logo': {'image_light': '_static/light.svg',
-                               'image_dark': '_static/dark.svg'},
+html_theme_options = {'logo': {'image_light': '_static/light_notag.svg',
+                               'image_dark': '_static/dark_notag.svg'},
                       'header_links_before_dropdown': 6, 
                       'navbar_align': 'content',
                       'footer_start': ['copyright.html'],
@@ -65,7 +68,8 @@ html_theme_options = {'logo': {'image_light': '_static/light.svg',
                       'search_bar_text': 'Search...',
                       'show_prev_next': False,
                       'collapse_navigation': True,
-                      'show_toc_level': 0
+                      'show_toc_level': 0,
+                      'pygment_light_style': 'tango'
                       }
 
 
@@ -77,10 +81,12 @@ napoleon_custom_sections = ['BatMods-lite',
                             'How to use the documentation', 
                             'Viewing documentation using IPython',
                             'Material Properties Package',
+                            'Math Module',
+                            'Mesh Module',
                             'Plotting Utilities',
                             'Single Particle Model Package',
                             'Pseudo-2D Model Package',
-                            'Battery Builder',
+                            'Domains Module',
                             'DAE Module',
                             'Root Functions',
                             'Post-processing Utilities',
@@ -98,8 +104,9 @@ autoapi_keep_files = True
 autoapi_root = 'api'
 autoapi_member_order = 'groupwise'
 autoapi_python_class_content = 'both'
-autoapi_options = ['members', 'inerited-members', 'undoc-members', 'show-module-summary', 
-                   'imported-members']
+autodoc_typehints = 'none'
+autoapi_options = ['members', 'inerited-members', 'undoc-members',
+                   'show-module-summary', 'imported-members']
 
 
 # -- Options for myst --------------------------------------------------------
@@ -107,4 +114,4 @@ autoapi_options = ['members', 'inerited-members', 'undoc-members', 'show-module-
 
 nb_execution_timeout = 300
 nb_number_source_lines = True
-myst_enable_extensions = ["amsmath", "dollarmath"]
+myst_enable_extensions = ['amsmath', 'dollarmath']

@@ -28,7 +28,7 @@ Functions
 
 
 
-.. py:function:: bandwidth(sim: object) -> tuple[int | numpy.ndarray]
+.. py:function:: bandwidth(sim)
 
    Determine the DAE system's bandwidth and Jacobian pattern.
 
@@ -47,7 +47,7 @@ Functions
              * **j_pat** (*2D array*) -- Residual function Jacobian pattern, as an array of ones and zeros.
 
 
-.. py:function:: residuals(t: float, sv: numpy.ndarray, svdot: numpy.ndarray, res: numpy.ndarray, inputs: tuple[object, dict]) -> None | tuple[numpy.ndarray]
+.. py:function:: residuals(t, sv, svdot, res, inputs)
 
    The DAE residuals ``res = M*y' - f(t, y)`` for the P2D model.
 
