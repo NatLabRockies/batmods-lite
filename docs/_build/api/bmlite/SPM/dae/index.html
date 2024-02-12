@@ -30,10 +30,10 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=4bdb038c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=96227a4f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
@@ -48,10 +48,11 @@
     <script src="../../../../_static/design-tabs.js?v=36754332"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/bmlite/SPM/dae/index';</script>
     <script src="../../../../_static/custom.js?v=e2d01366"></script>
+    <link rel="icon" href="../../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="bmlite.SPM.postutils" href="../postutils/index.html" />
-    <link rel="prev" title="bmlite.SPM.builder" href="../builder/index.html" />
+    <link rel="next" title="bmlite.SPM.domains" href="../domains/index.html" />
+    <link rel="prev" title="bmlite.SPM.solutions" href="../solutions/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -127,8 +128,8 @@
     
     
     
-    <img src="../../../../_static/light.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/dark.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
+    <img src="../../../../_static/light_notag.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/dark_notag.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -288,14 +289,18 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="../../P2D/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.P2D</span></code></a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../solutions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.solutions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../builder/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.builder</span></code></a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.dae</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../domains/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.domains</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../postutils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.postutils</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../roots/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.SPM.roots</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../materials/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.materials</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../plotutils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.plotutils</span></code></a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../math/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.math</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bmlite.mesh</span></code></a></li>
 </ul>
 </div>
 </nav></div>
@@ -369,17 +374,17 @@ so the <code class="docutils literal notranslate"><span class="pre">'band'</span
 <h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bmlite.SPM.dae.bandwidth" title="bmlite.SPM.dae.bandwidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bandwidth</span></code></a>(→ tuple[int | numpy.ndarray])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bmlite.SPM.dae.bandwidth" title="bmlite.SPM.dae.bandwidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bandwidth</span></code></a>(sim)</p></td>
 <td><p>Determine the DAE system's bandwidth and Jacobian pattern.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bmlite.SPM.dae.residuals" title="bmlite.SPM.dae.residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">residuals</span></code></a>(→ None | tuple[numpy.ndarray])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bmlite.SPM.dae.residuals" title="bmlite.SPM.dae.residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">residuals</span></code></a>(t, sv, svdot, res, inputs)</p></td>
 <td><p>The DAE residuals <code class="docutils literal notranslate"><span class="pre">res</span> <span class="pre">=</span> <span class="pre">M*y'</span> <span class="pre">-</span> <span class="pre">f(t,</span> <span class="pre">y)</span></code> for the SPM model.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="bmlite.SPM.dae.bandwidth">
-<span class="sig-prename descclassname"><span class="pre">bmlite.SPM.dae.</span></span><span class="sig-name descname"><span class="pre">bandwidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/bmlite/SPM/dae.html#bandwidth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.SPM.dae.bandwidth" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bmlite.SPM.dae.</span></span><span class="sig-name descname"><span class="pre">bandwidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/bmlite/SPM/dae.html#bandwidth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.SPM.dae.bandwidth" title="Link to this definition">#</a></dt>
 <dd><p>Determine the DAE system’s bandwidth and Jacobian pattern.</p>
 <p>Numerically determines the bandwidth and Jacobian pattern of the residual
 function by perturbating each <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">yp</span></code> term and determining which
@@ -404,7 +409,7 @@ integration step compared to the “dense” linear solver.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bmlite.SPM.dae.residuals">
-<span class="sig-prename descclassname"><span class="pre">bmlite.SPM.dae.</span></span><span class="sig-name descname"><span class="pre">residuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svdot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/bmlite/SPM/dae.html#residuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.SPM.dae.residuals" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bmlite.SPM.dae.</span></span><span class="sig-name descname"><span class="pre">residuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/bmlite/SPM/dae.html#residuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bmlite.SPM.dae.residuals" title="Link to this definition">#</a></dt>
 <dd><p>The DAE residuals <code class="docutils literal notranslate"><span class="pre">res</span> <span class="pre">=</span> <span class="pre">M*y'</span> <span class="pre">-</span> <span class="pre">f(t,</span> <span class="pre">y)</span></code> for the SPM model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

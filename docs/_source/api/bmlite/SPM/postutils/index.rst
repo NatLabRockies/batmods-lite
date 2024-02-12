@@ -34,7 +34,7 @@ Functions
 
 
 
-.. py:function:: current(sol: object, ax: object = None) -> None
+.. py:function:: current(sol, ax = None)
 
    Plot current density vs. time.
 
@@ -47,7 +47,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: intercalation(sol: object) -> None
+.. py:function:: intercalation(sol)
 
    Plots anode and cathode particle intercalation profiles vs. time.
 
@@ -57,7 +57,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: ivp(sol: object) -> None
+.. py:function:: ivp(sol)
 
    Subplots for current, voltage, and power.
 
@@ -67,7 +67,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: pixels(sol: object) -> None
+.. py:function:: pixels(sol)
 
    Makes pixel plots for most 2D (space/time) variables.
 
@@ -77,7 +77,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: post(sol: object) -> dict
+.. py:function:: post(sol)
 
    Run post processing to determine secondary variables.
 
@@ -97,7 +97,7 @@ Functions
              ========= ========================================================
 
 
-.. py:function:: potentials(sol: object) -> None
+.. py:function:: potentials(sol)
 
    Plots anode, electrolyte, and cathode potentials vs. time.
 
@@ -107,7 +107,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: power(sol: object, ax: object = None) -> None
+.. py:function:: power(sol, ax = None)
 
    Plot power density vs. time.
 
@@ -120,7 +120,7 @@ Functions
    :returns: *None.*
 
 
-.. py:function:: voltage(sol: object, ax: object = None) -> None
+.. py:function:: voltage(sol, ax = None)
 
    Plot cell voltage vs. time.
 

@@ -29,7 +29,7 @@ Classes
 
 
 
-.. py:class:: BaseSolution(sim: object, exp: dict)
+.. py:class:: BaseSolution(sim, exp)
 
 
 
@@ -96,7 +96,7 @@ Classes
 
       :returns: **ydot** (*2D array*) -- Solution variable time derivatives [units] returned by solver.
 
-   .. py:method:: dict_fill(sol: dict) -> None
+   .. py:method:: dict_fill(sol)
 
       Fill the instance attributes using a dictionary.
 
@@ -118,7 +118,7 @@ Classes
       :returns: *None.*
 
 
-   .. py:method:: ida_fill(sol: object, solvetime: float) -> None
+   .. py:method:: ida_fill(sol, solvetime)
 
       Fill the instance attributes using the SolverReturn object from the
       Sundials IDA solver.
@@ -142,7 +142,7 @@ Classes
       :returns: *None.*
 
 
-   .. py:method:: plot(*args: str) -> None
+   .. py:method:: plot(*args)
 
       Generates requested plots based on ``*args``.
 
@@ -165,17 +165,17 @@ Classes
       :returns: *None.*
 
 
-   .. py:method:: post() -> None
+   .. py:method:: post()
 
 
-   .. py:method:: report() -> None
+   .. py:method:: report()
 
       Prints the experiment details and solution success report.
 
       :returns: *None.*
 
 
-   .. py:method:: slice_and_save(savename: str, overwrite: bool = False) -> None
+   .. py:method:: save_sliced(savename, overwrite = False)
 
       Save a ``.npz`` file with all spatial, time, and state variables
       separated into 1D and 2D arrays. The keys are given below. The index
@@ -208,7 +208,7 @@ Classes
       :returns: *None.*
 
 
-   .. py:method:: solvetime(units: str = 's') -> str
+   .. py:method:: solvetime(units = 's')
 
       Print solve time (not including pre/post processing).
 
@@ -219,30 +219,10 @@ Classes
       :returns: **solvetime** (*str*) -- Time for Sundials IDA to solve problem in [units].
 
 
-   .. py:method:: to_dict() -> dict
+   .. py:method:: to_dict()
 
-      Output a dictionary with key/value pairs corresponding to the instance
-      attributes and values listed below.
-
-      :returns: **sol** (*dict*) -- Solution dictionary with the following key/value pairs:
-
-                =========== ========================================
-                Key         Value [units] (*type*)
-                =========== ========================================
-                t           solution times [s] (*1D array*)
-                y           solution variables [units] (*2D array*)
-                ydot        dy/dt derivatives [units/s] (*2D array*)
-                success     overall solver exit status (*bool*)
-                onroot      onroot solver exit status (*bool*)
-                message     solver exit message (*str*)
-                solvetime   solver integration time [s] (*float*)
-                =========== ========================================
-
-
-   .. py:method:: to_sliced_dict() -> dict
-
-      Creates a dict with all spatial, time, and state variables
-      separated into 1D and 2D arrays. The keys are given below.
+      Creates a dict with all spatial, time, and state variables separated
+      into 1D and 2D arrays. The keys are given below.
 
       ========= =======================================================
       Key       Value [units] (*type*)
@@ -265,7 +245,7 @@ Classes
 
 
 
-.. py:class:: CCSolution(sim: object, exp: dict)
+.. py:class:: CCSolution(sim, exp)
 
 
 
@@ -292,7 +272,7 @@ Classes
 
       :returns: **classname** (*str*) -- Name of current class.
 
-   .. py:method:: verify(plotflag: bool = False, rtol: float = 0.005, atol: float = 0.001) -> bool
+   .. py:method:: verify(plotflag = False, rtol = 0.005, atol = 0.001)
 
       Verifies the solution is mathematically consistent.
 
@@ -320,7 +300,7 @@ Classes
 
 
 
-.. py:class:: CPSolution(sim: object, exp: dict)
+.. py:class:: CPSolution(sim, exp)
 
 
 
@@ -347,7 +327,7 @@ Classes
 
       :returns: **classname** (*str*) -- Name of current class.
 
-   .. py:method:: verify(plotflag: bool = False, rtol: float = 0.005, atol: float = 0.001) -> bool
+   .. py:method:: verify(plotflag = False, rtol = 0.005, atol = 0.001)
 
       Verifies the solution is mathematically consistent.
 
@@ -375,7 +355,7 @@ Classes
 
 
 
-.. py:class:: CVSolution(sim: object, exp: dict)
+.. py:class:: CVSolution(sim, exp)
 
 
 
@@ -402,7 +382,7 @@ Classes
 
       :returns: **classname** (*str*) -- Name of current class.
 
-   .. py:method:: verify(plotflag: bool = False, rtol: float = 0.005, atol: float = 0.001) -> bool
+   .. py:method:: verify(plotflag = False, rtol = 0.005, atol = 0.001)
 
       Verifies the solution is mathematically consistent.
 

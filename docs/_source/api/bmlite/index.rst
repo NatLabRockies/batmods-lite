@@ -7,10 +7,14 @@
 
    .. rubric:: BatMods-lite
 
-   Provides:
+   Battery Analysis and Training Models for Optimization and Degradation Studies
+   (BATMODS) is a Python package with an API for pre-built battery models. The
+   original purpose of the package was to quickly generate synthetic data for
+   machine learning models to train with. However, the models are generally useful
+   for any battery simulation or analysis. BATMODS-lite includes the following:
 
-   1. A library and API for pre-built battery models
-   2. Kinetic/transport properties for common battery materials
+   1) A library and API for pre-built battery models
+   2) Kinetic/transport properties for common battery materials
 
    .. rubric:: How to use the documentation
 
@@ -40,6 +44,16 @@ Subpackages
    SPM/index.rst
    materials/index.rst
    plotutils/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   math/index.rst
+   mesh/index.rst
 
 
 Package Contents
@@ -137,7 +151,7 @@ Functions
      .. _SUNDIALS: https://sundials.readthedocs.io/
      .. _scikits-odes: https://bmcage.github.io/odes/dev/
 
-   .. py:method:: init_step(t0: float, y0: numpy.ndarray, yp0: numpy.ndarray) -> object
+   .. py:method:: init_step(t0, y0, yp0)
 
       Solve the ODE/DAE for a consistent initial condition at ``t = t0``.
 
@@ -151,7 +165,7 @@ Functions
       :returns: **idasol** (*NamedTuple*) -- Solution returned by SUNDIALS IDA integrator at ``t = t0``.
 
 
-   .. py:method:: solve(t_span: numpy.ndarray, y0: numpy.ndarray, yp0: numpy.ndarray) -> object
+   .. py:method:: solve(t_span, y0, yp0)
 
       Solve the ODE/DAE system and save the solution at each time in
       ``t_span``.
@@ -168,7 +182,7 @@ Functions
 
 
 
-.. py:function:: docs() -> None
+.. py:function:: docs()
 
    Opens a new tab in your browser with a locally run docs website.
 

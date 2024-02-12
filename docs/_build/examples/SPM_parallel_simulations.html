@@ -1,0 +1,544 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6. Parallel Simulations &#8212; BatMods-lite 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=96227a4f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/SPM_parallel_simulations';</script>
+    <script src="../_static/custom.js?v=e2d01366"></script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1. Making Inputs" href="P2D_templates.html" />
+    <link rel="prev" title="5. Root Functions" href="SPM_roots.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/light_notag.svg" class="logo__image only-light" alt="BatMods-lite 0.0.1 documentation - Home"/>
+    <script>document.write(`<img src="../_static/dark_notag.svg" class="logo__image only-dark" alt="BatMods-lite 0.0.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api/bmlite/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api/bmlite/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><!-- Added ids to keybindings for custom.js -->
+
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"
+         onfocus="removeKBD()"
+         onblur="addKBD()">
+  <span id="sb-kbd-span" class="search-button__kbd-shortcut"><kbd id="sb-kbd" class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>k</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Single Particle Model (SPM)</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="SPM_templates.html">1. Making Inputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SPM_constant_current.html">2. Constant Current</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SPM_constant_voltage.html">3. Constant Voltage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SPM_constant_power.html">4. Constant Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SPM_roots.html">5. Root Functions</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">6. Parallel Simulations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Pseudo-2D (P2D) Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="P2D_templates.html">1. Making Inputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="P2D_constant_current.html">2. Constant Current</a></li>
+<li class="toctree-l1"><a class="reference internal" href="P2D_constant_voltage.html">3. Constant Voltage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="P2D_constant_power.html">4. Constant Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="P2D_roots.html">5. Root Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="P2D_parallel_simulations.html">6. Parallel Simulations</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="parallel-simulations">
+<h1><span class="section-number">6. </span>Parallel Simulations<a class="headerlink" href="#parallel-simulations" title="Link to this heading">#</a></h1>
+<p>When it comes to training machine learning models, more data generally means better-performance. Consequently, quickly generating data is invaluable. In this tutorial, we’ll explore how to leverage parallel computing for data generation. The tutorial will focus on running the same experiment for simulations with different parameter sets.</p>
+<p>Please note that Jupyter Notebook is not an ideal IDE for parallel computing. While this tutorial is written in Jupyter Notebook for convenience, you will not be able to copy and run the following code blocks in an <code class="docutils literal notranslate"><span class="pre">.ipynb</span></code> file. The code blocks, including the output, for this tutorial were copied over from a script written in the <a class="reference external" href="https://www.spyder-ide.org/">Spyder IDE</a>.</p>
+<p>To start the tutorial, we will import the required modules. Note that we use packages from Python’s standard library. This means that you do not have to add any more dependencies to run BATMODS-lite code in parallel.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">bmlite</span> <span class="k">as</span> <span class="nn">bm</span>
+</pre></div>
+</div>
+<section id="setup-the-runner">
+<h2><span class="section-number">6.1. </span>Setup the Runner<a class="headerlink" href="#setup-the-runner" title="Link to this heading">#</a></h2>
+<p>Python’s multiprocessing pool is set up to operate on functions that only include one argument. Below, we create a wrapper function called <code class="docutils literal notranslate"><span class="pre">runner</span></code> that operates mainly on the <code class="docutils literal notranslate"><span class="pre">theta</span></code> argument. <code class="docutils literal notranslate"><span class="pre">theta</span></code> is a dictionary that maps model parameter names to their values. Despite the one-argument requirement, you can see that the function below also takes a second keywords argument <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> so we can pass some additional arguments to <code class="docutils literal notranslate"><span class="pre">runner</span></code>. We will use <code class="docutils literal notranslate"><span class="pre">partial</span></code> from <code class="docutils literal notranslate"><span class="pre">functools</span></code> below to address the second-argument issue.</p>
+<p>Inside the <code class="docutils literal notranslate"><span class="pre">runner</span></code> function, we extract the simulation object <code class="docutils literal notranslate"><span class="pre">sim</span></code> and experiment <code class="docutils literal notranslate"><span class="pre">exp</span></code> from the keyword arguments. We use <code class="docutils literal notranslate"><span class="pre">pop</span></code> to do this so that they are removed from the keywords dictionary as we extract them. That way, the remaining key/value pairs in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> can be passed to <code class="docutils literal notranslate"><span class="pre">run_CC</span></code> for the <code class="docutils literal notranslate"><span class="pre">IDASolver</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">for</span></code> loop within runner sets the model parameters from <code class="docutils literal notranslate"><span class="pre">theta</span></code>. After all of the parameters have been updated, we run <code class="docutils literal notranslate"><span class="pre">sim.pre()</span></code> to update the mesh/pointers/etc. just in case any of the updated paramters require re-running the pre-processor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">runner</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;sim&#39;</span><span class="p">)</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;exp&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">theta</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">pre</span><span class="p">()</span>
+
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run_CC</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sol</span>
+</pre></div>
+</div>
+</section>
+<section id="create-parameter-list">
+<h2><span class="section-number">6.2. </span>Create Parameter List<a class="headerlink" href="#create-parameter-list" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">bmlite.math</span></code> module includes a function <code class="docutils literal notranslate"><span class="pre">param_combinations</span></code> to help generate the <code class="docutils literal notranslate"><span class="pre">theta</span></code> values for the runner function above. The code below shows an example of how to use <code class="docutils literal notranslate"><span class="pre">param_combinations</span></code>. The inputs are a list of model parameter names (including their domain class) and value arrays for each parameter. In this case, we will vary the exchange current density and diffusion coefficient degradation factors for both electrodes. We will let each of these four parameters be either <span class="math notranslate nohighlight">\(0.1\)</span> or <span class="math notranslate nohighlight">\(10\)</span>., resulting in <span class="math notranslate nohighlight">\(2^4 = 16\)</span> total simulations. In this section of code, we also initialize the simulation and experiment and store them in a keywords dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">SPM</span><span class="o">.</span><span class="n">Simulation</span><span class="p">()</span>
+<span class="n">exp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;C_rate&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="s1">&#39;t_min&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span> <span class="s1">&#39;t_max&#39;</span><span class="p">:</span> <span class="mf">1350.</span><span class="p">,</span> <span class="s1">&#39;Nt&#39;</span><span class="p">:</span> <span class="mi">150</span><span class="p">}</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;an.i0_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;an.Ds_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;ca.i0_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;ca.Ds_deg&#39;</span><span class="p">]</span>
+
+<span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+    <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="n">theta_list</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">param_combinations</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+
+<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim</span>
+<span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;exp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exp</span>
+</pre></div>
+</div>
+<p>Since we are using the default simulation <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file, you will see the following output print to the console when you execute this code block. The message is a simple warning and can be ignored.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BATMODS</span> <span class="n">WARNING</span><span class="p">]</span>
+    <span class="n">SPM</span> <span class="n">Simulation</span><span class="p">:</span> <span class="n">Using</span> <span class="n">a</span> <span class="n">default</span> <span class="n">yaml</span>
+</pre></div>
+</div>
+</section>
+<section id="time-in-series">
+<h2><span class="section-number">6.3. </span>Time in Series<a class="headerlink" href="#time-in-series" title="Link to this heading">#</a></h2>
+<p>To compare our parallelization results to a baseline, we will run the <span class="math notranslate nohighlight">\(16\)</span> simulations in both series and in parallel. In the code below, we exercise each simulation in series, using the <code class="docutils literal notranslate"><span class="pre">time</span></code> module to track how long the data generation process takes. The simulation solutions are stored in a list named <code class="docutils literal notranslate"><span class="pre">series</span></code>. However, if you didn’t need to store all of the results, you could use <code class="docutils literal notranslate"><span class="pre">sol.save_sliced()</span></code> to save the results wihin the <code class="docutils literal notranslate"><span class="pre">for</span></code> loop rather than storing them in a list.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">series</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">theta_list</span><span class="p">:</span>
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">series</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;time_in_series: </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The results of this code block are shown below. You can see that the total simulation time took about <span class="math notranslate nohighlight">\(28\)</span> seconds, or roughtly <span class="math notranslate nohighlight">\(1.8\)</span> seconds per simulation. In the next section, we will show that running in parallel can dramatically reduce this time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">time_in_series</span><span class="p">:</span> <span class="mf">28.630</span> <span class="n">s</span>
+</pre></div>
+</div>
+</section>
+<section id="time-in-parallel">
+<h2><span class="section-number">6.4. </span>Time in Parallel<a class="headerlink" href="#time-in-parallel" title="Link to this heading">#</a></h2>
+<p>The code below shows how to call the <code class="docutils literal notranslate"><span class="pre">runner</span></code> function we set up at the top of the tutorial to run in parallel. Note two very important pieces of information as you examine this code block: (1) the code is wrapped in an <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">`__main__`:</span></code> statement. This is a requirement by the <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> package so that infite recursion does not occur, and (2) the <code class="docutils literal notranslate"><span class="pre">partial</span></code> function is used to create a new function called <code class="docutils literal notranslate"><span class="pre">process</span></code> that has the same arguments as <code class="docutils literal notranslate"><span class="pre">runner</span></code> (i.e., <code class="docutils literal notranslate"><span class="pre">theta</span></code>), but with the keywords arguments pre-specified. This is how we get around passing extra values to <code class="docutils literal notranslate"><span class="pre">runner</span></code> even though <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> requires single-argument functions.</p>
+<p>After setting up the <code class="docutils literal notranslate"><span class="pre">process</span></code> function wrapper, we determine the total number of cores on the computer by using <code class="docutils literal notranslate"><span class="pre">os.cpu_count()</span></code>. This is the maximum number of cores you can call, but you can also always use fewer. The machine that this code was run with has <span class="math notranslate nohighlight">\(12\)</span> total cores, and we used them all below. Generally speaking, using more cores for a small number of simulations run in parallel may actually take more time than running in series. However, if you are running tens, hundreds, or even thousands of simulations, more cores is generally better.</p>
+<p>As with the series runs, we will store the solutions from the parallel simulations in a list named <code class="docutils literal notranslate"><span class="pre">parallel</span></code>. The function <code class="docutils literal notranslate"><span class="pre">imap</span></code> from the multiprocessing pool will ensure that our solutions list will stay in the same order as the <code class="docutils literal notranslate"><span class="pre">theta_list</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="n">cpus</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+    
+    <span class="n">pool</span><span class="p">,</span> <span class="n">parallel</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">cpus</span><span class="p">),</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">theta_list</span><span class="p">):</span>
+        <span class="n">parallel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;time in parallel: </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Below you can see that the total time for the same <span class="math notranslate nohighlight">\(16\)</span> simulations in parallel required just under <span class="math notranslate nohighlight">\(12\)</span> seconds, or roughtly <span class="math notranslate nohighlight">\(0.7\)</span> seconds per simulation. This result shows that running in series took nearly <span class="math notranslate nohighlight">\(2.5\)</span>-times longer than exercising the same set of simulations in parallel. Of course, here we only ran the model <span class="math notranslate nohighlight">\(16\)</span> times so the time savings doesn’t seem like a lot. However, assuming the average time per simulation stayed about the same, this means that in a <span class="math notranslate nohighlight">\(12\)</span>-hour block we could get either <span class="math notranslate nohighlight">\(\approx 24,000\)</span> results in series or over <span class="math notranslate nohighlight">\(60,000\)</span> results in parallel given the same amount of time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">time_in_parallel</span><span class="p">:</span> <span class="mf">11.784</span> <span class="n">s</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-the-runner">6.1. Setup the Runner</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-parameter-list">6.2. Create Parameter List</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-in-series">6.3. Time in Series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-in-parallel">6.4. Time in Parallel</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, Corey R. Randall.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

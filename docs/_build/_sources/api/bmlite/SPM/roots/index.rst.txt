@@ -28,7 +28,7 @@ Classes
 
 
 
-.. py:class:: ILimits(I_low: float, I_high: float)
+.. py:class:: ILimits(I_low, I_high)
 
 
 
@@ -62,7 +62,7 @@ Classes
       :returns: **size** (*int*) -- The size of the events array in the root function.
 
 
-.. py:class:: VLimits(V_low: float, V_high: float)
+.. py:class:: VLimits(V_low, V_high)
 
 
 
