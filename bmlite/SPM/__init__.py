@@ -7,8 +7,8 @@ class, and run any available experiments using its "run" methods, e.g.
 processing, plotting, and saving methods.
 """
 
-from . import builder
 from . import dae
+from . import domains
 from . import roots
 from . import solutions
 from . import postutils
@@ -59,7 +59,7 @@ class Simulation(object):
 
         from ruamel.yaml import YAML
 
-        from .builder import Battery, Electrolyte, Electrode
+        from .domains import Battery, Electrolyte, Electrode
 
         if '.yaml' not in yamlfile:
             yamlfile += '.yaml'
@@ -128,22 +128,10 @@ class Simulation(object):
         self.an.update()
         self.ca.update()
 
-        # Make meshes
+        # Make meshes/pointers
         self.an.make_mesh()
-        self.ca.make_mesh()
-
-        # Make pointers
-        self.an.make_ptr()
-
-        self.ca.make_ptr()
-        for key, val in self.ca.ptr.items():
-            if 'shift' not in key and 'off' not in key:
-                self.ca.ptr[key] += self.an.ptr['shift']
-
-        self.el.make_ptr()
-        for key, val in self.el.ptr.items():
-            if 'shift' not in key and 'off' not in key:
-                self.el.ptr[key] += self.an.ptr['shift'] + self.ca.ptr['shift']
+        self.ca.make_mesh(pshift=self.an.ptr['shift'])
+        self.el.make_mesh(pshift=self.an.ptr['shift'] + self.ca.ptr['shift'])
 
         # Initialize potentials [V]
         self.an.phi_0 = 0.
@@ -164,8 +152,8 @@ class Simulation(object):
 
         # Determine the bandwidth
         # self.lband, self.uband, _ = bandwidth(self)
-        self.lband = self.el.ptr['phi_el'] - self.an.r_ptr('Li_ed')[-1]
-        self.uband = self.el.ptr['phi_el'] - self.an.r_ptr('Li_ed')[-1]
+        self.lband = self.el.ptr['phi_el'] - self.an.r_ptr['Li_ed'][-1]
+        self.uband = self.el.ptr['phi_el'] - self.an.r_ptr['Li_ed'][-1]
 
     def j_pattern(self) -> None:
         """

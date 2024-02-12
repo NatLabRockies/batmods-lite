@@ -81,7 +81,7 @@ class CPSolution(BaseSolution):
         an, sep, ca = sim.an, sim.sep, sim.ca
 
         P_ext = exp['P_ext']
-        P_mod = self.postvars['i_ext'] * self.y[:, ca.x_ptr('phi_ed')[-1]]
+        P_mod = self.postvars['i_ext'] * self.y[:, ca.x_ptr['phi_ed'][-1]]
         i_mod = self.postvars['i_ext']
         i_sum = np.tile(i_mod, (an.Nx + sep.Nx + ca.Nx, 1)).T
 

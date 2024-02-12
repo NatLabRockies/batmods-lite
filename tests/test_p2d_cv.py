@@ -7,13 +7,13 @@ from ruamel.yaml import YAML
 import matplotlib.pyplot as plt
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def sim():
     sim = bm.P2D.Simulation()
     return sim
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def exp():
     directory = os.path.dirname(__file__) + '/../bmlite/P2D/default_exps/'
     path = Path(directory + 'constant_voltage.yaml')
@@ -23,13 +23,13 @@ def exp():
     return exp
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def sol(sim, exp):
     sol = sim.run_CV(exp)
     return sol
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def rootsol(sim, exp):
     rootfn = bm.P2D.roots.ILimits(-0.45 * sim.bat.area, np.nan)
     rootsol = sim.run_CV(exp, rootfn=rootfn, nr_rootfns=rootfn.size)

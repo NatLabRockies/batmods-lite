@@ -3,7 +3,7 @@ import pytest
 import bmlite as bm
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def c():
     c = bm.Constants()
     return c

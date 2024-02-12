@@ -98,7 +98,12 @@ def _solid_phase_Li(sol: object) -> _ndarray:
 
     import numpy as np
 
+    from ..math import int_r
+
     an, ca = sol._sim.an, sol._sim.ca
+
+    an_sol = an.to_dict(sol)
+    ca_sol = ca.to_dict(sol)
 
     # Initial total solid-phase lithium [kmol/m^2]
     Li_ed_0 = an.x_0 * an.Li_max * an.eps_AM * an.thick \
@@ -112,14 +117,10 @@ def _solid_phase_Li(sol: object) -> _ndarray:
     Li_ca = np.zeros_like(sol.t)
 
     for i in range(sol.t.size):
-
-        Li_ed = sol.y[i, an.r_ptr('Li_ed')] * an.Li_max
         Li_an[i] = an.thick * an.eps_AM / V_an \
-                 * np.sum(4 * np.pi * an.r**2 * Li_ed * (an.rp - an.rm))
-
-        Li_ed = sol.y[i, ca.r_ptr('Li_ed')] * ca.Li_max
+                 * int_r(an.rm, an.rp, an_sol['cs'][i, :])
         Li_ca[i] = ca.thick * ca.eps_AM / V_ca \
-                 * np.sum(4 * np.pi * ca.r**2 * Li_ed * (ca.rp - ca.rm))
+                 * int_r(ca.rm, ca.rp, ca_sol['cs'][i, :])
 
     # Total solid-phase lithium [kmol/m^2] vs. time [s]
     Li_ed_t = Li_an + Li_ca
@@ -354,10 +355,10 @@ def intercalation(sol: object) -> None:
     ax[1].text(0.1, 0.1, 'Cathode particle', transform=ax[1].transAxes)
 
     for i, it in enumerate(t_inds):
-        Li_an = sol.y[it, an.r_ptr('Li_ed')]
+        Li_an = sol.y[it, an.r_ptr['Li_ed']]
         ax[0].plot(an.r * 1e6, Li_an, color=cmap(i))
 
-        Li_ca = sol.y[it, ca.r_ptr('Li_ed')]
+        Li_ca = sol.y[it, ca.r_ptr['Li_ed']]
         ax[1].plot(ca.r * 1e6, Li_ca, color=cmap(i))
 
     cb = plt.colorbar(sm, ax=ax[1], ticks=sol.t[t_inds])
@@ -402,7 +403,7 @@ def pixels(sol: object) -> None:
     # Li concentrations in anode [kmol/m^3]
     xlims = [an.rm[0] * 1e6, an.rp[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = sol.y[:, an.r_ptr('Li_ed')] * an.Li_max
+    z = sol.y[:, an.r_ptr['Li_ed']] * an.Li_max
 
     pixel(ax[0], xlims, ylims, z, r'[kmol/m$^3$]')
 
@@ -414,7 +415,7 @@ def pixels(sol: object) -> None:
     # Li concentrations in cathode [kmol/m^3]
     xlims = [ca.rm[0] * 1e6, ca.rp[-1] * 1e6]
     ylims = [sol.t.min(), sol.t.max()]
-    z = sol.y[:, ca.r_ptr('Li_ed')] * ca.Li_max
+    z = sol.y[:, ca.r_ptr['Li_ed']] * ca.Li_max
 
     pixel(ax[1], xlims, ylims, z, r'[kmol/m$^3$]')
 

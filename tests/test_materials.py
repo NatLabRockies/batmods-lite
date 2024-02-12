@@ -4,7 +4,7 @@ import numpy as np
 import bmlite as bm
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def args():
     alpha_a = 0.5
     alpha_c = 0.5

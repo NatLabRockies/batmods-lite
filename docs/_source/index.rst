@@ -1,6 +1,25 @@
-==========================
-BatMods-lite Documentation
-==========================
+.. raw:: html
+
+   <embed>
+     <img alt='BATMODS logo' class='onlight bg-transparent' src='_static/light.svg'
+      style='width: 75%; min-width: 250px; max-width: 500px;'>
+     <img alt='BATMODS logo' class='ondark bg-transparent' src='_static/dark.svg'
+      style='width: 75%; min-width: 250px; max-width: 500px;'>
+   </embed>
+
+=======
+Summary
+=======
+
+.. raw:: html
+
+   <p>
+   Battery Analysis and Training Models for Optimization and Degradation Studies
+   (BATMODS) is a Python package with an API for pre-built battery models. The 
+   original purpose of the package was to quickly generate synthetic data for
+   machine learning models to train with. However, the models are generally 
+   useful for any battery simulation or analysis.
+   </p>
 
 .. toctree:: 
    :caption: Examples

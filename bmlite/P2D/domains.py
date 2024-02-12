@@ -1,6 +1,6 @@
 """
-Battery Builder
----------------
+Domains Module
+--------------
 Contains classes to construct the battery for P2D simulations. Each class reads
 in keyword arguments that define parameters relevant to its specific domain.
 For example, the area and temperature are ``Battery`` level parameters because
@@ -23,13 +23,13 @@ class Battery(object):
             Keyword arguments to set the battery-level attributes. The required
             keys and descriptions are given below:
 
-            ====== =====================================================
+            ====== =================================================
             Key    Description [units] (type)
-            ====== =====================================================
+            ====== =================================================
             cap    nominal battery capacity [A*h] (*float*)
             temp   temperature [K] (*float*)
-            area   area normal to the current collectors [m^2] (*float*)
-            ====== =====================================================
+            area   area normal to current collectors [m^2] (*float*)
+            ====== =================================================
         """
 
         self.cap = kwargs.get('cap')
@@ -188,25 +188,25 @@ class Electrode(object):
             Keyword arguments to set the electrode attributes. The required
             keys and descriptions are given below:
 
-            ========= =========================================================
+            ========= ========================================================
             Key       Description [units] (type)
-            ========= =========================================================
+            ========= ========================================================
             Nx        number of ``x`` discretizations [-] (*int*)
             Nr        number of ``r`` discretizations [-] (*int*)
             thick     electrode thickness [m] (*float*)
             R_s       represenatative particle radius [m] (*float*)
             eps_el    electrolyte volume fraction [-] (*float*)
             eps_CBD   carbon binder domain volume fraction [-] (*float*)
-            p_sol     solids Bruggeman factor, ``eps_s**p_sol`` [-] (*float*)
-            p_liq     liquids Bruggeman factor, ``eps_el**p_liq`` [-] (*float*)
+            p_sol     solid Bruggeman factor, ``eps_s**p_sol`` [-] (*float*)
+            p_liq     liquid Bruggeman factor, ``eps_el**p_liq`` [-] (*float*)
             alpha_a   Butler-Volmer anodic symmetry factor [-] (*float*)
             alpha_c   Butler-Volmer cathodic symmetry factor [-] (*float*)
-            Li_max    max solid-phase lithium concentraion [kmol/m^3] (*float*)
-            x_0       initial solid-phase intercalation fraction [-] (*float*)
+            Li_max    max solid-phase Li concentraion [kmol/m^3] (*float*)
+            x_0       initial solid-phase intercalation [-] (*float*)
             i0_deg    ``i0`` degradation factor [-] (*float*)
             Ds_deg    ``Ds`` degradation factor [-] (*float*)
             material  class name from ``bmlite.materials`` [-] (*str*)
-            ========= =========================================================
+            ========= ========================================================
         """
 
         self.Nx = kwargs.get('Nx')
@@ -254,8 +254,8 @@ class Electrode(object):
         self.A_s = 3 * self.eps_AM / self.R_s
 
         ActiveMaterial = getattr(materials, self.material)
-        self._material = ActiveMaterial(
-            self.alpha_a, self.alpha_c, self.Li_max)
+        self._material = ActiveMaterial(self.alpha_a, self.alpha_c,
+                                        self.Li_max)
 
     def get_Ds(self, x: float | _ndarray, T: float) -> float | _ndarray:
         """
@@ -327,7 +327,7 @@ class Electrode(object):
 
         return self._material.get_Eeq(x, T)
 
-    def make_mesh(self) -> None:
+    def make_mesh(self, xshift: float = 0., pshift: int = 0) -> None:
         """
         Determines/sets the ``x`` locations for all of the "minus" interfaces
         ``xm``, "plus" interfaces ``xp``, and control volume centers ``x``
@@ -339,38 +339,32 @@ class Electrode(object):
         ``r`` based on the representative particle radius and ``Nr``
         discretization. At present, only a uniform mesh is supported.
 
+        Parameters
+        ----------
+        xshift : float, optional
+        pshift : int, optional
+
         Returns
         -------
         None.
 
-        Notes
-        -----
-        * "Minus" and "plus" interfaces represent the locations halfway between
-          two control volume centers.
-        * For a ``x`` control volume ``i``, ``xm_i < x_i`` and ``x_i < xp_i``.
-        * For a ``r`` control volume ``j``, ``rm_j < r_j`` and ``r_j < rp_j``.
+        See also
+        --------
+        batmods.mesh.x_ptr, batmods.mesh.xr_ptr, batmods.mesh.uniform_mesh
         """
 
-        import numpy as np
+        from ..mesh import x_ptr, xr_ptr, uniform_mesh
 
-        self.x = np.linspace(self.thick / self.Nx / 2,
-                             self.thick * (1 - 1 / self.Nx / 2), self.Nx)
+        # Mesh locations
+        self.xm, self.xp, self.x = uniform_mesh(self.thick, self.Nx, xshift)
+        self.rm, self.rp, self.r = uniform_mesh(self.R_s, self.Nr)
 
-        self.xm = np.hstack([0, 0.5 * (self.x[:-1] + self.x[1:])])
-        self.xp = np.hstack([self.xm[1:], self.thick])
-
-        self.r = np.linspace(self.R_s / self.Nr / 2,
-                             self.R_s * (1 - 1 / self.Nr / 2), self.Nr)
-
-        self.rm = np.hstack([0, 0.5 * (self.r[:-1] + self.r[1:])])
-        self.rp = np.hstack([self.rm[1:], self.R_s])
-
-    def make_ptr(self) -> None:
+        # Pointers
         # [[ptr_an], [ptr_sep], [ptr_ca]]
         # ptr_an and ptr_ca -> [[Li_ed(0->R_s)], phi_ed, Li_el, phi_el, ...]
 
         self.ptr = {}
-        self.ptr['Li_ed'] = 0
+        self.ptr['Li_ed'] = 0 + pshift
         self.ptr['r_off'] = 1
 
         self.ptr['phi_ed'] = self.ptr['Li_ed'] + self.Nr
@@ -380,20 +374,34 @@ class Electrode(object):
 
         self.ptr['shift'] = self.Nx * self.ptr['x_off']
 
+        x_ptr(self, ['phi_ed', 'Li_el', 'phi_el'])
+        xr_ptr(self, ['Li_ed'])
+
     def sv_0(self, el: object) -> _ndarray:
         import numpy as np
-
         return np.tile(np.hstack([self.x_0 * np.ones(self.Nr),
                                   self.phi_0, el.Li_0, el.phi_0]), self.Nx)
 
     def algidx(self) -> _ndarray:
         import numpy as np
+        return np.hstack([self.x_ptr['phi_ed'], self.x_ptr['phi_el']])
 
-        return np.hstack([self.x_ptr('phi_ed'), self.x_ptr('phi_el')])
+    def to_dict(self, sol: object) -> dict:
+        import numpy as np
 
-    def x_ptr(self, key: str, shift: int = 0) -> list[int]:
-        return [self.ptr[key] + i * self.ptr['x_off'] + shift
-                for i in range(self.Nx)]
+        ed_sol = {}
+        ed_sol['xs'] = np.zeros([sol.t.size, self.Nx, self.Nr])
+        for i in range(sol.t.size):
+            X_ed = sol.y[i, self.xr_ptr['Li_ed'].flatten()]
+            ed_sol['xs'][i, :, :] = X_ed.reshape([self.Nx, self.Nr])
+
+        ed_sol['cs'] = ed_sol['xs'] * self.Li_max
+
+        ed_sol['phis'] = sol.y[:, self.x_ptr['phi_ed']]
+        ed_sol['ce'] = sol.y[:, self.x_ptr['Li_el']]
+        ed_sol['phie'] = sol.y[:, self.x_ptr['phi_el']]
+
+        return ed_sol
 
 
 class Separator(object):
@@ -410,14 +418,14 @@ class Separator(object):
             Keyword arguments to set the separator attributes. The required
             keys and descriptions are given below:
 
-            ======== =========================================================
+            ======== ========================================================
             Key      Description [units] (type)
-            ======== =========================================================
-            Nx       Number of ``x`` discretizations [-] (*int*)
-            thick    Electrode thickness [m] (*float*)
-            eps_el   Electrolyte volume fraction [-] (*float*)
-            p_liq    Liquids Bruggeman factor, ``eps_el**p_liq`` [-] (*float*)
-            ======== =========================================================
+            ======== ========================================================
+            Nx       number of ``x`` discretizations [-] (*int*)
+            thick    electrode thickness [m] (*float*)
+            eps_el   electrolyte volume fraction [-] (*float*)
+            p_liq    liquid Bruggeman factor, ``eps_el**p_liq`` [-] (*float*)
+            ======== ========================================================
         """
 
         self.Nx = kwargs.get('Nx')
@@ -442,52 +450,55 @@ class Separator(object):
 
         self.eps_s = 1 - self.eps_el
 
-    def make_mesh(self) -> None:
+    def make_mesh(self, xshift: float = 0., pshift: int = 0) -> None:
         """
         Determines/sets the ``x`` locations for all of the "minus" interfaces
         ``xm``, "plus" interfaces ``xp``, and control volume centers ``x``
         based on the electrode thickness and ``Nx`` discretization. At present,
         only a uniform mesh is supported.
 
+        Parameters
+        ----------
+        xshift : float, optional
+        pshift : int, optional
+
         Returns
         -------
         None.
 
-        Notes
-        -----
-        * "Minus" and "plus" interfaces represent the locations halfway between
-          two control volume centers.
-        * For ``x`` control volume ``i``, ``xm_i < x_i`` and ``x_i < xp_i``.
+        See also
+        --------
+        batmods.mesh.x_ptr, batmods.mesh.xr_ptr, batmods.mesh.uniform_mesh
         """
 
-        import numpy as np
+        from ..mesh import x_ptr, uniform_mesh
 
-        self.x = np.linspace(self.thick / self.Nx / 2,
-                             self.thick * (1 - 1 / self.Nx / 2), self.Nx)
+        # Mesh locations
+        self.xm, self.xp, self.x = uniform_mesh(self.thick, self.Nx, xshift)
 
-        self.xm = np.hstack([0, 0.5 * (self.x[:-1] + self.x[1:])])
-        self.xp = np.hstack([self.xm[1:], self.thick])
-
-    def make_ptr(self) -> None:
+        # Pointers
         # [[ptr_an], Li_el, phi_el, ..., [ptr_ca]]
 
         self.ptr = {}
-        self.ptr['Li_el'] = 0
+        self.ptr['Li_el'] = 0 + pshift
         self.ptr['phi_el'] = self.ptr['Li_el'] + 1
         self.ptr['x_off'] = 2
 
         self.ptr['shift'] = self.Nx * self.ptr['x_off']
 
+        x_ptr(self, ['Li_el', 'phi_el'])
+
     def sv_0(self, el: object) -> _ndarray:
         import numpy as np
-
         return np.tile([el.Li_0, el.phi_0], self.Nx)
 
     def algidx(self) -> _ndarray:
-        import numpy as np
+        return self.x_ptr['phi_el']
 
-        return np.array(self.x_ptr('phi_el'))
+    def to_dict(self, sol: object) -> dict:
 
-    def x_ptr(self, key: str, shift: int = 0) -> list[int]:
-        return [self.ptr[key] + i * self.ptr['x_off'] + shift
-                for i in range(self.Nx)]
+        sep_sol = {}
+        sep_sol['ce'] = sol.y[:, self.x_ptr['Li_el']]
+        sep_sol['phie'] = sol.y[:, self.x_ptr['phi_el']]
+
+        return sep_sol

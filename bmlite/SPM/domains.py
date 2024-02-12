@@ -1,6 +1,6 @@
 """
-Battery Builder
----------------
+Domains Module
+--------------
 Contains classes to construct the battery for P2D simulations. Each class reads
 in keyword arguments that define parameters relevant to its specific domain.
 For example, the area and temperature are ``Battery`` level parameters because
@@ -82,23 +82,28 @@ class Electrolyte(object):
         """
         pass
 
-    def make_ptr(self) -> None:
+    def make_mesh(self, pshift: int = 0) -> None:
         # [[ptr_an], [ptr_ca], phi_el]
 
         self.ptr = {}
-        self.ptr['phi_el'] = 0
+        self.ptr['phi_el'] = 0 + pshift
 
         self.ptr['shift'] = 1
 
     def sv_0(self) -> _ndarray:
         import numpy as np
-
         return np.array([self.phi_0])
 
     def algidx(self) -> _ndarray:
         import numpy as np
-
         return np.hstack([self.ptr['phi_el']])
+
+    def to_dict(self, sol) -> dict:
+
+        el_sol = {}
+        el_sol['phie'] = sol.y[:, self.ptr['phi_el']]
+
+        return el_sol
 
 
 class Electrode(object):
@@ -242,53 +247,58 @@ class Electrode(object):
 
         return self._material.get_Eeq(x, T)
 
-    def make_mesh(self):
+    def make_mesh(self, pshift: int = 0):
         """
         Determines/sets the ``r`` locations for all of the "minus" interfaces
         ``rm``, "plus" interfaces ``rp``, and control volume centers ``r``
         based on the representative particle radius and ``Nr`` discretization.
         At present, only a uniform mesh is supported.
 
+        Parameters
+        ----------
+        pshift : int, optional
+
         Returns
         -------
         None.
 
-        Notes
-        -----
-        * "Minus" and "plus" interfaces represent the locations halfway between
-          two control volume centers.
-        * For a ``r`` control volume ``j``, ``rm_j < r_j`` and ``r_j < rp_j``.
+        See also
+        --------
+        batmods.mesh.r_ptr, batmods.mesh.uniform_mesh
         """
 
-        import numpy as np
+        from ..mesh import r_ptr, uniform_mesh
 
-        self.r = np.linspace(self.R_s / self.Nr / 2,
-                             self.R_s * (1 - 1 / self.Nr / 2), self.Nr)
+        # Mesh locations
+        self.rm, self.rp, self.r = uniform_mesh(self.R_s, self.Nr)
 
-        self.rm = np.hstack([0, 0.5 * (self.r[:-1] + self.r[1:])])
-        self.rp = np.hstack([self.rm[1:], self.R_s])
-
-    def make_ptr(self):
+        # Pointers
         # [[ptr_an], [ptr_ca], phi_el]
         # ptr_an and ptr_ca -> [[Li_ed(0->R_s)], phi_ed]
 
         self.ptr = {}
-        self.ptr['Li_ed'] = 0
+        self.ptr['Li_ed'] = 0 + pshift
         self.ptr['r_off'] = 1
 
-        self.ptr['phi_ed'] = self.Nr
+        self.ptr['phi_ed'] = self.ptr['Li_ed'] + self.Nr
 
         self.ptr['shift'] = self.Nr + 1
 
+        r_ptr(self, ['Li_ed'])
+
     def sv_0(self):
         import numpy as np
-
         return np.hstack([self.x_0 * np.ones(self.Nr), self.phi_0])
 
     def algidx(self):
         import numpy as np
-
         return np.array([self.ptr['phi_ed']])
 
-    def r_ptr(self, key):
-        return [self.ptr[key] + i * self.ptr['r_off'] for i in range(self.Nr)]
+    def to_dict(self, sol: object) -> dict:
+
+        ed_sol = {}
+        ed_sol['phis'] = sol.y[:, self.ptr['phi_ed']]
+        ed_sol['xs'] = sol.y[:, self.r_ptr['Li_ed']]
+        ed_sol['cs'] = ed_sol['xs'] * self.Li_max
+
+        return ed_sol

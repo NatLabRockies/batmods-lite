@@ -4,7 +4,7 @@ import bmlite as bm
 import matplotlib.pyplot as plt
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def sim():
     sim = bm.SPM.Simulation()
     return sim
