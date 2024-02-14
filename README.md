@@ -19,11 +19,11 @@
 ## Summary
 Battery Analysis and Training Models for Optimization and Degradation Studies (BATMODS) is a Python package with an API for pre-built battery models. The original purpose of the package was to quickly generate synthetic data for machine learning models to train with. However, the models are generally useful for any battery simulations or analysis. BATMODS-lite includes the following: 
 
-1) A library and API for pre-built battery models
+1) A libary and API for pre-built battery models
 2) Kinetic/transport properties for common battery materials
 
 ## Installing
-We recommmmend using [Anaconda](https://www.anaconda.com/download) to create and manage your Python virtual environments. The following directions assume you are using Anaconda. 
+We recommend using [Anaconda](https://www.anaconda.com/download) to create and manage your Python virtual environments. The following directions assume you are using Anaconda. 
 
 After downloading or cloning the BATMODS-lite repo files onto your local machine, open Anaconda Prompt (Windows) or Terminal (MacOS/Linux) and run the following to: (1) create an environment named "batmods," (2) activate your new environment, (3) install scikits.odes, and (4) install BATMODS-lite. 
 
