@@ -21,7 +21,7 @@ on:
 
 jobs:
   lint:
-    name: (${{ matrix.python-version }}, ${{ matrix.os }})
+    name: (Lint ${{ matrix.python-version }}, ${{ matrix.os }})
 
     runs-on: ${{ matrix.os }}
 
@@ -46,7 +46,7 @@ jobs:
           codespell --config .github/linters/.codespellrc
 
   tests:
-    name: (${{ matrix.python-version }}, ${{ matrix.os }})
+    name: (Test ${{ matrix.python-version }}, ${{ matrix.os }})
 
     runs-on: ${{ matrix.os }}
 
