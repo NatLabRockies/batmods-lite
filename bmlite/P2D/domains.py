@@ -214,9 +214,9 @@ class Electrode(object):
         self.Nr = kwargs.get('Nr')
         self.thick = kwargs.get('thick')
         self.R_s = kwargs.get('R_s')
+        self.eps_s = kwargs.get('eps_s')
         self.eps_el = kwargs.get('eps_el')
         self.eps_CBD = kwargs.get('eps_CBD')
-        self.eps_void = kwargs.get('eps_void')
         self.p_sol = kwargs.get('p_sol')
         self.p_liq = kwargs.get('p_liq')
         self.alpha_a = kwargs.get('alpha_a')
@@ -234,14 +234,14 @@ class Electrode(object):
         Updates any secondary/dependent parameters. For the ``Electrode``
         class, this initializes the material class, and sets the following:
 
-        * Solid-phase volume fraction [-]:
-            ``eps_s = 1 - eps_el``
+        * Void-phase volume fraction [-]:
+            ``eps_void = 1 - eps_s - eps_el``
         * Activate material volume fraction [-]:
-            ``eps_AM = 1 - eps_el - eps_void - eps_CBD``
+            ``eps_AM = eps_s - eps_CBD``
         * Solid-phase conductivity [S/m]:
-            ``sigma_s = 10*eps_s``
+            ``sigma_s = 10 * eps_s``
         * Specific particle surface area [m^2/m^3]:
-            ``A_s = eps_AM / R_s``
+            ``A_s = 3 * eps_AM / R_s``
 
         Returns
         -------
@@ -250,10 +250,10 @@ class Electrode(object):
 
         from .. import materials
 
-        self.eps_s = 1 - self.eps_el
-        self.eps_AM = 1 - self.eps_el - self.eps_void - self.eps_CBD
-        self.sigma_s = 10 * self.eps_s
-        self.A_s = 3 * self.eps_AM / self.R_s
+        self.eps_void = 1. - self.eps_s - self.eps_el
+        self.eps_AM = self.eps_s - self.eps_CBD
+        self.sigma_s = 10. * self.eps_s
+        self.A_s = 3. * self.eps_AM / self.R_s
 
         ActiveMaterial = getattr(materials, self.material)
         self._material = ActiveMaterial(self.alpha_a, self.alpha_c,

@@ -19,7 +19,7 @@ class Simulation(object):
     __slots__ = ['_yamlfile', '_yamlpath', '_flags', 'bat', 'el', 'an', 'ca',
                  'sv_0', 'svdot_0', 'lband', 'uband', 'algidx']
 
-    def __init__(self, yamlfile: str = 'default_SPM') -> None:
+    def __init__(self, yamlfile: str = 'graphite_nmc532') -> None:
         """
         Make a SPM simulation capable of running various experiments.
 
@@ -68,7 +68,7 @@ class Simulation(object):
         if yamlfile in defaults:
             path = os.path.dirname(__file__) + '/default_sims/' + yamlfile
             print('\n[BatMods WARNING]\n'
-                  '\tSPM Simulation: Using a default yaml\n')
+                  f'\tSPM Simulation: Using default {yamlfile}\n')
             yamlpath = Path(path)
 
         elif os.path.exists(yamlfile):

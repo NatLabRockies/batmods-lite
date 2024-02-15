@@ -35,8 +35,8 @@ def test_copy(sim):
 def test_templates():
     bm.SPM.templates()
     bm.SPM.templates(0)
-    bm.SPM.templates('default_SPM')
-    bm.SPM.templates('default_SPM.yaml')
+    bm.SPM.templates('graphite_nmc532')
+    bm.SPM.templates('graphite_nmc532.yaml')
     bm.SPM.templates(exp=0)
     bm.SPM.templates(exp='constant_current')
     bm.SPM.templates(exp='constant_current.yaml')

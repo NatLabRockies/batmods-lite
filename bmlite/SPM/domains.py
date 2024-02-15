@@ -143,9 +143,9 @@ class Electrode(object):
         self.Nr = kwargs.get('Nr')
         self.thick = kwargs.get('thick')
         self.R_s = kwargs.get('R_s')
+        self.eps_s = kwargs.get('eps_s')
         self.eps_el = kwargs.get('eps_el')
         self.eps_CBD = kwargs.get('eps_CBD')
-        self.eps_void = kwargs.get('eps_void')
         self.alpha_a = kwargs.get('alpha_a')
         self.alpha_c = kwargs.get('alpha_c')
         self.Li_max = kwargs.get('Li_max')
@@ -161,12 +161,12 @@ class Electrode(object):
         Updates any secondary/dependent parameters. For the ``Electrode``
         class, this initializes the material class, and sets the following:
 
-        * Solid-phase volume fraction [-]:
-            ``eps_s = 1 - eps_el``
+        * Void-phase volume fraction [-]:
+            ``eps_void = 1 - eps_s - eps_el``
         * Activate material volume fraction [-]:
-            ``eps_AM = 1 - eps_el - eps_void - eps_CBD``
+            ``eps_AM = eps_s - eps_CBD``
         * Specific particle surface area [m^2/m^3]:
-            ``A_s = eps_AM / R_s``
+            ``A_s = 3 * eps_AM / R_s``
 
         Returns
         -------
@@ -175,9 +175,12 @@ class Electrode(object):
 
         from .. import materials
 
-        self.eps_s = 1 - self.eps_el
-        self.eps_AM = 1 - self.eps_el - self.eps_void - self.eps_CBD
-        self.A_s = 3 * self.eps_AM / self.R_s
+        self.eps_void = 1. - self.eps_s - self.eps_el
+        self.eps_AM = self.eps_s - self.eps_CBD
+        self.A_s = 3. * self.eps_AM / self.R_s
+
+        if self.eps_void < 0.:
+            raise ValueError('eps_s + eps_el > 1.0')
 
         Material = getattr(materials, self.material)
         self._material = Material(self.alpha_a, self.alpha_c, self.Li_max)

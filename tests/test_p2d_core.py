@@ -35,8 +35,8 @@ def test_copy(sim):
 def test_templates():
     bm.P2D.templates()
     bm.P2D.templates(0)
-    bm.P2D.templates('default_P2D')
-    bm.P2D.templates('default_P2D.yaml')
+    bm.P2D.templates('graphite_nmc532')
+    bm.P2D.templates('graphite_nmc532.yaml')
     bm.P2D.templates(exp=0)
     bm.P2D.templates(exp='constant_current')
     bm.P2D.templates(exp='constant_current.yaml')
