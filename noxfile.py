@@ -31,6 +31,7 @@ def run_flake8(session: nox.Session) -> None:
     """
 
     session.run('pip', 'install', '--upgrade', '--quiet', 'flake8')
+    session.run('pip', 'install', '--upgrade', '--quiet', 'autopep8')
 
     if 'format' in session.posargs:
         session.run('autopep8', '.', '--in-place', '--recursive',
@@ -89,10 +90,13 @@ def run_pytest(session: nox.Session) -> None:
 
     """
 
+    import bmlite as bm
+    source_files = os.path.dirname(bm.__file__)
+
     if 'no-reports' in session.posargs:
         command = [
             'pytest',
-            '--cov=src/bmlite',
+            f'--cov={source_files}',  # works for editable and site-packages
             'tests/',
         ]
     else:
