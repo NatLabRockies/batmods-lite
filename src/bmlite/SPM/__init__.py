@@ -13,6 +13,16 @@ from . import roots
 from . import solutions
 from . import postutils
 
+__all__ = [
+    'dae',
+    'domains',
+    'roots',
+    'solutions',
+    'postutils',
+    'Simulation',
+    'templates',
+]
+
 
 class Simulation(object):
 
@@ -139,7 +149,7 @@ class Simulation(object):
         self.el.phi_0 = -self.an.get_Eeq(self.an.x_0, self.bat.temp)
 
         self.ca.phi_0 = self.ca.get_Eeq(self.ca.x_0, self.bat.temp) \
-                      - self.an.get_Eeq(self.an.x_0, self.bat.temp)
+            - self.an.get_Eeq(self.an.x_0, self.bat.temp)
 
         # Initialize sv and svdot
         self.sv_0 = np.hstack([self.an.sv_0(), self.ca.sv_0(), self.el.sv_0()])
@@ -148,7 +158,7 @@ class Simulation(object):
 
         # Algebraic indices
         self.algidx = list(self.an.algidx()) + list(self.ca.algidx()) \
-                    + list(self.el.algidx())
+            + list(self.el.algidx())
 
         # Determine the bandwidth
         # self.lband, self.uband, _ = bandwidth(self)

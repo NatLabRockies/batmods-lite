@@ -1,9 +1,9 @@
 from ._base_solution import BaseSolution
 
 
-class CPSolution(BaseSolution):
+class CVSolution(BaseSolution):
     """
-    Constant power solution for P2D simulations.
+    Constant voltage solution for P2D simulations.
 
     Base: :class:`~bmlite.P2D.solutions.BaseSolution`
     """
@@ -23,15 +23,15 @@ class CPSolution(BaseSolution):
         classname : str
             Name of current class.
         """
-        return 'CPSolution'
+        return 'CVSolution'
 
     def verify(self, plotflag: bool = False, rtol: float = 5e-3,
                atol: float = 1e-3) -> bool:
         """
         Verifies the solution is mathematically consistent.
 
-        Specifically, for a constant power experiment, this method checks
-        that the calculated power was within tolerance of the boundary
+        Specifically, for a constant voltage experiment, this method checks
+        that the calculated voltage was within tolerance of the boundary
         condition. In addition, this method checks the anodic and cathodic
         Faradaic currents against the current at each time step, the
         through-current in each control volume, and the Li-ion and solid-phase
@@ -69,7 +69,7 @@ class CPSolution(BaseSolution):
 
         from ... import Constants
         from ...plotutils import format_ticks, show
-        from ..postutils import _liquid_phase_Li, _solid_phase_Li, power
+        from ..postutils import _liquid_phase_Li, _solid_phase_Li, voltage
 
         c = Constants()
 
@@ -80,14 +80,14 @@ class CPSolution(BaseSolution):
 
         an, sep, ca = sim.an, sim.sep, sim.ca
 
-        P_ext = exp['P_ext']
-        P_mod = self.postvars['i_ext'] * self.y[:, ca.x_ptr['phi_ed'][-1]]
+        V_ext = exp['V_ext']
+        V_mod = self.y[:, ca.x_ptr['phi_ed'][-1]]
         i_mod = self.postvars['i_ext']
         i_sum = np.tile(i_mod, (an.Nx + sep.Nx + ca.Nx, 1)).T
 
-        i_an = np.sum(  self.postvars['sdot_an'] * an.A_s
+        i_an = np.sum(self.postvars['sdot_an'] * an.A_s
                       * (an.xp - an.xm) * c.F, axis=1)
-        i_ca = np.sum(  self.postvars['sdot_ca'] * ca.A_s
+        i_ca = np.sum(self.postvars['sdot_ca'] * ca.A_s
                       * (ca.xp - ca.xm) * c.F, axis=1)
 
         sum_ip = self.postvars['sum_ip']
@@ -96,7 +96,7 @@ class CPSolution(BaseSolution):
         Li_ed_0, Li_ed_t = _solid_phase_Li(self)
 
         checks = []
-        checks.append(np.allclose(P_ext, P_mod, rtol=rtol, atol=atol))
+        checks.append(np.allclose(V_ext, V_mod, rtol=rtol, atol=atol))
         checks.append(np.allclose(i_mod, -i_an, rtol=rtol, atol=atol))
         checks.append(np.allclose(i_mod, i_ca, rtol=rtol, atol=atol))
         checks.append(np.allclose(i_sum, -sum_ip, rtol=rtol, atol=atol))
@@ -107,10 +107,10 @@ class CPSolution(BaseSolution):
             fig, ax = plt.subplots(nrows=3, ncols=3, figsize=[12, 9],
                                    layout='constrained')
 
-            power(self, ax[0, 0])
+            voltage(self, ax[0, 0])
 
-            if P_mod.mean() != 0.:
-                ylims = np.array([0.995 * P_mod.mean(), 1.005 * P_mod.mean()])
+            if V_mod.mean() != 0.:
+                ylims = np.array([0.995 * V_mod.mean(), 1.005 * V_mod.mean()])
                 ax[0, 0].set_ylim([min(ylims), max(ylims)])
 
             # Faradaic currents

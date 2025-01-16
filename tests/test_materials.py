@@ -1,5 +1,6 @@
-import os, pytest
+import os
 
+import pytest
 import numpy as np
 import bmlite as bm
 

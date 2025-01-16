@@ -28,7 +28,7 @@ key). To view the type hints and brief descriptions, type an open parenthesis
 """
 
 from numpy import ndarray as _ndarray
-from scikits.odes import dae as _DAE
+from scikits_odes_sundials.ida import IDA as _IDA
 
 from . import math
 from . import mesh
@@ -36,6 +36,19 @@ from . import materials
 from . import P2D
 from . import plotutils
 from . import SPM
+
+__version__ = '0.0.1'
+
+__all__ = [
+    'math',
+    'mesh',
+    'materials',
+    'P2D',
+    'plotutils',
+    'SPM',
+    'Constants',
+    'IDASolver',
+]
 
 
 class Constants(object):
@@ -66,7 +79,7 @@ class Constants(object):
         return self._R
 
 
-class IDASolver(object):
+class IDASolver:
     """
     An IDA solver defined by a residuals function.
 
@@ -121,7 +134,7 @@ class IDASolver(object):
       .. _scikits-odes: https://bmcage.github.io/odes/dev/
     """
 
-    __slots__ = ['_integrator']
+    __slots__ = ('_IDA')
 
     def __init__(self, residuals, **kwargs) -> None:
 
@@ -147,7 +160,7 @@ class IDASolver(object):
         # Collect new defaults and any extra user kwargs
         options = {**options, **kwargs}
 
-        _DAE.__init__(self, 'ida', residuals, **options)
+        self._IDA = _IDA(residuals, **options)
 
     def solve(self, t_span: _ndarray, y0: _ndarray, yp0: _ndarray) -> object:
         """
@@ -172,7 +185,7 @@ class IDASolver(object):
             Solution returned by SUNDIALS IDA integrator over ``t_span``.
         """
 
-        idasol = _DAE.solve(self, t_span, y0, yp0)
+        idasol = self._IDA.solve(t_span, y0, yp0)
 
         return idasol
 
@@ -197,25 +210,9 @@ class IDASolver(object):
             Solution returned by SUNDIALS IDA integrator at ``t = t0``.
         """
 
-        idasol = _DAE.init_step(self, t0, y0, yp0)
+        idasol = self._IDA.init_step(t0, y0, yp0)
 
         return idasol
-
-
-def docs() -> None:
-    """
-    Opens a new tab in your browser with a locally run docs website.
-
-    Returns
-    -------
-    None.
-    """
-
-    import os, webbrowser
-
-    sitepath = os.path.dirname(__file__) + '/../docs/_build/index.html'
-
-    webbrowser.open_new_tab('file://' + os.path.realpath(sitepath))
 
 
 def _templates(model__file__: str, model_name: str, sim: str | int = None,
@@ -246,7 +243,8 @@ def _templates(model__file__: str, model_name: str, sim: str | int = None,
     None.
     """
 
-    import os, json
+    import os
+    import json
     from pathlib import Path
 
     from ruamel.yaml import YAML
@@ -292,6 +290,3 @@ def _templates(model__file__: str, model_name: str, sim: str | int = None,
         print('\n' + '=' * 30 + '\n' + expfile + '\n' + '=' * 30)
         expdict = yaml.load(Path(dirname + '/default_exps/' + expfile))
         print('exp = ' + json.dumps(expdict, indent=4))
-
-
-__version__ = '0.0.1'

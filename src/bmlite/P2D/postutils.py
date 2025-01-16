@@ -41,7 +41,7 @@ def post(sol: object) -> dict:
     """
 
     import numpy as np
-    from scipy.integrate import cumtrapz
+    from scipy.integrate import cumulative_trapezoid
 
     from .dae import residuals
 
@@ -81,7 +81,7 @@ def post(sol: object) -> dict:
     sim._flags['post'] = False
 
     # Areal capacity [A*h/m^2]
-    cap_m2 = np.abs(np.hstack([0., cumtrapz(i_ext, sol.t / 3600.)]))
+    cap_m2 = np.abs(np.hstack([0., cumulative_trapezoid(i_ext, sol.t / 3600.)]))
 
     # Store outputs
     postvars = {}
@@ -165,7 +165,7 @@ def _solid_phase_Li(sol: object) -> _ndarray:
 
     # Initial total solid-phase lithium [kmol/m^2]
     Li_ed_0 = an.x_0 * an.Li_max * an.eps_AM * an.thick \
-            + ca.x_0 * ca.Li_max * ca.eps_AM * ca.thick
+        + ca.x_0 * ca.Li_max * ca.eps_AM * ca.thick
 
     # Anode/cathode lithium [kmol/m^2] vs. time [s]
     V_an = 4 * np.pi * an.R_s**3 / 3

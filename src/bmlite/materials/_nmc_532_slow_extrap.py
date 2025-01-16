@@ -1,14 +1,17 @@
 from numpy import ndarray as _ndarray
 
 
-class GraphiteSlow(object):
+class NMC532SlowExtrap(object):
 
     def __init__(self, alpha_a: float, alpha_c: float, Li_max: float) -> None:
         """
-        Computationally slow Graphite kinetic and transport properties.
+        Computationally slow NMC532 kinetic and transport properties.
 
-        Differs from ``GraphiteFast`` because the equilibrium potential is
+        Differs from ``NMC532Fast`` because the equilibrium potential is
         piecewise here, making it more accurate, but slower to evaluate.
+
+        Differs from ``NMC532Slow`` because the equilibrium potential is
+        extrapolated to 3V when x=1 and linearly for x<0.34
 
         Parameters
         ----------
@@ -31,7 +34,7 @@ class GraphiteSlow(object):
         self.alpha_c = alpha_c
         self.Li_max = Li_max
 
-        csvfile = os.path.dirname(__file__) + '/data/graphite_ocv.csv'
+        csvfile = os.path.dirname(__file__) + '/data/nmc532_ocv_extrap.csv'
         df = pd.read_csv(csvfile).sort_values(by='x')
 
         self.x_min = df['x'].min()
@@ -63,10 +66,22 @@ class GraphiteSlow(object):
 
         c = Constants()
 
-        Ds = 3e-14 * np.exp(-30e6 / c.R * (1 / T - 1 / 303.15))
+        A = np.array([
+            -2.509010843479270e+2,
+             2.391026725259970e+3,
+            -4.868420267611360e+3,
+            -8.331104102921070e+1,
+             1.057636028329000e+4,
+            -1.268324548348120e+4,
+             5.016272167775530e+3,
+             9.824896659649480e+2,
+            -1.502439339070900e+3,
+             4.723709304247700e+2,
+            -6.526092046397090e+1,
+        ])
 
-        if np.atleast_1d(x).size > 1:
-            Ds = Ds * np.ones_like(x)
+        Ds = np.exp(-30e6/c.R * (1./T - 1./303.15)) \
+           * 2.25 * 10.0**(np.polyval(A, x))
 
         return Ds
 
@@ -102,9 +117,17 @@ class GraphiteSlow(object):
 
         c = Constants()
 
-        i0 = 2.5 * 0.27 * np.exp(-30e6 / c.R * (1 / T - 1 / 303.15)) \
-           * C_Li**self.alpha_a * (self.Li_max * x)**self.alpha_c \
-           * (self.Li_max - self.Li_max * x)**self.alpha_a
+        A = np.array([
+             1.650452829641290e+1,
+            -7.523567141488800e+1,
+             1.240524690073040e+2,
+            -9.416571081287610e+1,
+             3.249768821737960e+1,
+            -3.585290065824760e+0,
+        ])
+
+        i0 = 9.*(C_Li/1.2)**self.alpha_a * np.polyval(A, x) \
+           * np.exp(-30e6/c.R * (1./T - 1./303.15))
 
         return i0
 
@@ -126,22 +149,6 @@ class GraphiteSlow(object):
         Eeq : float | 1D array
             Equilibrium potential [V].
 
-        Raises
-        ------
-        ValueError :
-            x is out of bounds [x_min, x_max].
         """
-
-        import numpy as np
-
-        if isinstance(x, float):
-            if x < self.x_min or x > self.x_max:
-                raise ValueError(f'x is out of bounds [{self.x_min},'
-                                 f' {self.x_max}]')
-
-        if not isinstance(x, float):
-            if np.any(x < self.x_min) or np.any(x > self.x_max):
-                raise ValueError(f'x is out of bounds [{self.x_min},'
-                                 f' {self.x_max}]')
 
         return self._Eeq_spline(x)

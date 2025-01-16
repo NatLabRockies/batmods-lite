@@ -16,7 +16,7 @@ def test_simulation(sim):
 
 def test_fake_yaml():
     with pytest.raises(FileNotFoundError):
-        sim = bm.SPM.Simulation('fake.yaml')
+        _ = bm.SPM.Simulation('fake.yaml')
 
 
 def test_j_pattern(sim):

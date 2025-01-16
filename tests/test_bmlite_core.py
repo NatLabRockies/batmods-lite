@@ -30,8 +30,3 @@ def test_constants_faraday(c):
 
 def test_constants_idealgas(c):
     assert c.R == 8.3145e3
-
-
-def test_docs():
-    bm.docs()
-    assert True

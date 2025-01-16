@@ -226,8 +226,8 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     ln_Li = np.hstack([ln_Li_an, ln_Li_sep, ln_Li_ca])
 
     ip_io = -k_eff * (phi_el[1:] - phi_el[:-1]) / (x[1:] - x[:-1]) \
-          - 2 * k_eff * c.R * T / c.F * (1 + gam_b[1:-1]) * (t0_b[1:-1] - 1) \
-              * (ln_Li[1:] - ln_Li[:-1]) / (x[1:] - x[:-1])
+        - 2 * k_eff * c.R * T / c.F * (1 + gam_b[1:-1]) * (t0_b[1:-1] - 1) \
+        * (ln_Li[1:] - ln_Li[:-1]) / (x[1:] - x[:-1])
 
     Np_io = D_eff * (Li_el[1:] - Li_el[:-1]) / (x[1:] - x[:-1])
 
@@ -237,22 +237,22 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     eta = phi_an - phi_el_an - an.get_Eeq(Li_an[:, -1] / an.Li_max, T)
 
     i0 = an.get_i0(Li_an[:, -1] / an.Li_max, Li_el_an, T)
-    sdot_an = i0 / c.F * (  np.exp( an.alpha_a * c.F * eta / c.R / T)
-                          - np.exp(-an.alpha_c * c.F * eta / c.R / T) )
+    sdot_an = i0 / c.F * (np.exp(an.alpha_a * c.F * eta / c.R / T)
+                          - np.exp(-an.alpha_c * c.F * eta / c.R / T))
 
     # Cathode overpotentials and Li+ productions
     eta = phi_ca - phi_el_ca - ca.get_Eeq(Li_ca[:, -1] / ca.Li_max, T)
 
     i0 = ca.get_i0(Li_ca[:, -1] / ca.Li_max, Li_el_ca, T)
-    sdot_ca = i0 / c.F * (  np.exp( ca.alpha_a * c.F * eta / c.R / T)
-                          - np.exp(-ca.alpha_c * c.F * eta / c.R / T) )
+    sdot_ca = i0 / c.F * (np.exp(ca.alpha_a * c.F * eta / c.R / T)
+                          - np.exp(-ca.alpha_c * c.F * eta / c.R / T))
 
     # Boundary condition ------------------------------------------------------
 
     # External current [A/m^2]
     exp['i_ext'] = sdot_ca[-1] * ca.A_s * c.F * (ca.xp[-1] - ca.xm[-1]) \
-                 + ca.sigma_s * ca.eps_s**ca.p_sol \
-                     * (phi_ca[-1] - phi_ca[-2]) / (ca.x[-1] - ca.x[-2])
+        + ca.sigma_s * ca.eps_s**ca.p_sol \
+        * (phi_ca[-1] - phi_ca[-2]) / (ca.x[-1] - ca.x[-2])
 
     if sim._flags['BC'] == 'current':
         i_ext = exp['C_rate'] * bat.cap / bat.area
@@ -284,7 +284,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     wt_p = 0.5 * (an.rp[1:] - an.rm[1:]) / (an.r[1:] - an.r[:-1])
 
     Ds = wt_m * an.get_Ds(Li_an[:, :-1] / an.Li_max, T) \
-       + wt_p * an.get_Ds(Li_an[:, 1:] / an.Li_max, T)
+        + wt_p * an.get_Ds(Li_an[:, 1:] / an.Li_max, T)
 
     # Solid-phase radial diffusion
     Nk_ed = np.column_stack([np.zeros(an.Nx), Ds * grad_r(an.r, Li_an, axis=1),
@@ -297,19 +297,19 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     # Solid-phase COC (algebraic)
     res[an.x_ptr['phi_ed']] = (ip_ed - im_ed) / (an.xp - an.xm) \
-                            + an.A_s * sdot_an * c.F
+        + an.A_s * sdot_an * c.F
 
     # Reference potential BC (algebraic)
     res[an.x_ptr['phi_ed'][0]] = phi_an[0] - 0.
 
     # Electrolyte COM (differential)
     res[an.x_ptr['Li_el']] = an.eps_el * svdot[an.x_ptr['Li_el']] \
-         - ( Np_el - Nm_el - (ip_el * t0_an[1:] - im_el * t0_an[:-1]) / c.F ) \
-         / ( an.xp - an.xm ) - an.A_s * sdot_an
+        - (Np_el - Nm_el - (ip_el * t0_an[1:] - im_el * t0_an[:-1]) / c.F) \
+        / (an.xp - an.xm) - an.A_s * sdot_an
 
     # Electrolyte COC (algebraic)
     res[an.x_ptr['phi_el']] = (ip_el - im_el) / (an.xp - an.xm) \
-                            - an.A_s * sdot_an * c.F
+        - an.A_s * sdot_an * c.F
 
     # Store some outputs for verification
     div_i_an = (ip_ed - im_ed + ip_el - im_el) / (an.xp - an.xm)
@@ -333,8 +333,8 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     # Electrolyte COM (differential)
     res[sep.x_ptr['Li_el']] = sep.eps_el * svdot[sep.x_ptr['Li_el']] \
-       - ( Np_el - Nm_el - (ip_el * t0_sep[1:] - im_el * t0_sep[:-1]) / c.F ) \
-       / ( sep.xp - sep.xm )
+        - (Np_el - Nm_el - (ip_el * t0_sep[1:] - im_el * t0_sep[:-1]) / c.F) \
+        / (sep.xp - sep.xm)
 
     # Store some outputs for verification
     div_i_sep = (ip_el - im_el) / (sep.xp - sep.xm)
@@ -365,7 +365,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     wt_p = 0.5 * (ca.rp[1:] - ca.rm[1:]) / (ca.r[1:] - ca.r[:-1])
 
     Ds = wt_m * ca.get_Ds(Li_ca[:, :-1] / ca.Li_max, T) \
-       + wt_p * ca.get_Ds(Li_ca[:, 1:] / ca.Li_max, T)
+        + wt_p * ca.get_Ds(Li_ca[:, 1:] / ca.Li_max, T)
 
     # Solid-phase radial diffusion
     Nk_ed = np.column_stack([np.zeros(ca.Nx), Ds * grad_r(ca.r, Li_ca, axis=1),
@@ -378,7 +378,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     # Solid-phase COC (algebraic)
     res[ca.x_ptr['phi_ed']] = (ip_ed - im_ed) / (ca.xp - ca.xm) \
-                            + ca.A_s * sdot_ca * c.F
+        + ca.A_s * sdot_ca * c.F
 
     if sim._flags['BC'] == 'current':
         pass
@@ -391,12 +391,12 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     # Electrolyte COM (differential)
     res[ca.x_ptr['Li_el']] = ca.eps_el * svdot[ca.x_ptr['Li_el']] \
-         - ( Np_el - Nm_el - (ip_el * t0_ca[1:] - im_el * t0_ca[:-1]) / c.F ) \
-         / ( ca.xp - ca.xm ) - ca.A_s * sdot_ca
+        - (Np_el - Nm_el - (ip_el * t0_ca[1:] - im_el * t0_ca[:-1]) / c.F) \
+        / (ca.xp - ca.xm) - ca.A_s * sdot_ca
 
     # Electrolyte COC (algebraic)
     res[ca.x_ptr['phi_el']] = (ip_el - im_el) / (ca.xp - ca.xm) \
-                            - ca.A_s * sdot_ca * c.F
+        - ca.A_s * sdot_ca * c.F
 
     # Store some outputs for verification
     div_i_ca = (ip_ed - im_ed + ip_el - im_el) / (ca.xp - ca.xm)

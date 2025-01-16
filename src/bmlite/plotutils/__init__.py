@@ -59,7 +59,7 @@ def format_ticks(ax: object) -> None:
 
 
 def pixel(ax: object, xlims: list[float], ylims: list[float], z: _ndarray,
-            cblabel: str) -> None:
+          cblabel: str) -> None:
     """
     Fill an axis instance with a pixel plot defined by the inputs.
 

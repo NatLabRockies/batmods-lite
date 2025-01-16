@@ -83,9 +83,9 @@ class CCSolution(BaseSolution):
         i_ext = exp['C_rate'] * sim.bat.cap / sim.bat.area
         i_mod = self.postvars['i_ext']
 
-        i_an = np.sum(  self.postvars['sdot_an'] * an.A_s
+        i_an = np.sum(self.postvars['sdot_an'] * an.A_s
                       * (an.xp - an.xm) * c.F, axis=1)
-        i_ca = np.sum(  self.postvars['sdot_ca'] * ca.A_s
+        i_ca = np.sum(self.postvars['sdot_ca'] * ca.A_s
                       * (ca.xp - ca.xm) * c.F, axis=1)
 
         sum_ip = self.postvars['sum_ip']

@@ -1,7 +1,7 @@
 from numpy import ndarray as _ndarray
 
 
-class GraphiteSlowExtrap(object):
+class GraphiteSlow(object):
 
     def __init__(self, alpha_a: float, alpha_c: float, Li_max: float) -> None:
         """
@@ -9,9 +9,6 @@ class GraphiteSlowExtrap(object):
 
         Differs from ``GraphiteFast`` because the equilibrium potential is
         piecewise here, making it more accurate, but slower to evaluate.
-
-        Differs from ``GraphiteSlow`` because the equilibrium potential is
-        extrapolated to 0V when x=1
 
         Parameters
         ----------
@@ -34,7 +31,7 @@ class GraphiteSlowExtrap(object):
         self.alpha_c = alpha_c
         self.Li_max = Li_max
 
-        csvfile = os.path.dirname(__file__) + '/data/graphite_ocv_extrap.csv'
+        csvfile = os.path.dirname(__file__) + '/data/graphite_ocv.csv'
         df = pd.read_csv(csvfile).sort_values(by='x')
 
         self.x_min = df['x'].min()
@@ -106,8 +103,8 @@ class GraphiteSlowExtrap(object):
         c = Constants()
 
         i0 = 2.5 * 0.27 * np.exp(-30e6 / c.R * (1 / T - 1 / 303.15)) \
-           * C_Li**self.alpha_a * (self.Li_max * x)**self.alpha_c \
-           * (self.Li_max - self.Li_max * x)**self.alpha_a
+            * C_Li**self.alpha_a * (self.Li_max * x)**self.alpha_c \
+            * (self.Li_max - self.Li_max * x)**self.alpha_a
 
         return i0
 
@@ -129,8 +126,22 @@ class GraphiteSlowExtrap(object):
         Eeq : float | 1D array
             Equilibrium potential [V].
 
+        Raises
+        ------
+        ValueError :
+            x is out of bounds [x_min, x_max].
         """
 
         import numpy as np
+
+        if isinstance(x, float):
+            if x < self.x_min or x > self.x_max:
+                raise ValueError(f'x is out of bounds [{self.x_min},'
+                                 f' {self.x_max}]')
+
+        if not isinstance(x, float):
+            if np.any(x < self.x_min) or np.any(x > self.x_max):
+                raise ValueError(f'x is out of bounds [{self.x_min},'
+                                 f' {self.x_max}]')
 
         return self._Eeq_spline(x)

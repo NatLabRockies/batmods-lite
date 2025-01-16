@@ -118,7 +118,7 @@ def div_x(xm: _ndarray, xp: _ndarray, f: _ndarray,
     add together the divergence components. For example,
 
     .. code-block:: python
-    
+
         div_f = div_x(xm, xp, fx, 0) + div_x(ym, yp, fy, 1)
               + div_x(zm, zp, fz, 2)
 

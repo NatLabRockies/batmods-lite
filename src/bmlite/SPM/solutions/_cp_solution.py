@@ -114,7 +114,6 @@ class CPSolution(BaseSolution):
 
             ymin = min([ax[1, j].get_ylim()[0] for j in range(2)])
             ymax = max([ax[1, j].get_ylim()[1] for j in range(2)])
-            ylim = max(np.abs([ymin, ymax]))
 
             for j in range(2):
                 ax[1, j].set_ylim([ymin, ymax])

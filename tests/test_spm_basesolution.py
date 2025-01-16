@@ -1,6 +1,7 @@
-import os, pytest
+import os
 from pathlib import Path
 
+import pytest
 import numpy as np
 import bmlite as bm
 from ruamel.yaml import YAML
@@ -44,7 +45,7 @@ def sim():
 
 @pytest.fixture(scope='module')
 def exp():
-    directory = os.path.dirname(__file__) + '/../bmlite/SPM/default_exps/'
+    directory = os.path.dirname(__file__) + '/../src/bmlite/SPM/default_exps/'
     path = Path(directory + 'constant_current.yaml')
     yaml = YAML()
 
