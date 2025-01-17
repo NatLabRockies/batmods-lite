@@ -1,5 +1,4 @@
 import pytest
-
 import bmlite as bm
 import matplotlib.pyplot as plt
 
@@ -21,15 +20,15 @@ def test_fake_yaml():
 
 def test_j_pattern(sim):
     lband, uband = sim.j_pattern()
-    assert sim.lband == lband
-    assert sim.uband == uband
+    assert sim._lband == lband
+    assert sim._uband == uband
 
     plt.close('all')
 
 
 def test_copy(sim):
     sim2 = sim.copy()
-    assert all(sim2.sv_0 == sim.sv_0)
+    assert all(sim2._sv0 == sim._sv0)
 
 
 def test_templates():
@@ -37,7 +36,4 @@ def test_templates():
     bm.SPM.templates(0)
     bm.SPM.templates('graphite_nmc532')
     bm.SPM.templates('graphite_nmc532.yaml')
-    bm.SPM.templates(exp=0)
-    bm.SPM.templates(exp='constant_current')
-    bm.SPM.templates(exp='constant_current.yaml')
     assert True

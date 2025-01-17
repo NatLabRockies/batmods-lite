@@ -5,6 +5,7 @@ This module includes the system of differential algebraic equations (DAE) for
 the P2D model. In addition, the ``bandwidth`` function is included in this
 module, which helps determine the lower and upper bandwidths of ``residuals``
 so the ``'band'`` linear solver option can be used in the ``IDASolver`` class.
+
 """
 
 from numpy import ndarray as _ndarray
@@ -30,56 +31,53 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
     -------
     lband : int
         Lower bandwidth from the residual function's Jacobian pattern.
-
     uband : int
         Upper bandwidth from the residual function's Jacobian pattern.
-
     j_pat : 2D array
         Residual function Jacobian pattern, as an array of ones and zeros.
+
     """
 
     import numpy as np
 
     # Jacobian size
-    N = sim.sv_0.size
+    N = sim._sv0.size
 
     # Fake OCV experiment
-    exp = {}
-    exp['C_rate'] = 0.
-    exp['t_min'] = 0.
-    exp['t_max'] = 3600.
-    exp['Nt'] = 3601
-
-    exp['BC'] = 'current'
-    exp['i_ext'] = exp['C_rate'] * sim.bat.cap / sim.bat.area
-
-    # Turn on band flag
-    sim._flags['band'] = True
+    expr = {
+        'mode': 'current',
+        'units': 'C',
+        'value': lambda t: 0.,
+    }
 
     # Perturbed variables
     jac = np.zeros([N, N])
-    sv = sim.sv_0.copy()
-    svdot = sim.svdot_0.copy()
+    sv = sim._sv0.copy()
+    svdot = sim._svdot0.copy()
     res = np.zeros_like(sv)
-    res_0 = residuals(0, sv, svdot, res, (sim, exp))
+
+    residuals(0, sv, svdot, res, (sim, expr))
+    res_0 = res.copy()
 
     for j in range(N):
         dsv = np.copy(sv)
         res = np.copy(res)
         svdot = np.copy(svdot)
 
-        dsv[j] = 1.01 * (sv[j] + 0.01)
-        dres = res_0 - residuals(0, dsv, svdot, res, (sim, exp))
+        dsv[j] = sv[j] + max(1e-6, 1e-6*sv[j])
+        residuals(0, dsv, svdot, res, (sim, expr))
+        dres = res_0 - res
 
         jac[:, j] = dres
 
     for j in range(N):
         sv = np.copy(sv)
         res = np.copy(res)
-        dsvp = np.copy(svdot)
+        dsvdot = np.copy(svdot)
 
-        dsvp[j] = 1.01 * (svdot[j] + 0.01)
-        dres = res_0 - residuals(0., sv, dsvp, res, (sim, exp))
+        dsvdot[j] = svdot[j] + max(1e-6, 1e-6*svdot[j])
+        residuals(0., sv, dsvdot, res, (sim, expr))
+        dres = res_0 - res
 
         jac[:, j] += dres
 
@@ -91,14 +89,11 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
 
         l_inds = np.where(abs(jac[i, :i]) > 0)[0]
         if len(l_inds) >= 1 and i - l_inds[0] > lband:
-            lband = i - l_inds[0]
+            lband = int(i - l_inds[0])
 
         u_inds = i + np.where(abs(jac[i, i:]) > 0)[0]
         if len(u_inds) >= 1 and u_inds[-1] - i > uband:
-            uband = u_inds[-1] - i
-
-    # Turn off band flag
-    sim._flags['band'] = False
+            uband = int(u_inds[-1] - i)
 
     # Make Jacobian pattern of zeros and ones
     j_pat = np.zeros_like(jac)
@@ -116,17 +111,13 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     ----------
     t : float
         Value of time [s].
-
     sv : 1D array
         Solution/state variables at time ``t``.
-
     svdot : 1D array
         Solution/state variable time derivatives at time ``t``.
-
     res : 1D array
         An array the same size as ``sv`` and ``svdot``. The values are filled
         in with ``res = M*y' - f(t, y)`` inside this function.
-
     inputs : (sim : P2D Simulation object, exp : experiment dict)
         The simulation object and experimental details dictionary inputs that
         describe the specific battery and experiment to simulate.
@@ -135,10 +126,8 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     -------
     None
         If no ``sim._flags`` are ``True``.
-
     res : 1D array
         Array of residuals if ``sim._flags['band'] = True``.
-
     outputs : tuple[1D array]
         If ``sim._flags['post'] = True`` then ``outputs`` is returned, which
         includes post-processed values. These can help verify the governing
@@ -155,6 +144,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
         sum_ip   ``i_ed + i_el`` at each "plus" interface [A/m^2] (*1D array*)
         i_el_x   ``i_el`` at each x interface [A/m^2] (*1D array*)
         ======== =============================================================
+
     """
 
     import numpy as np
@@ -248,17 +238,19 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
                           - np.exp(-ca.alpha_c * c.F * eta / c.R / T))
 
     # Boundary condition ------------------------------------------------------
+    mode = exp['mode']
+    units = exp['units']
+    value = exp['value']
 
     # External current [A/m^2]
-    exp['i_ext'] = sdot_ca[-1] * ca.A_s * c.F * (ca.xp[-1] - ca.xm[-1]) \
-        + ca.sigma_s * ca.eps_s**ca.p_sol \
-        * (phi_ca[-1] - phi_ca[-2]) / (ca.x[-1] - ca.x[-2])
+    i_ext = sdot_ca[-1] * ca.A_s * c.F * (ca.xp[-1] - ca.xm[-1]) \
+          + ca.sigma_s * ca.eps_s**ca.p_sol \
+              * (phi_ca[-1] - phi_ca[-2]) / (ca.x[-1] - ca.x[-2])
 
-    if sim._flags['BC'] == 'current':
-        i_ext = exp['C_rate'] * bat.cap / bat.area
-
-    else:
-        i_ext = exp['i_ext']
+    if mode == 'current' and units == 'A':
+        i_ext = value(t) / bat.area
+    elif mode == 'current' and units == 'C':
+        i_ext = value(t) * bat.cap / bat.area
 
     # Anode -------------------------------------------------------------------
 
@@ -378,16 +370,12 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     # Solid-phase COC (algebraic)
     res[ca.x_ptr['phi_ed']] = (ip_ed - im_ed) / (ca.xp - ca.xm) \
-        + ca.A_s * sdot_ca * c.F
+                            + ca.A_s * sdot_ca * c.F
 
-    if sim._flags['BC'] == 'current':
-        pass
-
-    elif sim._flags['BC'] == 'voltage':
-        res[ca.x_ptr['phi_ed'][-1]] = phi_ca[-1] - exp['V_ext']
-
-    elif sim._flags['BC'] == 'power':
-        res[ca.x_ptr['phi_ed'][-1]] = exp['i_ext'] * phi_ca[-1] - exp['P_ext']
+    if mode == 'voltage':
+        res[ca.x_ptr['phi_ed'][-1]] = phi_ca[-1] - value(t)
+    elif mode == 'power':
+        res[ca.x_ptr['phi_ed'][-1]] = i_ext*bat.area*phi_ca[-1] - value(t)
 
     # Electrolyte COM (differential)
     res[ca.x_ptr['Li_el']] = ca.eps_el * svdot[ca.x_ptr['Li_el']] \
@@ -396,17 +384,26 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
 
     # Electrolyte COC (algebraic)
     res[ca.x_ptr['phi_el']] = (ip_el - im_el) / (ca.xp - ca.xm) \
-        - ca.A_s * sdot_ca * c.F
+                            - ca.A_s * sdot_ca * c.F
 
     # Store some outputs for verification
     div_i_ca = (ip_ed - im_ed + ip_el - im_el) / (ca.xp - ca.xm)
     sum_ip = np.hstack([sum_ip, ip_el + ip_ed])
     i_el_x = np.hstack([i_el_x, im_el, ip_el[-1]])
 
+    # Events tracking ---------------------------------------------------------
+    total_time = sim._t0 + t
+
+    exp['events'] = {
+        'time_s': total_time,
+        'time_min': total_time / 60.,
+        'time_h': total_time / 3600.,
+        'current_A': i_ext*bat.area,
+        'current_C': i_ext*bat.area / bat.cap,
+        'voltage_V': phi_ca[-1],
+        'power_W': i_ext*bat.area*phi_ca[-1],
+    }
+
     # Returns -----------------------------------------------------------------
-
-    if sim._flags['band']:
-        return res
-
-    elif sim._flags['post']:
+    if sim._flags['post']:
         return div_i_an, div_i_sep, div_i_ca, sdot_an, sdot_ca, sum_ip, i_el_x

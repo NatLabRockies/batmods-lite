@@ -5,6 +5,7 @@ This module includes the system of differential algebraic equations (DAE) for
 the SPM model. In addition, the ``bandwidth`` function is included in this
 module, which helps determine the lower and upper bandwidths of ``residuals``
 so the ``'band'`` linear solver option can be used in the ``IDASolver`` class.
+
 """
 
 from numpy import ndarray as _ndarray
@@ -30,57 +31,53 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
     -------
     lband : int
         Lower bandwidth from the residual function's Jacobian pattern.
-
     uband : int
         Upper bandwidth from the residual function's Jacobian pattern.
-
     j_pat : 2D array
         Residual function Jacobian pattern, as an array of ones and zeros.
+
     """
 
     import numpy as np
 
     # Jacobian size
-    N = sim.sv_0.size
+    N = sim._sv0.size
 
     # Fake OCV experiment
-    exp = {}
-    exp['C_rate'] = 0.
-    exp['t_min'] = 0.
-    exp['t_max'] = 3600.
-    exp['Nt'] = 3601
-
-    exp['BC'] = 'current'
-    exp['i_ext'] = exp['C_rate'] * sim.bat.cap / sim.bat.area
-
-    # Turn on band flag and set BC
-    sim._flags['band'] = True
-    sim._flags['BC'] = 'current'
+    expr = {
+        'mode': 'current',
+        'units': 'C',
+        'value': lambda t: 0.,
+    }
 
     # Perturbed variables
     jac = np.zeros([N, N])
-    sv = sim.sv_0.copy()
-    svdot = sim.svdot_0.copy()
+    sv = sim._sv0.copy()
+    svdot = sim._svdot0.copy()
     res = np.zeros_like(sv)
-    res_0 = residuals(0, sv, svdot, res, (sim, exp))
+
+    residuals(0, sv, svdot, res, (sim, expr))
+    res_0 = res.copy()
 
     for j in range(N):
         dsv = np.copy(sv)
         res = np.copy(res)
         svdot = np.copy(svdot)
 
-        dsv[j] = 1.01 * (sv[j] + 0.01)
-        dres = res_0 - residuals(0, dsv, svdot, res, (sim, exp))
+        dsv[j] = sv[j] + max(1e-6, 1e-6*sv[j])
+        residuals(0, dsv, svdot, res, (sim, expr))
+        dres = res_0 - res
 
         jac[:, j] = dres
 
     for j in range(N):
         sv = np.copy(sv)
         res = np.copy(res)
-        dsvp = np.copy(svdot)
+        dsvdot = np.copy(svdot)
 
-        dsvp[j] = 1.01 * (svdot[j] + 0.01)
-        dres = res_0 - residuals(0., sv, dsvp, res, (sim, exp))
+        dsvdot[j] = svdot[j] + max(1e-6, 1e-6*svdot[j])
+        residuals(0., sv, dsvdot, res, (sim, expr))
+        dres = res_0 - res
 
         jac[:, j] += dres
 
@@ -92,15 +89,11 @@ def bandwidth(sim: object) -> tuple[int | _ndarray]:
 
         l_inds = np.where(abs(jac[i, :i]) > 0)[0]
         if len(l_inds) >= 1 and i - l_inds[0] > lband:
-            lband = i - l_inds[0]
+            lband = int(i - l_inds[0])
 
         u_inds = i + np.where(abs(jac[i, i:]) > 0)[0]
         if len(u_inds) >= 1 and u_inds[-1] - i > uband:
-            uband = u_inds[-1] - i
-
-    # Turn off band flag and reset BC
-    sim._flags['band'] = False
-    sim._flags['BC'] = None
+            uband = int(u_inds[-1] - i)
 
     # Make Jacobian pattern of zeros and ones
     j_pat = np.zeros_like(jac)
@@ -118,17 +111,13 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     ----------
     t : float
         Value of time [s].
-
     sv : 1D array
         Solution/state variables at time ``t``.
-
     svdot : 1D array
         Solution/state variable time derivatives at time ``t``.
-
     res : 1D array
         An array the same size as ``sv`` and ``svdot``. The values are filled
         in with ``res = M*y' - f(t, y)`` inside this function.
-
     inputs : (sim : SPM Simulation object, exp : experiment dict)
         The simulation object and experimental details dictionary inputs that
         describe the specific battery and experiment to simulate.
@@ -137,10 +126,8 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     -------
     None
         If no ``sim._flags`` are ``True``.
-
     res : 1D array
         Array of residuals if ``sim._flags['band'] = True``.
-
     outputs : tuple[1D array]
         If ``sim._flags['post'] = True`` then ``outputs`` is returned, which
         includes post-processed values. These can help verify the governing
@@ -155,6 +142,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
         sdot_an    anode Li+ production rate [kmol/m^3/s] (*float*)
         sdot_ca    cathode Li+ production rate [kmol/m^3/s] (*float*)
         ========== =======================================================
+
     """
 
     import numpy as np
@@ -193,7 +181,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     wt_p = 0.5 * (an.rp[1:] - an.rm[1:]) / (an.r[1:] - an.r[:-1])
 
     Ds_an = wt_m * an.get_Ds(Li_an[:-1] / an.Li_max, T) \
-        + wt_p * an.get_Ds(Li_an[1:] / an.Li_max, T)
+          + wt_p * an.get_Ds(Li_an[1:] / an.Li_max, T)
 
     # Solid-phase COM (differential)
     Nm_ed = np.zeros(an.Nr)
@@ -205,8 +193,8 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     Np_ed[-1] = -sdot_an
 
     res[an.r_ptr['Li_ed']] = an.Li_max * svdot[an.r_ptr['Li_ed']] \
-        - (an.rp**2 * Np_ed - an.rm**2 * Nm_ed) \
-        / an.r**2 / (an.rp - an.rm)
+                           - (an.rp**2 * Np_ed - an.rm**2 * Nm_ed) \
+                           / an.r**2 / (an.rp - an.rm)
 
     # Solid-phase COC (algebraic)
     res[an.ptr['phi_ed']] = phi_an - 0.
@@ -225,7 +213,7 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     wt_p = 0.5 * (ca.rp[1:] - ca.rm[1:]) / (ca.r[1:] - ca.r[:-1])
 
     Ds_ca = wt_m * ca.get_Ds(Li_ca[:-1] / ca.Li_max, T) \
-        + wt_p * ca.get_Ds(Li_ca[1:] / ca.Li_max, T)
+          + wt_p * ca.get_Ds(Li_ca[1:] / ca.Li_max, T)
 
     # Solid-phase COM (differential)
     Nm_ed = np.zeros(ca.Nr)
@@ -237,42 +225,54 @@ def residuals(t: float, sv: _ndarray, svdot: _ndarray, res: _ndarray,
     Np_ed[-1] = -sdot_ca
 
     res[ca.r_ptr['Li_ed']] = ca.Li_max * svdot[ca.r_ptr['Li_ed']] \
-        - (ca.rp**2 * Np_ed - ca.rm**2 * Nm_ed) \
-        / ca.r**2 / (ca.rp - ca.rm)
+                           - (ca.rp**2 * Np_ed - ca.rm**2 * Nm_ed) \
+                           / ca.r**2 / (ca.rp - ca.rm)
 
     # External current [A/m^2]
-    exp['i_ext'] = -sdot_an * an.A_s * an.thick * c.F
+    i_ext = -sdot_an * an.A_s * an.thick * c.F
 
-    # Solid-phase COC (algebraic)
-    if sim._flags['BC'] == 'current':
+    # Boundary conditions -----------------------------------------------------
+    mode = exp['mode']
+    units = exp['units']
+    value = exp['value']
+
+    # Cathode - Solid-phase COC (algebraic)
+    # Electrolyte - potential (algebraic)
+    if mode == 'current' and units == 'A':
         res[ca.ptr['phi_ed']] = sdot_ca * ca.A_s * ca.thick * c.F \
-            - bat.cap * exp['C_rate'] / bat.area
-
-    elif sim._flags['BC'] == 'voltage':
-        res[ca.ptr['phi_ed']] = phi_ca - exp['V_ext']
-
-    elif sim._flags['BC'] == 'power':
-        res[ca.ptr['phi_ed']] = exp['i_ext'] * phi_ca - exp['P_ext']
-
-    # Electrolyte -------------------------------------------------------------
-
-    # Electrolyte potential (algebraic)
-    if sim._flags['BC'] == 'current':
+                              - value(t) / bat.area
         res[el.ptr['phi_el']] = sdot_an * an.A_s * an.thick * c.F \
-            + bat.cap * exp['C_rate'] / bat.area
+                              + value(t) / bat.area
 
-    elif sim._flags['BC'] == 'voltage':
-        res[el.ptr['phi_el']] = sdot_an * an.A_s * an.thick \
-            + sdot_ca * ca.A_s * ca.thick
+    elif mode == 'current' and units == 'C':
+        res[ca.ptr['phi_ed']] = sdot_ca * ca.A_s * ca.thick * c.F \
+                              - value(t) * bat.cap / bat.area
+        res[el.ptr['phi_el']] = sdot_an * an.A_s * an.thick * c.F \
+                              + value(t) * bat.cap / bat.area
 
-    elif sim._flags['BC'] == 'power':
+    elif mode == 'voltage':
+        res[ca.ptr['phi_ed']] = phi_ca - value(t)
         res[el.ptr['phi_el']] = sdot_an * an.A_s * an.thick \
-            + sdot_ca * ca.A_s * ca.thick
+                              + sdot_ca * ca.A_s * ca.thick
+
+    elif mode == 'power':
+        res[ca.ptr['phi_ed']] = i_ext*bat.area*phi_ca - value(t)
+        res[el.ptr['phi_el']] = sdot_an * an.A_s * an.thick \
+                              + sdot_ca * ca.A_s * ca.thick
+
+    # Events tracking ---------------------------------------------------------
+    total_time = sim._t0 + t
+
+    exp['events'] = {
+        'time_s': total_time,
+        'time_min': total_time / 60.,
+        'time_h': total_time / 3600.,
+        'current_A': i_ext*bat.area,
+        'current_C': i_ext*bat.area / bat.cap,
+        'voltage_V': phi_ca,
+        'power_W': i_ext*bat.area*phi_ca,
+    }
 
     # Returns -----------------------------------------------------------------
-
-    if sim._flags['band']:
-        return res
-
-    elif sim._flags['post']:
+    if sim._flags['post']:
         return sdot_an, sdot_ca

@@ -90,7 +90,7 @@ class Electrolyte(object):
 
         self.ptr['shift'] = 1
 
-    def sv_0(self) -> _ndarray:
+    def sv0(self) -> _ndarray:
         import numpy as np
         return np.array([self.phi_0])
 
@@ -291,7 +291,7 @@ class Electrode(object):
 
         r_ptr(self, ['Li_ed'])
 
-    def sv_0(self):
+    def sv0(self):
         import numpy as np
         return np.hstack([self.x_0 * np.ones(self.Nr), self.phi_0])
 
@@ -301,9 +301,14 @@ class Electrode(object):
 
     def to_dict(self, sol: object) -> dict:
 
-        ed_sol = {}
-        ed_sol['phis'] = sol.y[:, self.ptr['phi_ed']]
-        ed_sol['xs'] = sol.y[:, self.r_ptr['Li_ed']]
-        ed_sol['cs'] = ed_sol['xs'] * self.Li_max
+        phis = sol.y[:, self.ptr['phi_ed']]
+        xs = sol.y[:, self.r_ptr['Li_ed']]
+
+        ed_sol = {
+            'r': self.r,
+            'phis': phis,
+            'xs': xs,
+            'cs': xs*self.Li_max,
+        }
 
         return ed_sol

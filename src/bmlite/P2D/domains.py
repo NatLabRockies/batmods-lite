@@ -389,7 +389,7 @@ class Electrode(object):
         x_ptr(self, ['phi_ed', 'Li_el', 'phi_el'])
         xr_ptr(self, ['Li_ed'])
 
-    def sv_0(self, el: object) -> _ndarray:
+    def sv0(self, el: object) -> _ndarray:
         import numpy as np
         return np.tile(np.hstack([self.x_0 * np.ones(self.Nr),
                                   self.phi_0, el.Li_0, el.phi_0]), self.Nx)
@@ -503,7 +503,7 @@ class Separator(object):
 
         x_ptr(self, ['Li_el', 'phi_el'])
 
-    def sv_0(self, el: object) -> _ndarray:
+    def sv0(self, el: object) -> _ndarray:
         import numpy as np
         return np.tile([el.Li_0, el.phi_0], self.Nx)
 

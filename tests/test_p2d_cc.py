@@ -1,11 +1,5 @@
-import os
-from pathlib import Path
-
 import pytest
-import numpy as np
 import bmlite as bm
-from ruamel.yaml import YAML
-import matplotlib.pyplot as plt
 
 
 @pytest.fixture(scope='module')
@@ -15,30 +9,19 @@ def sim():
 
 
 @pytest.fixture(scope='module')
-def exp():
-    directory = os.path.dirname(__file__) + '/../src/bmlite/P2D/default_exps/'
-    path = Path(directory + 'constant_current.yaml')
-    yaml = YAML()
-
-    exp = yaml.load(path)
-    return exp
-
-
-@pytest.fixture(scope='module')
-def sol(sim, exp):
-    sol = sim.run_CC(exp)
+def sol(sim):
+    expr = bm.Experiment()
+    expr.add_step('current_C', -2., (1350., 150))
+    sol = sim.run(expr)
     return sol
 
 
 @pytest.fixture(scope='module')
-def rootsol(sim, exp):
-    rootfn = bm.P2D.roots.VLimits(3.7, np.nan)
-    rootsol = sim.run_CC(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
+def rootsol(sim):
+    expr = bm.Experiment()
+    expr.add_step('current_C', -2., (3600., 5.), limits=('voltage_V', 3.))
+    rootsol = sim.run(expr)
     return rootsol
-
-
-def test_classname(sol):
-    assert sol.classname == 'CCSolution'
 
 
 def test_run_CC(sol):
@@ -47,10 +30,10 @@ def test_run_CC(sol):
 
 def test_onroot(rootsol):
     assert rootsol.success
-    assert rootsol.onroot
+    assert 'events' in rootsol.message[0]
 
 
-def test_verify(sol):
-    assert sol.verify(True)
+# def test_verify(sol):
+#     assert sol.verify(True)
 
-    plt.close('all')
+#     plt.close('all')

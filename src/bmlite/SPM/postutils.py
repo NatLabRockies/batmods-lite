@@ -10,72 +10,61 @@ the following functions.
 from numpy import ndarray as _ndarray
 
 
-def post(sol: object) -> dict:
-    """
-    Run post processing to determine secondary variables.
+# TODO
+# def post(sol: object) -> dict:
+#     """
+#     Run post processing to determine secondary variables.
 
-    Parameters
-    ----------
-    sol : SPM Solution object
-        A single particle model solution object.
+#     Parameters
+#     ----------
+#     sol : SPM Solution object
+#         A single particle model solution object.
 
-    Returns
-    -------
-    postvars : dict
-        Post processed variables, as described below.
+#     Returns
+#     -------
+#     postvars : dict
+#         Post processed variables, as described below.
 
-        ========= ========================================================
-        Key       Value [units] (*type*)
-        ========= ========================================================
-        res       DAE residual at t (row) for y (col) [units] (*2D array*)
-        sdot_an   anode Faradaic current at t [kmol/m^2/s] (*1D array*)
-        sdot_ca   cathode Faradaic current at t [kmol/m^2/s] (*1D array*)
-        i_ext     external current density at t [A/m^2] (*1D array*)
-        A*h/m^2   areal capacity at t [A*h/m^2] (*1D array*)
-        ========= ========================================================
-    """
+#         ========= ========================================================
+#         Key       Value [units] (*type*)
+#         ========= ========================================================
+#         res       DAE residual at t (row) for y (col) [units] (*2D array*)
+#         sdot_an   anode Faradaic current at t [kmol/m^2/s] (*1D array*)
+#         sdot_ca   cathode Faradaic current at t [kmol/m^2/s] (*1D array*)
+#         i_ext     external current density at t [A/m^2] (*1D array*)
+#         ========= ========================================================
+#     """
 
-    import numpy as np
-    from scipy.integrate import cumulative_trapezoid
+#     import numpy as np
 
-    from .dae import residuals
+#     from .dae import residuals
 
-    # Pull sim and exp from sol
-    sim, exp = sol._sim, sol._exp.copy()
+#     # Pull sim and exp from sol
+#     sim, exp = sol._sim, sol._exp.copy()
 
-    # Extract desired variables for each time
-    sdot_an = np.zeros_like(sol.t)
-    sdot_ca = np.zeros_like(sol.t)
+#     # Extract desired variables for each time
+#     sdot_an = np.zeros_like(sol.t)
+#     sdot_ca = np.zeros_like(sol.t)
 
-    i_ext = np.zeros_like(sol.t)
+#     # Turn on output from residuals
+#     sim._flags['post'] = True
 
-    # Turn on output from residuals
-    sim._flags['post'] = True
+#     for i, t in enumerate(sol.t):
+#         sv, svdot = sol.y[i, :], sol.ydot[i, :]
 
-    for i, t in enumerate(sol.t):
-        sv, svdot = sol.y[i, :], sol.ydot[i, :]
+#         output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
+#         sdot_an[i], sdot_ca[i] = output
 
-        output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
-        sdot_an[i], sdot_ca[i] = output
+#     # Turn off output from residuals
+#     sim._flags['post'] = False
 
-        i_ext[i] = exp['i_ext']
+#     # Store outputs
+#     postvars = {
+#         'sdot_an': sdot_an,
+#         'sdot_ca': sdot_ca,
+#     }
 
-    # Turn off output from residuals
-    sim._flags['post'] = False
-
-    # Areal capacity [A*h/m^2]
-    cap_m2 = np.abs(np.hstack([0., cumulative_trapezoid(i_ext, sol.t / 3600.)]))
-
-    # Store outputs
-    postvars = {}
-
-    postvars['sdot_an'] = sdot_an
-    postvars['sdot_ca'] = sdot_ca
-
-    postvars['i_ext'] = i_ext
-    postvars['A*h/m^2'] = cap_m2
-
-    return postvars
+#     return postvars
 
 
 def _solid_phase_Li(sol: object) -> _ndarray:
@@ -128,150 +117,6 @@ def _solid_phase_Li(sol: object) -> _ndarray:
     return Li_ed_0, Li_ed_t
 
 
-def current(sol: object, ax: object = None) -> None:
-    """
-    Plot current density vs. time.
-
-    Parameters
-    ----------
-    sol : SPM Solution object
-        A single particle model solution object.
-
-    ax : object, optional
-        An ``axis`` instance from a ``matplotlib`` figure. The default is
-        ``None``. If not specified, a new figure is made.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import format_ticks, show
-
-    if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
-                               layout='constrained')
-
-    ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'$i_{\rm ext}$ [A/m$^2$]')
-
-    ax.plot(sol.t, sol.postvars['i_ext'], '-k')
-    format_ticks(ax)
-
-    if ax is None:
-        show(fig)
-
-
-def voltage(sol: object, ax: object = None) -> None:
-    """
-    Plot cell voltage vs. time.
-
-    Parameters
-    ----------
-    sol : SPM Solution object
-        A single particle model solution object.
-
-    ax : object, optional
-        An ``axis`` instance from a ``matplotlib`` figure. The default is
-        ``None``. If not specified, a new figure is made.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import format_ticks, show
-
-    if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
-                               layout='constrained')
-
-    ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'$\phi_{\rm ca} - \phi_{\rm an}$ [V]')
-
-    sim = sol._sim
-
-    ax.plot(sol.t, sol.y[:, sim.ca.ptr['phi_ed']], '-k')
-    format_ticks(ax)
-
-    if ax is None:
-        show(fig)
-
-
-def power(sol: object, ax: object = None) -> None:
-    """
-    Plot power density vs. time.
-
-    Parameters
-    ----------
-    sol : SPM Solution object
-        A single particle model solution object.
-
-    ax : object, optional
-        An ``axis`` instance from a ``matplotlib`` figure. The default is
-        ``None``. If not specified, a new figure is made.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import format_ticks, show
-
-    if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
-                               layout='constrained')
-
-    ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'$p_{\rm ext}$ [W/m$^2$]')
-
-    sim = sol._sim
-
-    i_ext = sol.postvars['i_ext']
-    V_cell = sol.y[:, sim.ca.ptr['phi_ed']]
-
-    ax.plot(sol.t, i_ext * V_cell, '-k')
-    format_ticks(ax)
-
-    if ax is None:
-        show(fig)
-
-
-def ivp(sol: object) -> None:
-    """
-    Subplots for current, voltage, and power.
-
-    Parameters
-    ----------
-    sol : SPM Solution object
-        A single particle model solution object.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import show
-
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
-                           layout='constrained')
-
-    current(sol, ax[0])
-    voltage(sol, ax[1])
-    power(sol, ax[2])
-
-    fig.get_layout_engine().set(wspace=0.1)
-    show(fig)
-
-
 def potentials(sol: object) -> None:
     """
     Plots anode, electrolyte, and cathode potentials vs. time.
@@ -284,6 +129,7 @@ def potentials(sol: object) -> None:
     Returns
     -------
     None.
+
     """
 
     import matplotlib.pyplot as plt
@@ -323,6 +169,7 @@ def intercalation(sol: object) -> None:
     Returns
     -------
     None.
+
     """
 
     import numpy as np
@@ -381,12 +228,13 @@ def pixels(sol: object) -> None:
 
     Parameters
     ----------
-    sol : P2D Solution object
-        A pseudo-2D model solution object.
+    sol : SPM Solution object
+        A single particle model solution object.
 
     Returns
     -------
     None.
+
     """
 
     import matplotlib.pyplot as plt
