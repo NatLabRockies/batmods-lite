@@ -12,8 +12,6 @@ from numpy import ndarray as _ndarray
 
 class VLimits(object):
 
-    __slots__ = ['V_low', 'V_high', '_size']
-
     def __init__(self, V_low: float, V_high: float) -> None:
         """
         Generate a root function that stops at voltage limits.
@@ -22,7 +20,6 @@ class VLimits(object):
         ----------
         V_low : float
             The desired low voltage limit [V].
-
         V_high : float
             The desired high voltage limit [V].
 
@@ -39,6 +36,7 @@ class VLimits(object):
         >>> rootfn = bm.SPM.roots.VLimits(3.0, np.nan)
         >>> sol = sim.run_CC(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
         >>> sol.plot('ivp')
+
         """
 
         self.V_low = V_low
@@ -54,6 +52,7 @@ class VLimits(object):
         -------
         size : int
             The size of the events array in the root function.
+
         """
         return self._size
 
@@ -68,17 +67,13 @@ class VLimits(object):
         ----------
         t : float
             Value of time [s].
-
         sv : 1D array
             Solution/state variables at time ``t``.
-
         svdot : 1D array
             Solution/state variable time derivatives at time ``t``.
-
         events : 1D array
             An empty array with a length equal to the number of root functions,
             here ``size = 2``.
-
         inputs : (sim : SPM Simulation object, exp : experiment dict)
             The simulation object and experimental details dictionary inputs
             that describe the specific battery and experiment to simulate.
@@ -86,6 +81,7 @@ class VLimits(object):
         Returns
         -------
         None.
+
         """
 
         sim, _ = inputs
@@ -96,8 +92,6 @@ class VLimits(object):
 
 class ILimits(object):
 
-    __slots__ = ['I_low', 'I_high', '_size']
-
     def __init__(self, I_low: float, I_high: float) -> None:
         """
         Generate a root function that stops at current limits.
@@ -106,7 +100,6 @@ class ILimits(object):
         ----------
         I_low : float
             The desired low current limit [A], + for charge, - for discharge.
-
         I_high : float
             The desired high current limit [A], + for charge, - for discharge.
 
@@ -123,6 +116,7 @@ class ILimits(object):
         >>> rootfn = bm.SPM.roots.ILimits(-0.45 * sim.bat.area, np.nan)
         >>> sol = sim.run_CV(exp, rootfn=rootfn, nr_rootfns=rootfn.size)
         >>> sol.plot('ivp')
+
         """
 
         self.I_low = I_low
@@ -138,6 +132,7 @@ class ILimits(object):
         -------
         size : int
             The size of the events array in the root function.
+
         """
         return self._size
 
@@ -152,17 +147,13 @@ class ILimits(object):
         ----------
         t : float
             Value of time [s].
-
         sv : 1D array
             Solution/state variables at time ``t``.
-
         svdot : 1D array
             Solution/state variable time derivatives at time ``t``.
-
         events : 1D array
             An empty array with a length equal to the number of root functions,
             here ``size = 1``.
-
         inputs : (sim : SPM Simulation object, exp : experiment dict)
             The simulation object and experimental details dictionary inputs
             that describe the specific battery and experiment to simulate.
@@ -170,6 +161,7 @@ class ILimits(object):
         Returns
         -------
         None.
+
         """
 
         sim, exp = inputs

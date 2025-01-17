@@ -4,6 +4,7 @@ from numpy import ndarray as _ndarray
 class BaseSolution(object):
     """
     Base methods for all P2D Solution classes.
+
     """
 
     __slots__ = ['_sim', '_exp', '_t', '_y', '_ydot', '_success', '_onroot',
@@ -20,10 +21,10 @@ class BaseSolution(object):
         ----------
         sim : SPM Simulation object
             The SPM Simulation instance used to produce the solution.
-
         exp : dict
             Experiment dictionary. Specific key/value pairs are dependent on
             the experiment that was run.
+
         """
 
         self._sim = sim.copy()
@@ -47,6 +48,7 @@ class BaseSolution(object):
         -------
         classname : str
             Name of current class.
+
         """
         return 'BaseSolution'
 
@@ -59,6 +61,7 @@ class BaseSolution(object):
         -------
         t : 1D array
             Solution times [s] returned by solver.
+
         """
         return self._t
 
@@ -71,6 +74,7 @@ class BaseSolution(object):
         -------
         y : 2D array
             Solution variables [units] returned by solver.
+
         """
         return self._y
 
@@ -83,6 +87,7 @@ class BaseSolution(object):
         -------
         ydot : 2D array
             Solution variable time derivatives [units] returned by solver.
+
         """
         return self._ydot
 
@@ -95,6 +100,7 @@ class BaseSolution(object):
         -------
         success : bool
             ``True`` if no errors, ``False`` otherwise.
+
         """
         return self._success
 
@@ -107,6 +113,7 @@ class BaseSolution(object):
         -------
         onroot : bool
             ``True`` if exit on root/event, ``False`` otherwise.
+
         """
         return self._onroot
 
@@ -119,6 +126,7 @@ class BaseSolution(object):
         -------
         message : str
             Exit message from Sundials IDA solver.
+
         """
         return self._message
 
@@ -136,6 +144,7 @@ class BaseSolution(object):
         -------
         solvetime : str
             Time for Sundials IDA to solve problem in [units].
+
         """
 
         converter = {'s': lambda t: t,
@@ -174,13 +183,14 @@ class BaseSolution(object):
         Returns
         -------
         None.
+
         """
 
-        self._t = sol.values.t
-        self._y = sol.values.y
-        self._ydot = sol.values.ydot
-        self._success = bool(sol.flag >= 0)
-        self._onroot = bool(not isinstance(sol.roots.t, type(None)))
+        self._t = sol.t
+        self._y = sol.y
+        self._ydot = sol.yp
+        self._success = sol.success
+        self._onroot = bool(sol.status == 2)
         self._message = sol.message
         self._solvetime = solvetime
 
@@ -208,6 +218,7 @@ class BaseSolution(object):
         Returns
         -------
         None.
+
         """
 
         self._t = sol['t']
@@ -225,6 +236,7 @@ class BaseSolution(object):
         Returns
         -------
         None.
+
         """
 
         experiment = 'Experiment('
@@ -278,6 +290,7 @@ class BaseSolution(object):
             message     solver exit message (*str*)
             solvetime   solver integration time [s] (*float*)
             =========== ========================================
+
         """
 
         sol = {}
@@ -321,6 +334,7 @@ class BaseSolution(object):
         Returns
         -------
         None.
+
         """
 
         if len(self.postvars) == 0:
@@ -382,6 +396,7 @@ class BaseSolution(object):
         -------
         sol_dict : dict
             A dictionary containing the solution
+
         """
 
         if len(self.postvars) == 0:
@@ -448,6 +463,7 @@ class BaseSolution(object):
         Returns
         -------
         None.
+
         """
 
         import os

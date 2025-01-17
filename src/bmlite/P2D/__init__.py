@@ -5,6 +5,7 @@ A packaged pseudo-2D (P2D) model. Build a model using the ``Simulation`` class,
 and run any available experiments using its "run" methods, e.g. ``run_CC()``.
 The experiments return ``Solution`` class instances with post processing,
 plotting, and saving methods.
+
 """
 
 from . import dae
@@ -62,6 +63,7 @@ class Simulation(object):
         bmlite.P2D.templates :
             Get help making your own ``.yaml`` file by starting with the
             default template.
+
         """
 
         import os
@@ -129,6 +131,7 @@ class Simulation(object):
         file, however, they will need to manually re-run the ``pre()`` method
         if they do so. Otherwise, the dependent parameters may not be
         consistent with the user-defined inputs.
+
         """
 
         import numpy as np
@@ -161,8 +164,8 @@ class Simulation(object):
         self.svdot_0 = np.zeros_like(self.sv_0)
 
         # Algebraic indices
-        self.algidx = list(self.an.algidx()) + list(self.sep.algidx()) \
-            + list(self.ca.algidx())
+        self.algidx = self.an.algidx().tolist() + self.sep.algidx().tolist() \
+                    + self.ca.algidx().tolist()
 
         # Determine the bandwidth
         # self.lband, self.uband, _ = bandwidth(self)
@@ -180,13 +183,13 @@ class Simulation(object):
         -------
         lband : int
             Lower bandwidth from the residual function's Jacobian pattern.
-
         uband : int
             Upper bandwidth from the residual function's Jacobian pattern.
 
         See also
         --------
         bmlite.P2D.dae.bandwidth
+
         """
 
         import matplotlib.pyplot as plt
@@ -256,6 +259,7 @@ class Simulation(object):
         --------
         bmlite.IDASolver
         bmlite.P2D.solutions.CCSolution
+
         """
 
         import time
@@ -273,12 +277,13 @@ class Simulation(object):
         sol = CCSolution(self, exp)
 
         # Solver options
-        options = {'user_data': (self, exp),
-                   'linsolver': 'band',
-                   'lband': self.lband,
-                   'uband': self.uband,
-                   'algidx': self.algidx
-                   }
+        options = {
+            'userdata': (self, exp),
+            'linsolver': 'band',
+            'lband': self.lband,
+            'uband': self.uband,
+            'algidx': self.algidx,
+        }
 
         for key, val in kwargs.items():
             options[key] = val
@@ -347,6 +352,7 @@ class Simulation(object):
         --------
         bmlite.IDASolver
         bmlite.P2D.solutions.CVSolution
+
         """
 
         import time
@@ -364,12 +370,13 @@ class Simulation(object):
         sol = CVSolution(self, exp)
 
         # Solver options
-        options = {'user_data': (self, exp),
-                   'linsolver': 'band',
-                   'lband': self.lband,
-                   'uband': self.uband,
-                   'algidx': self.algidx
-                   }
+        options = {
+            'userdata': (self, exp),
+            'linsolver': 'band',
+            'lband': self.lband,
+            'uband': self.uband,
+            'algidx': self.algidx,
+        }
 
         for key, val in kwargs.items():
             options[key] = val
@@ -400,12 +407,12 @@ class Simulation(object):
                 init = solver.init_step(exp['t_min'], self.sv_0, self.svdot_0)
 
                 exp['V_ext'] = V_ext
-                idasol = solver.solve(t_span, init.values.y, init.values.ydot)
+                idasol = solver.solve(t_span, init.y, init.yp)
 
-                if idasol.flag >= 0:
+                if idasol.success:
                     break
 
-            if not idasol.flag >= 0:
+            if not idasol.success:
                 print('\n[BatMods ERROR]\n'
                       '\trun_CV: failed to resolve bad initstep\n')
             else:
@@ -469,6 +476,7 @@ class Simulation(object):
         --------
         bmlite.IDASolver
         bmlite.P2D.solutions.CPSolution
+
         """
 
         import time
@@ -486,12 +494,13 @@ class Simulation(object):
         sol = CPSolution(self, exp)
 
         # Solver options
-        options = {'user_data': (self, exp),
-                   'linsolver': 'band',
-                   'lband': self.lband,
-                   'uband': self.uband,
-                   'algidx': self.algidx
-                   }
+        options = {
+            'userdata': (self, exp),
+            'linsolver': 'band',
+            'lband': self.lband,
+            'uband': self.uband,
+            'algidx': self.algidx,
+        }
 
         for key, val in kwargs.items():
             options[key] = val
@@ -521,6 +530,7 @@ class Simulation(object):
         sim : P2D Simulation object
             A unique copy (stored separately in memory) of the Simulation
             instance.
+
         """
 
         from copy import deepcopy
@@ -545,6 +555,7 @@ def templates(sim: str | int = None, exp: str | int = None) -> None:
     Returns
     -------
     None.
+
     """
 
     from .. import _templates

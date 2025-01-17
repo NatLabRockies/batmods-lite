@@ -62,6 +62,7 @@ class Simulation(object):
         bmlite.SPM.templates :
             Get help making your own ``.yaml`` file by starting with the
             default template.
+
         """
 
         import os
@@ -128,6 +129,7 @@ class Simulation(object):
         file, however, they will need to manually re-run the ``pre()`` method
         if they do so. Otherwise, the dependent parameters may not be
         consistent with the user-defined inputs.
+
         """
 
         import numpy as np
@@ -149,7 +151,7 @@ class Simulation(object):
         self.el.phi_0 = -self.an.get_Eeq(self.an.x_0, self.bat.temp)
 
         self.ca.phi_0 = self.ca.get_Eeq(self.ca.x_0, self.bat.temp) \
-            - self.an.get_Eeq(self.an.x_0, self.bat.temp)
+                      - self.an.get_Eeq(self.an.x_0, self.bat.temp)
 
         # Initialize sv and svdot
         self.sv_0 = np.hstack([self.an.sv_0(), self.ca.sv_0(), self.el.sv_0()])
@@ -157,13 +159,13 @@ class Simulation(object):
         self.svdot_0 = np.zeros_like(self.sv_0)
 
         # Algebraic indices
-        self.algidx = list(self.an.algidx()) + list(self.ca.algidx()) \
-            + list(self.el.algidx())
+        self.algidx = self.an.algidx().tolist() + self.ca.algidx().tolist() \
+                    + self.el.algidx().tolist()
 
         # Determine the bandwidth
         # self.lband, self.uband, _ = bandwidth(self)
-        self.lband = self.el.ptr['phi_el'] - self.an.r_ptr['Li_ed'][-1]
-        self.uband = self.el.ptr['phi_el'] - self.an.r_ptr['Li_ed'][-1]
+        self.lband = int(self.el.ptr['phi_el'] - self.an.r_ptr['Li_ed'][-1])
+        self.uband = int(self.el.ptr['phi_el'] - self.an.r_ptr['Li_ed'][-1])
 
     def j_pattern(self) -> None:
         """
@@ -176,13 +178,13 @@ class Simulation(object):
         -------
         lband : int
             Lower bandwidth from the residual function's Jacobian pattern.
-
         uband : int
             Upper bandwidth from the residual function's Jacobian pattern.
 
         See also
         --------
         bmlite.SPM.dae.bandwidth
+
         """
 
         import matplotlib.pyplot as plt
@@ -252,6 +254,7 @@ class Simulation(object):
         --------
         bmlite.IDASolver
         bmlite.SPM.solutions.CCSolution
+
         """
 
         import time
@@ -269,12 +272,13 @@ class Simulation(object):
         sol = CCSolution(self, exp)
 
         # Solver options
-        options = {'user_data': (self, exp),
-                   'linsolver': 'band',
-                   'lband': self.lband,
-                   'uband': self.uband,
-                   'algidx': self.algidx
-                   }
+        options = {
+            'userdata': (self, exp),
+            'linsolver': 'band',
+            'lband': self.lband,
+            'uband': self.uband,
+            'algidx': self.algidx,
+        }
 
         for key, val in kwargs.items():
             options[key] = val
@@ -343,6 +347,7 @@ class Simulation(object):
         --------
         bmlite.IDASolver
         bmlite.SPM.solutions.CVSolution
+
         """
 
         import time
@@ -360,12 +365,13 @@ class Simulation(object):
         sol = CVSolution(self, exp)
 
         # Solver options
-        options = {'user_data': (self, exp),
-                   'linsolver': 'band',
-                   'lband': self.lband,
-                   'uband': self.uband,
-                   'algidx': self.algidx
-                   }
+        options = {
+            'userdata': (self, exp),
+            'linsolver': 'band',
+            'lband': self.lband,
+            'uband': self.uband,
+            'algidx': self.algidx,
+        }
 
         for key, val in kwargs.items():
             options[key] = val
@@ -396,12 +402,12 @@ class Simulation(object):
                 init = solver.init_step(exp['t_min'], self.sv_0, self.svdot_0)
 
                 exp['V_ext'] = V_ext
-                idasol = solver.solve(t_span, init.values.y, init.values.ydot)
+                idasol = solver.solve(t_span, init.y, init.yp)
 
-                if idasol.flag >= 0:
+                if idasol.success:
                     break
 
-            if not idasol.flag >= 0:
+            if not idasol.success:
                 print('\n[BatMods ERROR]\n'
                       '\trun_CV: failed to resolve bad initstep\n')
             else:
@@ -465,6 +471,7 @@ class Simulation(object):
         --------
         bmlite.IDASolver
         bmlite.SPM.solutions.CPSolution
+
         """
 
         import time
@@ -482,12 +489,13 @@ class Simulation(object):
         sol = CPSolution(self, exp)
 
         # Solver options
-        options = {'user_data': (self, exp),
-                   'linsolver': 'band',
-                   'lband': self.lband,
-                   'uband': self.uband,
-                   'algidx': self.algidx
-                   }
+        options = {
+            'userdata': (self, exp),
+            'linsolver': 'band',
+            'lband': self.lband,
+            'uband': self.uband,
+            'algidx': self.algidx,
+        }
 
         for key, val in kwargs.items():
             options[key] = val
@@ -517,6 +525,7 @@ class Simulation(object):
         sim : SPM Simulation object
             A unique copy (stored separately in memory) of the Simulation
             instance.
+
         """
 
         from copy import deepcopy
@@ -534,13 +543,13 @@ def templates(sim: str | int = None, exp: str | int = None) -> None:
     ----------
     sim : str | int, optional
         Simulation template file name or index. The default is ``None``.
-
     exp : str | int, optional
         Experiment template file name or index. The default is ``None``.
 
     Returns
     -------
     None.
+
     """
 
     from .. import _templates

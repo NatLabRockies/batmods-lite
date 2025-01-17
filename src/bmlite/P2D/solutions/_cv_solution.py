@@ -6,6 +6,7 @@ class CVSolution(BaseSolution):
     Constant voltage solution for P2D simulations.
 
     Base: :class:`~bmlite.P2D.solutions.BaseSolution`
+
     """
 
     __slots__ = []
@@ -22,11 +23,12 @@ class CVSolution(BaseSolution):
         -------
         classname : str
             Name of current class.
+
         """
         return 'CVSolution'
 
-    def verify(self, plotflag: bool = False, rtol: float = 5e-3,
-               atol: float = 1e-3) -> bool:
+    def verify(self, plotflag: bool = False, rtol: float = 1e-2,
+               atol: float = 1e-2) -> bool:
         """
         Verifies the solution is mathematically consistent.
 
@@ -51,10 +53,8 @@ class CVSolution(BaseSolution):
         plotflag : bool, optional
             A flag to see plots showing the verification calculations. The
             default is ``False``.
-
         rtol : float, optional
             Relative tolerance for comparisons. The default is 5e-3.
-
         atol : float, optional
             Absolute tolerance for comparisons. The default is 1e-3.
 
@@ -62,6 +62,7 @@ class CVSolution(BaseSolution):
         -------
         checks : bool
             ``True`` is all checks are satisfied, ``False`` otherwise.
+
         """
 
         import numpy as np

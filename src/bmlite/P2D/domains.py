@@ -6,6 +6,7 @@ in keyword arguments that define parameters relevant to its specific domain.
 For example, the area and temperature are ``Battery`` level parameters because
 they are the same everywhere, but the discretizations ``Nx`` and ``Nr`` may be
 different for the anode, separator, and cathode domains.
+
 """
 
 from numpy import ndarray as _ndarray
@@ -30,6 +31,7 @@ class Battery(object):
             temp   temperature [K] (*float*)
             area   area normal to current collectors [m^2] (*float*)
             ====== =================================================
+
         """
 
         self.cap = kwargs.get('cap')
@@ -46,6 +48,7 @@ class Battery(object):
         Returns
         -------
         None.
+
         """
         pass
 
@@ -68,6 +71,7 @@ class Electrolyte(object):
             li_0       initial Li+ concentration [kmol/m^3] (*float*)
             material   class name from ``bmlite.materials`` [-] (*str*)
             ========== ================================================
+
         """
 
         self.Li_0 = kwargs.get('Li_0')
@@ -81,6 +85,7 @@ class Electrolyte(object):
         Returns
         -------
         None.
+
         """
 
         from .. import materials
@@ -97,7 +102,6 @@ class Electrolyte(object):
         ----------
         C_Li : float | 1D array
             Lithium ion concentration in the electrolyte [kmol/m^3].
-
         T : float
             Battery temperature [K].
 
@@ -105,6 +109,7 @@ class Electrolyte(object):
         -------
         D : float | 1D array
             Lithium ion diffusivity in the electrolyte [m^2/s].
+
         """
 
         return self._material.get_D(C_Li, T)
@@ -118,7 +123,6 @@ class Electrolyte(object):
         ----------
         C_Li : float | 1D array
             Lithium ion concentration in the electrolyte [kmol/m^3].
-
         T : float
             Battery temperature [K].
 
@@ -126,6 +130,7 @@ class Electrolyte(object):
         -------
         t0 : float | 1D array
             Lithium ion transference number [-].
+
         """
 
         return self._material.get_t0(C_Li, T)
@@ -139,7 +144,6 @@ class Electrolyte(object):
         ----------
         C_Li : float | 1D array
             Lithium ion concentration in the electrolyte [kmol/m^3].
-
         T : float
             Battery temperature [K].
 
@@ -147,6 +151,7 @@ class Electrolyte(object):
         -------
         kappa : float | 1D array
             Electrolyte conductivity [S/m].
+
         """
 
         return self._material.get_kappa(C_Li, T)
@@ -160,7 +165,6 @@ class Electrolyte(object):
         ----------
         C_Li : float | 1D array
             Lithium ion concentration in the electrolyte [kmol/m^3].
-
         T : float
             Battery temperature [K].
 
@@ -168,6 +172,7 @@ class Electrolyte(object):
         -------
         gamma : float | 1D array
             Thermodynamic factor [-].
+
         """
 
         return self._material.get_gamma(C_Li, T)
@@ -208,6 +213,7 @@ class Electrode(object):
             Ds_deg    ``Ds`` degradation factor [-] (*float*)
             material  class name from ``bmlite.materials`` [-] (*str*)
             ========= ========================================================
+
         """
 
         self.Nx = kwargs.get('Nx')
@@ -246,6 +252,7 @@ class Electrode(object):
         Returns
         -------
         None.
+
         """
 
         from .. import materials
@@ -271,7 +278,6 @@ class Electrode(object):
         ----------
         x : float | 1D array
             Lithium intercalation fraction [-].
-
         T : float
             Battery temperature [K].
 
@@ -279,6 +285,7 @@ class Electrode(object):
         -------
         Ds : float | 1D array
             Lithium diffusivity in the solid phase [m^2/s].
+
         """
 
         return self.Ds_deg * self._material.get_Ds(x, T)
@@ -296,10 +303,8 @@ class Electrode(object):
         ----------
         x : float | 1D array
             Lithium intercalation fraction at ``r = R_s`` [-].
-
         C_Li : float | 1D array
             Lithium ion concentration in the local electrolyte [kmol/m^3].
-
         T : float
             Battery temperature [K].
 
@@ -307,6 +312,7 @@ class Electrode(object):
         -------
         i0 : float | 1D array
             Exchange current density [A/m^2].
+
         """
 
         return self.i0_deg * self._material.get_i0(x, C_Li, T)
@@ -320,7 +326,6 @@ class Electrode(object):
         ----------
         x : float | 1D array
             Lithium intercalation fraction at ``r = R_s`` [-].
-
         T : float
             Battery temperature [K].
 
@@ -328,6 +333,7 @@ class Electrode(object):
         -------
         Eeq : float | 1D array
             Equilibrium potential [V].
+
         """
 
         return self._material.get_Eeq(x, T)
@@ -356,6 +362,7 @@ class Electrode(object):
         See also
         --------
         batmods.mesh.x_ptr, batmods.mesh.xr_ptr, batmods.mesh.uniform_mesh
+
         """
 
         from ..mesh import x_ptr, xr_ptr, uniform_mesh
@@ -431,6 +438,7 @@ class Separator(object):
             eps_el   electrolyte volume fraction [-] (*float*)
             p_liq    liquid Bruggeman factor, ``eps_el**p_liq`` [-] (*float*)
             ======== ========================================================
+
         """
 
         self.Nx = kwargs.get('Nx')
@@ -451,6 +459,7 @@ class Separator(object):
         Returns
         -------
         None.
+
         """
 
         self.eps_s = 1 - self.eps_el
@@ -474,6 +483,7 @@ class Separator(object):
         See also
         --------
         batmods.mesh.x_ptr, batmods.mesh.xr_ptr, batmods.mesh.uniform_mesh
+
         """
 
         from ..mesh import x_ptr, uniform_mesh

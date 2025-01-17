@@ -8,32 +8,14 @@ from ruamel.yaml import YAML
 import matplotlib.pyplot as plt
 
 
-class Values(object):
-
-    def __init__(self) -> None:
-        self.t = None
-        self.y = None
-        self.ydot = None
-
-
-class Roots(object):
-
-    def __init__(self) -> None:
-        self.t = None
-        self.y = None
-        self.ydot = None
-
-
 class IDASol(object):
 
     def __init__(self) -> None:
-        self.values = Values()
-        self.values.t = np.linspace(0., 1350., 150)
-        self.values.y = np.ones([10, 10])
-        self.values.ydot = np.zeros([10, 10])
-        self.roots = Roots()
-        self.flag = 0
-        self.onroot = False
+        self.t = np.linspace(0., 1350., 150)
+        self.y = np.ones([10, 10])
+        self.yp = np.zeros([10, 10])
+        self.success = True
+        self.status = 2
         self.message = 'Successful solve.'
 
 
@@ -67,14 +49,15 @@ def idasol():
 
 @pytest.fixture(scope='module')
 def dictsol():
-    dictsol = {'t': np.linspace(0., 1350., 150),
-               'y': np.ones([10, 10]),
-               'ydot': np.zeros([10, 10]),
-               'success': True,
-               'onroot': False,
-               'message': 'Successful solve.',
-               'solvetime': 60.0
-               }
+    dictsol = {
+        't': np.linspace(0., 1350., 150),
+        'y': np.ones([10, 10]),
+        'ydot': np.zeros([10, 10]),
+        'success': True,
+        'onroot': False,
+        'message': 'Successful solve.',
+        'solvetime': 60.0,
+    }
 
     return dictsol
 
@@ -104,11 +87,11 @@ def test_classname(sol):
 def test_ida_fill(sol, idasol):
     sol.ida_fill(idasol, 60.0)
 
-    assert all(sol.t == idasol.values.t)
-    assert np.all(sol.y == idasol.values.y)
-    assert np.all(sol.ydot == idasol.values.ydot)
-    assert sol.success == bool(idasol.flag >= 0)
-    assert sol.onroot == bool(not isinstance(idasol.roots.t, type(None)))
+    assert all(sol.t == idasol.t)
+    assert np.all(sol.y == idasol.y)
+    assert np.all(sol.ydot == idasol.yp)
+    assert sol.success == idasol.success
+    assert sol.onroot == bool(idasol.status == 2)
     assert sol.message == idasol.message
     assert sol._solvetime == 60.0
 

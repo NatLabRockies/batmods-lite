@@ -28,7 +28,7 @@ key). To view the type hints and brief descriptions, type an open parenthesis
 """
 
 from numpy import ndarray as _ndarray
-from scikits_odes_sundials.ida import IDA as _IDA
+from sksundae.ida import IDA as _IDA
 
 from . import math
 from . import mesh
@@ -59,23 +59,17 @@ class Constants(object):
     _R = 8.3145e3
 
     def __init__(self) -> None:
-        """
-        Physical constants class with read-only attributes.
-        """
+        """Physical constants class with read-only attributes."""
         pass
 
     @property
     def F(self) -> float:
-        """
-        Faraday's constant [C/kmol].
-        """
+        """Faraday's constant [C/kmol]."""
         return self._F
 
     @property
     def R(self) -> float:
-        """
-        Gas constant [J/kmol/K].
-        """
+        """Gas constant [J/kmol/K]."""
         return self._R
 
 
@@ -97,7 +91,6 @@ class IDASolver:
         Residuals function ``def residuals(t, y, yp, res, inputs) -> None``.
         For some examples, see :func:`bmlite.SPM.dae.residuals` and/or
         :func:`bmlite.P2D.dae.residuals`.
-
     **kwargs : dict, optional
         The keyword arguments specify the Sundials IDA solver options. A
         partial list of options/defaults is given below:
@@ -106,8 +99,8 @@ class IDASolver:
         Key          Description (*type* or {options}, default)
         ============ =========================================================
         rtol         relative tolerance (*float*, 1e-6)
-        atol         absolute tolerance (*float*, 1e-12)
-        user_data    the ``inputs`` parameter (*tuple*, ``None``)
+        atol         absolute tolerance (*float*, 1e-6)
+        userdata     the ``inputs`` parameter (*tuple*, ``None``)
         linsolver    linear solver (``{'dense', 'band'}``, ``'dense'``)
         lband        width of the lower band (*int*, 0)
         uband        width of the upper band (*int*, 0)
@@ -115,7 +108,7 @@ class IDASolver:
         nr_rootfns   number of events in ``'rootfn'`` (*int*, ``0``)
         initcond     unknown variable set (``{'y0', 'yp0', None}``, ``'yp0'``)
         algidx       algebraic variable indices in y (*list[int]*, ``None``)
-        max_t_step   maximum time step [s] (*float*, 0. -> unrestricted)
+        max_step     maximum time step [s] (*float*, 0. -> unrestricted)
         ============ =========================================================
 
     Notes
@@ -132,6 +125,7 @@ class IDASolver:
 
       .. _SUNDIALS: https://sundials.readthedocs.io/
       .. _scikits-odes: https://bmcage.github.io/odes/dev/
+
     """
 
     __slots__ = ('_IDA')
@@ -139,23 +133,13 @@ class IDASolver:
     def __init__(self, residuals, **kwargs) -> None:
 
         # Overwrite scikits.odes defaults w/ some keys renamed
-        options = {}
-        options['rtol'] = kwargs.pop('rtol', 1e-6)
-        options['atol'] = kwargs.pop('atol', 1e-9)
-        options['user_data'] = kwargs.pop('user_data', None)
-
-        options['linsolver'] = kwargs.pop('linsolver', 'dense')
-        options['lband'] = kwargs.pop('lband', 0)
-        options['uband'] = kwargs.pop('uband', 0)
-
-        options['rootfn'] = kwargs.pop('rootfn', None)
-        options['nr_rootfns'] = kwargs.pop('nr_rootfns', 0)
-
-        options['compute_initcond'] = kwargs.pop('initcond', 'yp0')
-        options['algebraic_vars_idx'] = kwargs.pop('algidx', None)
-        options['max_step_size'] = kwargs.pop('max_t_step', 0.)
-
-        options['old_api'] = False
+        options = {
+            'rtol': kwargs.pop('rtol', 1e-6),
+            'eventsfn': kwargs.pop('rootfn', None),
+            'num_events': kwargs.pop('nr_rootfns', 0),
+            'calc_initcond': kwargs.pop('initcond', 'yp0'),
+            'algebraic_idx': kwargs.pop('algidx', None),
+        }
 
         # Collect new defaults and any extra user kwargs
         options = {**options, **kwargs}
@@ -172,10 +156,8 @@ class IDASolver:
         t_span : 1D array
             Array of times [s] to store the solution. ``t_span[0]`` must be
             the start time and ``t_span[-1]`` the final time.
-
         y0 : 1D array
             Array of state variables at ``t = t_span[0]``.
-
         yp0 : 1D array
             Array of state variable time derivatives at ``t = t_span[0]``.
 
@@ -183,6 +165,7 @@ class IDASolver:
         -------
         idasol : NamedTuple
             Solution returned by SUNDIALS IDA integrator over ``t_span``.
+
         """
 
         idasol = self._IDA.solve(t_span, y0, yp0)
@@ -197,10 +180,8 @@ class IDASolver:
         ----------
         t0 : float
             Initial time [s].
-
         y0 : 1D array
             Array of state variables at ``t = t0``.
-
         yp0 : 1D array
             Array of state variable time derivatives at ``t = t0``.
 
@@ -208,6 +189,7 @@ class IDASolver:
         -------
         idasol : NamedTuple
             Solution returned by SUNDIALS IDA integrator at ``t = t0``.
+
         """
 
         idasol = self._IDA.init_step(t0, y0, yp0)
@@ -227,20 +209,18 @@ def _templates(model__file__: str, model_name: str, sim: str | int = None,
     model__file__ : str
         The module ``__file__`` attribute. This sets the local path to make
         sure templates are pulled from the correct model path.
-
     model_name : str
         Name for the model package. This ensures template lists are labeled
         correctly.
-
     sim : str | int, optional
         Simulation template file name or index. The default is ``None``.
-
     exp : str | int, optional
         Experiment template file name or index. The default is ``None``.
 
     Returns
     -------
     None.
+
     """
 
     import os
