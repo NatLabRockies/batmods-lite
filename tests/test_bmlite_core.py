@@ -1,5 +1,4 @@
 import pytest
-
 import bmlite as bm
 
 
@@ -21,7 +20,7 @@ def test_constants_read_only(c):
 
 
 def test_constants_empty_slots(c):
-    assert c.__slots__ == []
+    assert len(c.__slots__) == 0
 
 
 def test_constants_faraday(c):
