@@ -112,17 +112,11 @@ class BaseSolution(IDAResult):
         plt.figure()
         plt.plot(self.vars[x], self.vars[y], **kwargs)
 
-        if '_' in x:
-            variable, units = x.split('_')
-            xlabel = variable.capitalize() + ' [' + units + ']'
-        else:
-            xlabel = x
+        variable, units = x.split('_')
+        xlabel = variable.capitalize() + ' [' + units + ']'
 
-        if '_' in y:
-            variable, units = y.split('_')
-            ylabel = variable.capitalize() + ' [' + units + ']'
-        else:
-            ylabel = y
+        variable, units = y.split('_')
+        ylabel = variable.capitalize() + ' [' + units + ']'
 
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
@@ -137,9 +131,35 @@ class BaseSolution(IDAResult):
     def to_dict(self) -> dict:
         """
         Creates a dict with all spatial, time, and state variables separated
-        into 1D and 2D arrays. The keys are given below.
+        into 1D, 2D, and 3D arrays. The keys are given below. The index order
+        of the 2D and 3D arrays is given with the value descriptions.
 
-        TODO
+        ========= ====================================================
+        Key       Value [units] (*type*)
+        ========= ====================================================
+        x_a       x mesh in anode [m] (*1D array*)
+        x_s       x mesh in separator [m] (*1D array*)
+        x_c       x mesh in cathode [m] (*1D array*)
+        x         stacked x mesh for an, sep, and ca [m] (*1D array*)
+        r_a       r mesh for anode particles [m] (*1D array*)
+        r_c       r mesh for cathode particles [m] (*1D array*)
+        t         saved solution times [s] (*1D array*)
+        phie_a    electrolyte potentials at t, x_a [V] (*2D array*)
+        phis_a    electrode potentials at t, x_a [V] (*2D array*)
+        ce_a      electrolyte Li+ at t, x_a [kmol/m^3] (*2D array*)
+        cs_a      electrode Li at t, x_a, r_a [kmol/m^3] (*3D array*)
+        phie_s    electrolyte potentials at t, x_s [V] (*2D array*)
+        ce_s      electrolyte Li+ at t, x_s [kmol/m^3] (*2D array*)
+        phie_c    electrolyte potentials at t, x_c [V] (*2D array*)
+        phis_c    electrode potentials at t, x_c [V] (*2D array*)
+        ce_c      electrolyte Li+ at t, x_c [kmol/m^3] (*2D array*)
+        cs_c      electrode Li at t, x_c, r_c [kmol/m^3] (*3D array*)
+        phie      electrolyte potentials at t, x [V] (*2D array*)
+        ce        electrolyte Li+ at t, x [kmol/m^3] (*2D array*)
+        ie        ``i_el`` at t, x boundaries [A/m^2] (*2D array*)
+        j_a       Faradaic current at t, x_a [kmol/m^2/s] (*2D array*)
+        j_c       Faradaic current at t, x_c [kmol/m^2/s] (*2D array*)
+        ========= ====================================================
 
         Parameters
         ----------
@@ -152,7 +172,30 @@ class BaseSolution(IDAResult):
 
         """
 
-        vars = {}  # TODO
+        vars = {
+            'x_a': self.vars['an']['x'],
+            'x_s': self.vars['sep']['x'],
+            'x_c': self.vars['ca']['x'],
+            # 'x': ,  # TODO
+            'r_a': self.vars['an']['r'],
+            'r_c': self.vars['ca']['r'],
+            't': self.vars['time_s'],
+            'phie_a': self.vars['an']['phie'],
+            'phis_a': self.vars['an']['phis'],
+            'ce_a': self.vars['an']['ce'],
+            'cs_a': self.vars['an']['cs'],
+            'phie_s': self.vars['sep']['phie'],
+            'ce_s': self.vars['sep']['ce'],
+            'phie_c': self.vars['ca']['phie'],
+            'phis_c': self.vars['ca']['phis'],
+            'ce_c': self.vars['ca']['ce'],
+            'cs_c': self.vars['ca']['cs'],
+            # 'phie': ,  # TODO
+            # 'ce': ,  # TODO
+            # 'ie': ,  # TODO
+            # 'j_a': ,  # TODO
+            # 'j_c': ,  # TODO
+        }
 
         return vars
 
@@ -162,7 +205,32 @@ class BaseSolution(IDAResult):
         separated into 1D and 2D arrays. The keys are given below. The index
         order of the 2D arrays is given with the value descriptions.
 
-        TODO
+        ========= ====================================================
+        Key       Value [units] (*type*)
+        ========= ====================================================
+        x_a       x mesh in anode [m] (*1D array*)
+        x_s       x mesh in separator [m] (*1D array*)
+        x_c       x mesh in cathode [m] (*1D array*)
+        x         stacked x mesh for an, sep, and ca [m] (*1D array*)
+        r_a       r mesh for anode particles [m] (*1D array*)
+        r_c       r mesh for cathode particles [m] (*1D array*)
+        t         saved solution times [s] (*1D array*)
+        phie_a    electrolyte potentials at t, x_a [V] (*2D array*)
+        phis_a    electrode potentials at t, x_a [V] (*2D array*)
+        ce_a      electrolyte Li+ at t, x_a [kmol/m^3] (*2D array*)
+        cs_a      electrode Li at t, x_a, r_a [kmol/m^3] (*3D array*)
+        phie_s    electrolyte potentials at t, x_s [V] (*2D array*)
+        ce_s      electrolyte Li+ at t, x_s [kmol/m^3] (*2D array*)
+        phie_c    electrolyte potentials at t, x_c [V] (*2D array*)
+        phis_c    electrode potentials at t, x_c [V] (*2D array*)
+        ce_c      electrolyte Li+ at t, x_c [kmol/m^3] (*2D array*)
+        cs_c      electrode Li at t, x_c, r_c [kmol/m^3] (*3D array*)
+        phie      electrolyte potentials at t, x [V] (*2D array*)
+        ce        electrolyte Li+ at t, x [kmol/m^3] (*2D array*)
+        ie        ``i_el`` at t, x boundaries [A/m^2] (*2D array*)
+        j_a       Faradaic current at t, x_a [kmol/m^2/s] (*2D array*)
+        j_c       Faradaic current at t, x_c [kmol/m^2/s] (*2D array*)
+        ========= ====================================================
 
         Parameters
         ----------

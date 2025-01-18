@@ -5,6 +5,7 @@ This module contains all post-processing functions for the SPM package. The
 available post-processing options for a given experiment are specific to that
 experiment. Therefore, not all ``Solution`` classes may have access to all of
 the following functions.
+
 """
 
 from numpy import ndarray as _ndarray

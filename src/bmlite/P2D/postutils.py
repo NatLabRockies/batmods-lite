@@ -5,101 +5,97 @@ This module contains all post-processing functions for the P2D package. The
 available post-processing options for a given experiment are specific to that
 experiment. Therefore, not all ``Solution`` classes may have access to all of
 the following functions.
+
 """
 
 from numpy import ndarray as _ndarray
 
+# TODO
+# def post(sol: object) -> dict:
+#     """
+#     Run post processing to determine secondary variables.
 
-def post(sol: object) -> dict:
-    """
-    Run post processing to determine secondary variables.
+#     Parameters
+#     ----------
+#     sol : P2D Solution object
+#         A pseudo-2D model solution object.
 
-    Parameters
-    ----------
-    sol : P2D Solution object
-        A pseudo-2D model solution object.
+#     Returns
+#     -------
+#     postvars : dict
+#         Post processed variables, as described below.
 
-    Returns
-    -------
-    postvars : dict
-        Post processed variables, as described below.
+#         =========== ========================================================
+#         Key         Value [units] (*type*)
+#         =========== ========================================================
+#         res         DAE residual at t (row) for y (col) [units] (*2D array*)
+#         div_i_an    divergence of current at t, x_a [A/m^3] (*2D array*)
+#         div_i_sep   divergence of current at t, x_s [A/m^3] (*2D array*)
+#         div_i_ca    divergence of current at t, x_c [A/m^3] (*2D array*)
+#         sdot_an     Faradaic current at t, x_a [kmol/m^2/s] (*1D array*)
+#         sdot_ca     Faradaic current at t, x_c [kmol/m^2/s] (*1D array*)
+#         sum_ip      ``i_ed + i_el`` at t, xp interfaces [A/m^2] (*2D array*)
+#         i_el_x      ``i_el`` at t, x interfaces [A/m^2] (*2D array*)
+#         i_ext       external current density at t [A/m^2] (*1D array*)
+#         A*h/m^2     areal capacity at t [A*h/m^2] (*1D array*)
+#         =========== ========================================================
+#     """
 
-        =========== ========================================================
-        Key         Value [units] (*type*)
-        =========== ========================================================
-        res         DAE residual at t (row) for y (col) [units] (*2D array*)
-        div_i_an    divergence of current at t, x_a [A/m^3] (*2D array*)
-        div_i_sep   divergence of current at t, x_s [A/m^3] (*2D array*)
-        div_i_ca    divergence of current at t, x_c [A/m^3] (*2D array*)
-        sdot_an     Faradaic current at t, x_a [kmol/m^2/s] (*1D array*)
-        sdot_ca     Faradaic current at t, x_c [kmol/m^2/s] (*1D array*)
-        sum_ip      ``i_ed + i_el`` at t, xp interfaces [A/m^2] (*2D array*)
-        i_el_x      ``i_el`` at t, x interfaces [A/m^2] (*2D array*)
-        i_ext       external current density at t [A/m^2] (*1D array*)
-        A*h/m^2     areal capacity at t [A*h/m^2] (*1D array*)
-        =========== ========================================================
-    """
+#     import numpy as np
 
-    import numpy as np
-    from scipy.integrate import cumulative_trapezoid
+#     from .dae import residuals
 
-    from .dae import residuals
+#     # Pull sim and exp from sol
+#     sim, exp = sol._sim, sol._exp.copy()
 
-    # Pull sim and exp from sol
-    sim, exp = sol._sim, sol._exp.copy()
+#     # Get needed domains
+#     an, sep, ca = sim.an, sim.sep, sim.ca
 
-    # Get needed domains
-    an, sep, ca = sim.an, sim.sep, sim.ca
+#     # Extract desired variables for each time
+#     div_i_an = np.zeros([sol.t.size, an.Nx])
+#     div_i_sep = np.zeros([sol.t.size, sep.Nx])
+#     div_i_ca = np.zeros([sol.t.size, ca.Nx])
 
-    # Extract desired variables for each time
-    div_i_an = np.zeros([sol.t.size, an.Nx])
-    div_i_sep = np.zeros([sol.t.size, sep.Nx])
-    div_i_ca = np.zeros([sol.t.size, ca.Nx])
+#     sdot_an = np.zeros([sol.t.size, an.Nx])
+#     sdot_ca = np.zeros([sol.t.size, ca.Nx])
 
-    sdot_an = np.zeros([sol.t.size, an.Nx])
-    sdot_ca = np.zeros([sol.t.size, ca.Nx])
+#     sum_ip = np.zeros([sol.t.size, an.Nx + sep.Nx + ca.Nx])
+#     i_el_x = np.zeros([sol.t.size, an.Nx + sep.Nx + ca.Nx + 1])
 
-    sum_ip = np.zeros([sol.t.size, an.Nx + sep.Nx + ca.Nx])
-    i_el_x = np.zeros([sol.t.size, an.Nx + sep.Nx + ca.Nx + 1])
+#     i_ext = np.zeros_like(sol.t)
 
-    i_ext = np.zeros_like(sol.t)
+#     # Turn on output from residuals
+#     sim._flags['post'] = True
 
-    # Turn on output from residuals
-    sim._flags['post'] = True
+#     for i, t in enumerate(sol.t):
+#         sv, svdot = sol.y[i, :], sol.ydot[i, :]
 
-    for i, t in enumerate(sol.t):
-        sv, svdot = sol.y[i, :], sol.ydot[i, :]
+#         output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
 
-        output = residuals(t, sv, svdot, np.zeros_like(sv), (sim, exp))
+#         (div_i_an[i, :], div_i_sep[i, :], div_i_ca[i, :], sdot_an[i, :],
+#          sdot_ca[i, :], sum_ip[i, :], i_el_x[i, :]) = output
 
-        (div_i_an[i, :], div_i_sep[i, :], div_i_ca[i, :], sdot_an[i, :],
-         sdot_ca[i, :], sum_ip[i, :], i_el_x[i, :]) = output
+#         i_ext[i] = exp['i_ext']
 
-        i_ext[i] = exp['i_ext']
+#     # Turn off output from residuals
+#     sim._flags['post'] = False
 
-    # Turn off output from residuals
-    sim._flags['post'] = False
+#     # Store outputs
+#     postvars = {}
 
-    # Areal capacity [A*h/m^2]
-    cap_m2 = np.abs(np.hstack([0., cumulative_trapezoid(i_ext, sol.t / 3600.)]))
+#     postvars['div_i_an'] = div_i_an
+#     postvars['div_i_sep'] = div_i_sep
+#     postvars['div_i_ca'] = div_i_ca
 
-    # Store outputs
-    postvars = {}
+#     postvars['sdot_an'] = sdot_an
+#     postvars['sdot_ca'] = sdot_ca
 
-    postvars['div_i_an'] = div_i_an
-    postvars['div_i_sep'] = div_i_sep
-    postvars['div_i_ca'] = div_i_ca
+#     postvars['sum_ip'] = sum_ip
+#     postvars['i_el_x'] = i_el_x
 
-    postvars['sdot_an'] = sdot_an
-    postvars['sdot_ca'] = sdot_ca
+#     postvars['i_ext'] = i_ext
 
-    postvars['sum_ip'] = sum_ip
-    postvars['i_el_x'] = i_el_x
-
-    postvars['i_ext'] = i_ext
-    postvars['A*h/m^2'] = cap_m2
-
-    return postvars
+#     return postvars
 
 
 def _liquid_phase_Li(sol: object) -> _ndarray:
@@ -201,150 +197,6 @@ def _solid_phase_Li(sol: object) -> _ndarray:
     Li_ed_t = Li_an + Li_ca
 
     return Li_ed_0, Li_ed_t
-
-
-def current(sol: object, ax: object = None) -> None:
-    """
-    Plot current density vs. time.
-
-    Parameters
-    ----------
-    sol : P2D Solution object
-        A pseudo-2D model solution object.
-
-    ax : object, optional
-        An ``axis`` instance from a ``matplotlib`` figure. The default is
-        ``None``. If not specified, a new figure is made.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import format_ticks, show
-
-    if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
-                               layout='constrained')
-
-    ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'$i_{\rm ext}$ [A/m$^2$]')
-
-    ax.plot(sol.t, sol.postvars['i_ext'], '-k')
-    format_ticks(ax)
-
-    if ax is None:
-        show(fig)
-
-
-def voltage(sol: object, ax: object = None) -> None:
-    """
-    Plot cell voltage vs. time.
-
-    Parameters
-    ----------
-    sol : P2D Solution object
-        A pseudo-2D model solution object.
-
-    ax : object, optional
-        An ``axis`` instance from a ``matplotlib`` figure. The default is
-        ``None``. If not specified, a new figure is made.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import format_ticks, show
-
-    if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
-                               layout='constrained')
-
-    ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'$\phi_{\rm ca} - \phi_{\rm an}$ [V]')
-
-    sim = sol._sim
-
-    ax.plot(sol.t, sol.y[:, sim.ca.x_ptr['phi_ed'][-1]], '-k')
-    format_ticks(ax)
-
-    if ax is None:
-        show(fig)
-
-
-def power(sol: object, ax: object = None) -> None:
-    """
-    Plot power density vs. time.
-
-    Parameters
-    ----------
-    sol : P2D Solution object
-        A pseudo-2D model solution object.
-
-    ax : object, optional
-        An ``axis`` instance from a ``matplotlib`` figure. The default is
-        ``None``. If not specified, a new figure is made.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import format_ticks, show
-
-    if ax is None:
-        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 3],
-                               layout='constrained')
-
-    ax.set_xlabel(r'$t$ [s]')
-    ax.set_ylabel(r'$p_{\rm ext}$ [W/m$^2$]')
-
-    sim = sol._sim
-
-    i_ext = sol.postvars['i_ext']
-    V_cell = sol.y[:, sim.ca.x_ptr['phi_ed'][-1]]
-
-    ax.plot(sol.t, i_ext * V_cell, '-k')
-    format_ticks(ax)
-
-    if ax is None:
-        show(fig)
-
-
-def ivp(sol: object) -> None:
-    """
-    Subplots for current, voltage, and power.
-
-    Parameters
-    ----------
-    sol : P2D Solution object
-        A pseudo-2D model solution object.
-
-    Returns
-    -------
-    None.
-    """
-
-    import matplotlib.pyplot as plt
-
-    from ..plotutils import show
-
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
-                           layout='constrained')
-
-    current(sol, ax[0])
-    voltage(sol, ax[1])
-    power(sol, ax[2])
-
-    fig.get_layout_engine().set(wspace=0.1)
-    show(fig)
 
 
 def potentials(sol: object) -> None:

@@ -112,17 +112,11 @@ class BaseSolution(IDAResult):
         plt.figure()
         plt.plot(self.vars[x], self.vars[y], **kwargs)
 
-        if '_' in x:
-            variable, units = x.split('_')
-            xlabel = variable.capitalize() + ' [' + units + ']'
-        else:
-            xlabel = x
+        variable, units = x.split('_')
+        xlabel = variable.capitalize() + ' [' + units + ']'
 
-        if '_' in y:
-            variable, units = y.split('_')
-            ylabel = variable.capitalize() + ' [' + units + ']'
-        else:
-            ylabel = y
+        variable, units = y.split('_')
+        ylabel = variable.capitalize() + ' [' + units + ']'
 
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
@@ -227,8 +221,8 @@ class BaseSolution(IDAResult):
             'phis_c': self.vars['ca']['phis'],
             'cs_c': self.vars['ca']['cs'],
             'phie': self.vars['el']['phie'],
-            # 'j_a': self.vars['an']['sdot'],  TODO
-            # 'j_c': self.vars['ca']['sdot'],  TODO
+            # 'j_a': self.vars['an']['sdot'],  # TODO
+            # 'j_c': self.vars['ca']['sdot'],  # TODO
         }
 
         return vars

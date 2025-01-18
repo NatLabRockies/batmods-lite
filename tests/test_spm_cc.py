@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 import bmlite as bm
 
 
@@ -31,6 +32,16 @@ def test_run_CC(sol):
 def test_onroot(rootsol):
     assert rootsol.success
     assert 'events' in rootsol.message[0]
+
+
+def test_current_units(sim, sol):
+    current_A = -2.*sim.bat.cap
+
+    expr = bm.Experiment()
+    expr.add_step('current_A', current_A, (1350., 150))
+    sol_A = sim.run(expr)
+
+    np.testing.assert_allclose(sol.y, sol_A.y)
 
 
 # def test_verify(sol):

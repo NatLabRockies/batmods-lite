@@ -28,14 +28,14 @@ Battery Analysis and Training Models for Optimization and Degradation Studies (B
 ## Installation
 BATMODS-lite is only available via GitHub. Please clone the repo or download the files. Also, make sure you have a Python installation with a version >=3.10. If you are new to Python, we recommend using [Anaconda](https://www.anaconda.com/download) to set up your installation. 
 
-Once the files are availabe on your machine, use your terminal to navigate into the folder and execute one of the following depending on your installation preference.
+Once the files are available on your machine, use your terminal to navigate into the folder and execute one of the following depending on your installation preference.
 
 ```
 pip install .             (basic installation)
-pip install -e .[dev]     (editable installtion with developer options)
+pip install -e .[dev]     (editable installation with developer options)
 ```
 
-The editable installation is useful if you plan to make changes to your local package. It ensures that any changes are immediately availabe each time the package is imported, without needing to reinstall. The developer options will likely be helpful if you are modifying the package. For more info on pre-build developer routines look at `noxfile.py`.
+The editable installation is useful if you plan to make changes to your local package. It ensures that any changes are immediately available each time the package is imported, without needing to reinstall. The developer options will likely be helpful if you are modifying the package. For more info on pre-build developer routines look at `noxfile.py`.
 
 ## Get Started
 The API is organized around three main classes that allow you to construct simulations, define experiments, and interact with solutions. Two basic examples are given below. These demonstrate a 2C discharge for both the single particle model (SPM) and pseudo-2D (P2D) model. Note that the experiment class interfaces with all simulations. The simulations and their respective solutions, however, will depend on the model subpackage they are loaded from.
