@@ -355,6 +355,134 @@ class BaseSolution(IDAResult):
         self.vars['voltage_V'] = voltage_V
         self.vars['power_W'] = current_A*voltage_V
 
+    def _verify(self, plot: bool = False, atol: float = 1e-1,
+                rtol: float = 2e-2) -> dict:
+        """
+        Verifies the solution is mathematically consistent. This is primarily
+        for testing purposes.
+
+        Specifically, this compares the boundary current is consistent with the
+        reactions in each electrode at each time step, and that the solid- and
+        liquid-phase lithium are conserved. If the verification fails, you can
+        visualize the checks by using `plot`. Figures shaded grey indicate that
+        its respective test failed. Note that divergence figures for the anode,
+        separator, and cathode are also shown, but are only for debugging. Thus
+        they are not included in the `checks` output dictionary.
+
+        Parameters
+        ----------
+        plot : bool, optional
+            A flag to show plots of the verifications. The default is False.
+        atol : float, optional
+            Absolute tolerance for comparisons. The default is 1e-1.
+        rtol : float, optional
+            Relative tolerance for comparisons. The default is 1e-2.
+
+        Returns
+        -------
+        checks : bool
+            A dictionary of keys describing each check and boolean values to
+            specify whether each check passed or not.
+
+        """
+
+        from .._utils import ExitHandler
+        from ..plotutils import format_ticks
+        from .postutils import _solid_phase_Li, _liquid_phase_Li
+
+        sim = self._sim
+
+        c, bat, an, ca = sim.c, sim.bat, sim.an, sim.ca
+
+        if not self._postvars:
+            self.post()
+
+        i_mod = self.vars['current_A'] / bat.area
+
+        Li_ed_0, Li_ed_t = _solid_phase_Li(self)
+        Li_el_0, Li_el_t = _liquid_phase_Li(self)
+
+        dxb_an = an.xp - an.xm
+        dxb_ca = ca.xp - ca.xm
+
+        j_an_tot = np.sum(self.vars['an']['sdot']*an.A_s*dxb_an*c.F, axis=1)
+        j_ca_tot = np.sum(self.vars['ca']['sdot']*ca.A_s*dxb_ca*c.F, axis=1)
+
+        checks = {
+            'j_a': np.allclose(i_mod, -j_an_tot, rtol=rtol, atol=atol),
+            'j_c': np.allclose(i_mod, j_ca_tot, rtol=rtol, atol=atol),
+            'cs': np.allclose(1., Li_ed_t / Li_ed_0, rtol=rtol, atol=atol),
+            'ce': np.allclose(1., Li_el_t / Li_el_0, rtol=rtol, atol=atol),
+        }
+
+        if plot:
+            fig, ax = plt.subplots(nrows=2, ncols=3, figsize=[12, 6],
+                                   layout='constrained')
+
+            # Faradaic currents
+            ax[0, 0].set_ylabel(r'$i_{\rm ext} / j_{\rm far}$ [A/m$^2$]')
+
+            ax[0, 0].plot(self.t, i_mod / j_an_tot, '-C3', label='anode')
+            ax[0, 0].plot(self.t, i_mod / j_ca_tot, '-C2', label='cathode')
+
+            ax[0, 0].legend(loc='best')
+
+            # solid- and liquid-phase conservation
+            ax[0, 1].plot(self.t, Li_ed_t / Li_ed_0, '-k')
+            ax[0, 1].set_ylabel(r'$C_{\rm Li,s} \ / \ C_{\rm Li,s}^0$ [$-$]')
+
+            ax[0, 2].plot(self.t, Li_el_t / Li_el_0, '-k')
+            ax[0, 2].set_ylabel(r'$C_{\rm Li^+} \ / \ C_{\rm Li^+}^0$ [$-$]')
+
+            ymin = min([ax[0, j].get_ylim()[0] for j in range(1, 3)])
+            ymax = max([ax[0, j].get_ylim()[1] for j in range(1, 3)])
+            ylim = max([1 - ymin, ymax - 1])
+
+            for j in range(1, 3):
+                ax[1, j].set_ylim([1 - ylim, 1 + ylim])
+
+            # divergence (conservation of charge)
+            ax[1, 0].text(0.7, 0.85, 'anode', transform=ax[1, 0].transAxes)
+            ax[1, 0].plot(self.t, self.vars['an']['div_i'])
+
+            ax[1, 1].text(0.7, 0.85, 'separator', transform=ax[1, 1].transAxes)
+            ax[1, 1].plot(self.t, self.vars['sep']['div_i'])
+
+            ax[1, 2].text(0.7, 0.85, 'cathode', transform=ax[1, 2].transAxes)
+            ax[1, 2].plot(self.t, self.vars['ca']['div_i'])
+
+            ymin = min([ax[1, j].get_ylim()[0] for j in range(3)])
+            ymax = max([ax[1, j].get_ylim()[1] for j in range(3)])
+            ylim = max(np.abs([ymin, ymax]))
+
+            for j in range(3):
+                ax[1, j].set_ylim([-ylim, ylim])
+                ax[1, j].set_ylabel(
+                    r'$\nabla \cdot (i_{\rm el} + i_{\rm ed})$ [A/m$^3$]'
+                )
+
+            # formatting
+            for i in range(2):
+                for j in range(3):
+                    ax[i, j].set_xlabel(r'$t$ [s]')
+                    format_ticks(ax[i, j])
+
+            # shade bad checks
+            plot_checks = {
+                'j_far': all([checks['j_a'], checks['j_c']]),
+                'cs': checks['cs'],
+                'ce': checks['ce'],
+            }
+            for j, val in enumerate(plot_checks.values()):
+                if not val:
+                    ax[i, j].patch.set_facecolor('grey')
+                    ax[i, j].patch.set_alpha(0.5)
+
+            if not plt.isinteractive():
+                ExitHandler.register_atexit(plt.show)
+
+        return checks
+
 
 class StepSolution(BaseSolution):
     """Single-step solution."""

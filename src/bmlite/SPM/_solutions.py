@@ -301,6 +301,98 @@ class BaseSolution(IDAResult):
         self.vars['voltage_V'] = voltage_V
         self.vars['power_W'] = current_A*voltage_V
 
+    def _verify(self, plot: bool = False, atol: float = 1e-1,
+                rtol: float = 2e-2) -> dict:
+        """
+        Verifies the solution is mathematically consistent. This is primarily
+        for testing purposes.
+
+        Specifically, this compares the boundary current is consistent with the
+        reactions in each electrode at each time step, and that solid-phase
+        lithium was conserved. If the verification fails, you can visualize the
+        checks by using the `plot` flag. Figures shaded grey indicate that its
+        respective test failed.
+
+        Parameters
+        ----------
+        plot : bool, optional
+            A flag to show plots of the verifications. The default is False.
+        atol : float, optional
+            Absolute tolerance for comparisons. The default is 1e-1.
+        rtol : float, optional
+            Relative tolerance for comparisons. The default is 1e-2.
+
+        Returns
+        -------
+        checks : bool
+            A dictionary of keys describing each check and boolean values to
+            specify whether each check passed or not.
+
+        """
+
+        from .._utils import ExitHandler
+        from ..plotutils import format_ticks
+        from .postutils import _solid_phase_Li
+
+        sim = self._sim
+
+        c, bat, an, ca = sim.c, sim.bat, sim.an, sim.ca
+
+        if not self._postvars:
+            self.post()
+
+        i_mod = self.vars['current_A'] / bat.area
+
+        Li_ed_0, Li_ed_t = _solid_phase_Li(self)
+
+        j_an_tot = self.vars['an']['sdot']*an.A_s*an.thick*c.F
+        j_ca_tot = self.vars['ca']['sdot']*ca.A_s*ca.thick*c.F
+
+        checks = {
+            'j_a': np.allclose(i_mod, -j_an_tot, rtol=rtol, atol=atol),
+            'j_c': np.allclose(i_mod, j_ca_tot, rtol=rtol, atol=atol),
+            'cs': np.allclose(1., Li_ed_t / Li_ed_0, rtol=rtol, atol=atol),
+        }
+
+        if plot:
+            fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
+                                   layout='constrained')
+
+            # Faradaic currents
+            ax[0].set_ylabel(r'$i_{\rm ext} / j_{\rm an}$ [A/m$^2$]')
+            ax[1].set_ylabel(r'$i_{\rm ext} / j_{\rm ca}$ [A/m$^2$]')
+
+            ax[0].plot(self.t, i_mod / j_an_tot, '-C3')
+            ax[1].plot(self.t, i_mod / j_ca_tot, '-C2')
+
+            ymin = min([ax[i].get_ylim()[0] for i in range(1)])
+            ymax = max([ax[i].get_ylim()[1] for i in range(1)])
+
+            for i in range(1):
+                ax[i].set_ylim([ymin, ymax])
+
+            # Lithium conservation
+            ax[2].set_ylabel(r'$C_{\rm Li,s} \ / \ C_{\rm Li,s}^0$ [$-$]')
+            ax[2].plot(self.t, Li_ed_t / Li_ed_0, '-k')
+
+            # formatting
+            for i in range(3):
+                ax[i].set_xlabel(r'$t$ [s]')
+                format_ticks(ax[i])
+
+            # shade bad checks
+            for i, val in enumerate(checks.values()):
+                if not val:
+                    ax[i].patch.set_facecolor('grey')
+                    ax[i].patch.set_alpha(0.5)
+
+            fig.get_layout_engine().set(wspace=0.1, hspace=0.1)
+
+            if not plt.isinteractive():
+                ExitHandler.register_atexit(plt.show)
+
+        return checks
+
 
 class StepSolution(BaseSolution):
     """Single-step solution."""

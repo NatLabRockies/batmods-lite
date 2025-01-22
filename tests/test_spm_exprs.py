@@ -31,20 +31,32 @@ def test_constant_current(soln):
     ccsoln = soln.get_steps(0)
     assert ccsoln.success
 
+    checks = ccsoln._verify()
+    assert all(checks.values())
+
 
 def test_constant_voltage(soln):
     cvsoln = soln.get_steps(3)
     assert cvsoln.success
+
+    checks = cvsoln._verify()
+    assert all(checks.values())
 
 
 def test_constant_power(soln):
     cpsoln = soln.get_steps(4)
     assert cpsoln.success
 
+    checks = cpsoln._verify()
+    assert all(checks.values())
+
 
 def test_dynamic_load(soln):
     dysoln = soln.get_steps(5)
     assert dysoln.success
+
+    checks = dysoln._verify()
+    assert all(checks.values())
 
 
 def test_event_switches(soln):

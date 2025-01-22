@@ -43,6 +43,13 @@ def test_step_solution(soln):
         step_soln.complex_plot(*args)
         plt.close('all')
 
+    # verification
+    with plt.ioff():
+        checks = step_soln._verify(plot=True)
+        plt.close('all')
+
+    assert all(checks.values())
+
 
 def test_cycle_solution(soln):
 
@@ -64,4 +71,9 @@ def test_cycle_solution(soln):
     args = ('potentials', 'intercalation', 'pixels')
     with plt.ioff():
         cycle_soln.complex_plot(*args)
+        plt.close('all')
+
+    # verification
+    with plt.ioff():
+        _ = cycle_soln._verify(plot=True)
         plt.close('all')
