@@ -1,4 +1,0 @@
-C_rate: -2.     # C-rate [1/h]
-t_min:  0.      # Min time [s]
-t_max:  1350.   # Max time [s]
-Nt:     150     # Number time discretizations [-]

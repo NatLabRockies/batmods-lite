@@ -1,6 +1,5 @@
-# Local batch files
-badges.bat 
-site.bat
+# OSX
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -9,6 +8,9 @@ __pycache__/
 
 # C extensions
 *.so
+
+# VSCode 
+.vscode
 
 # Distribution / packaging
 .Python
@@ -28,7 +30,6 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -41,6 +42,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+reports/
 htmlcov/
 .tox/
 .nox/
@@ -72,6 +74,9 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+
+# Sphinx documentation
+docs/build/
 
 # PyBuilder
 .pybuilder/
@@ -110,6 +115,8 @@ ipython_config.py
 #   in version control.
 #   https://pdm.fming.dev/#use-with-ide
 .pdm.toml
+.pdm-python
+.pdm-build/
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
@@ -133,9 +140,6 @@ venv.bak/
 # Spyder project settings
 .spyderproject
 .spyproject
-
-# VSCode 
-.vscode
 
 # Rope project settings
 .ropeproject

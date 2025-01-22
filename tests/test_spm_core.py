@@ -1,12 +1,12 @@
 import pytest
-
 import bmlite as bm
 import matplotlib.pyplot as plt
 
 
 @pytest.fixture(scope='module')
 def sim():
-    sim = bm.SPM.Simulation()
+    with pytest.warns(UserWarning):
+        sim = bm.SPM.Simulation()
     return sim
 
 
@@ -16,28 +16,19 @@ def test_simulation(sim):
 
 def test_fake_yaml():
     with pytest.raises(FileNotFoundError):
-        sim = bm.SPM.Simulation('fake.yaml')
+        _ = bm.SPM.Simulation('fake.yaml')
 
 
 def test_j_pattern(sim):
-    lband, uband = sim.j_pattern()
-    assert sim.lband == lband
-    assert sim.uband == uband
+    with plt.ioff():
+        lband, uband = sim.j_pattern(return_bands=True)
+
+    assert sim._lband == lband
+    assert sim._uband == uband
 
     plt.close('all')
 
 
 def test_copy(sim):
     sim2 = sim.copy()
-    assert all(sim2.sv_0 == sim.sv_0)
-
-
-def test_templates():
-    bm.SPM.templates()
-    bm.SPM.templates(0)
-    bm.SPM.templates('graphite_nmc532')
-    bm.SPM.templates('graphite_nmc532.yaml')
-    bm.SPM.templates(exp=0)
-    bm.SPM.templates(exp='constant_current')
-    bm.SPM.templates(exp='constant_current.yaml')
-    assert True
+    assert all(sim2._sv0 == sim._sv0)

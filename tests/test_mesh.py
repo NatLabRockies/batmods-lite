@@ -70,7 +70,7 @@ def test_x_ptr(x_domain):
                        for i in range(x_domain.Nx)], dtype=int)
 
     phie_ptr = np.array([x_domain.ptr['phie'] + i * x_domain.ptr['x_off']
-                       for i in range(x_domain.Nx)], dtype=int)
+                         for i in range(x_domain.Nx)], dtype=int)
 
     assert np.all(x_domain.x_ptr['ce'] == ce_ptr)
     assert np.all(x_domain.x_ptr['phie'] == phie_ptr)
@@ -94,7 +94,7 @@ def test_xr_ptr(xr_domain):
     for i in range(xr_domain.Nx):
         for j in range(xr_domain.Nr):
             cs_ptr[i, j] = xr_domain.ptr['cs'] + i * xr_domain.ptr['x_off'] \
-                         + j * xr_domain.ptr['r_off']
+                + j * xr_domain.ptr['r_off']
 
     assert np.all(xr_domain.xr_ptr['cs'] == cs_ptr)
 
@@ -107,8 +107,8 @@ def test_uniform_mesh():
 
     assert np.allclose(xm, np.linspace(5., 5. + 10. - dx, 50))
     assert np.allclose(xp, np.linspace(5. + dx, 5. + 10., 50))
-    assert np.allclose(x, 0.5 * (  np.linspace(5., 5. + 10. - dx, 50)
-                                 + np.linspace(5. + dx, 5. + 10., 50) ))
+    assert np.allclose(x, 0.5 * (np.linspace(5., 5. + 10. - dx, 50)
+                                 + np.linspace(5. + dx, 5. + 10., 50)))
 
 
 def test_param_weights():
@@ -120,8 +120,8 @@ def test_param_weights():
 
     x = 0.5 * (xm + xp)
 
-    wt_m2 = 0.5 * (xp[: -1] - xm[: -1]) / (x[1: ] - x[: -1])
-    wt_p2 = 0.5 * (xp[1:] - xm[1:]) / (x[1: ] - x[: -1])
+    wt_m2 = 0.5 * (xp[: -1] - xm[: -1]) / (x[1:] - x[: -1])
+    wt_p2 = 0.5 * (xp[1:] - xm[1:]) / (x[1:] - x[: -1])
 
     assert np.allclose(wt_m1, wt_m2)
     assert np.allclose(wt_p1, wt_p2)

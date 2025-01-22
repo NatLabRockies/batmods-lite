@@ -1,5 +1,4 @@
 import pytest
-
 import bmlite as bm
 
 
@@ -21,7 +20,7 @@ def test_constants_read_only(c):
 
 
 def test_constants_empty_slots(c):
-    assert c.__slots__ == []
+    assert len(c.__slots__) == 0
 
 
 def test_constants_faraday(c):
@@ -32,6 +31,18 @@ def test_constants_idealgas(c):
     assert c.R == 8.3145e3
 
 
-def test_docs():
-    bm.docs()
+def test_templates():
+    with pytest.raises(AttributeError):
+        bm.templates('fake')
+
+    bm.templates('spm')
+    bm.templates('spm', 0)
+    bm.templates('spm', 'graphite_nmc532')
+    bm.templates('spm', 'graphite_nmc532.yaml')
+
+    bm.templates('p2d')
+    bm.templates('p2d', 0)
+    bm.templates('p2d', 'graphite_nmc532')
+    bm.templates('p2d', 'graphite_nmc532.yaml')
+
     assert True
