@@ -4,7 +4,6 @@ from typing import Iterable, TYPE_CHECKING
 import textwrap
 from copy import deepcopy
 
-import atexit
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -113,6 +112,8 @@ class BaseSolution(IDAResult):
 
         """
 
+        from .._utils import ExitHandler
+
         plt.figure()
         plt.plot(self.vars[x], self.vars[y], **kwargs)
 
@@ -126,7 +127,7 @@ class BaseSolution(IDAResult):
         plt.ylabel(ylabel)
 
         if not plt.isinteractive():
-            atexit.register(plt.show)
+            ExitHandler.register_atexit(plt.show)
 
     def complex_plot(self, *args: str) -> None:
         """

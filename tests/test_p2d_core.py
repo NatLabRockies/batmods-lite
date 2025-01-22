@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 
 @pytest.fixture(scope='module')
 def sim():
-    sim = bm.P2D.Simulation()
+    with pytest.warns(UserWarning):
+        sim = bm.P2D.Simulation()
     return sim
 
 

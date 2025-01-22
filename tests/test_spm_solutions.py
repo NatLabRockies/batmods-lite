@@ -6,18 +6,18 @@ import bmlite as bm
 import matplotlib.pyplot as plt
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def soln():
 
     warnings.filterwarnings('ignore')
 
-    model = bm.SPM.Simulation()
+    sim = bm.SPM.Simulation()
 
     expr = bm.Experiment()
-    expr.add_step('current_C', -2., (3600., 1.), limits=('voltage_V', 3.))
-    expr.add_step('current_A', 0., (3600., 1.))
+    expr.add_step('current_C', -2., (3600., 10.), limits=('voltage_V', 3.))
+    expr.add_step('current_A', 0., (600., 10.))
 
-    soln = model.run(expr)
+    soln = sim.run(expr)
 
     return soln
 

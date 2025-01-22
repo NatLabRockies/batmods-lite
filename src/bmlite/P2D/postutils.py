@@ -204,7 +204,8 @@ def potentials(soln: Solution) -> None:
 
     import matplotlib.colors as clrs
 
-    from ..plotutils import format_ticks, show
+    from .._utils import ExitHandler
+    from ..plotutils import format_ticks
 
     sep, ca = soln._sim.sep, soln._sim.ca
 
@@ -265,7 +266,9 @@ def potentials(soln: Solution) -> None:
     ax.vlines(sep.xp[-1]*1e6, ylims[0], ylims[1], 'k', linestyles='--')
 
     format_ticks(ax)
-    show(fig)
+
+    if not plt.isinteractive():
+        ExitHandler.register_atexit(plt.show)
 
 
 def electrolyte(soln: Solution) -> None:
@@ -285,7 +288,8 @@ def electrolyte(soln: Solution) -> None:
 
     import matplotlib.colors as clrs
 
-    from ..plotutils import format_ticks, show
+    from .._utils import ExitHandler
+    from ..plotutils import format_ticks
 
     sep, ca = soln._sim.sep, soln._sim.ca
 
@@ -319,7 +323,9 @@ def electrolyte(soln: Solution) -> None:
     ax.vlines(sep.xp[-1]*1e6, ylims[0], ylims[1], 'k', linestyles='--')
 
     format_ticks(ax)
-    show(fig)
+
+    if not plt.isinteractive():
+        ExitHandler.register_atexit(plt.show)
 
 
 def intercalation(soln: Solution) -> None:
@@ -339,7 +345,8 @@ def intercalation(soln: Solution) -> None:
 
     import matplotlib.colors as clrs
 
-    from ..plotutils import format_ticks, show
+    from .._utils import ExitHandler
+    from ..plotutils import format_ticks
 
     # Pull time indices and setup colorbar
     t_inds = np.ceil(np.linspace(0, soln.t.size - 1, 11)).astype(int)
@@ -349,8 +356,8 @@ def intercalation(soln: Solution) -> None:
     sm = plt.cm.ScalarMappable(cmap='jet', norm=norm)
 
     # Solid-phase Li intercalation fracs [-]
-    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=[8, 6],
-                           layout='constrained')
+    _, ax = plt.subplots(nrows=2, ncols=2, figsize=[8, 6],
+                         layout='constrained')
 
     ax[0, 0].text(0.1, 0.1, r'$x$ = an/sep', transform=ax[0, 0].transAxes)
     ax[0, 1].text(0.1, 0.1, r'$x$ = sep/ca', transform=ax[0, 1].transAxes)
@@ -387,7 +394,8 @@ def intercalation(soln: Solution) -> None:
             ax[i, j].set_ylim([0., 1.05])
             format_ticks(ax[i, j])
 
-    show(fig)
+    if not plt.isinteractive():
+        ExitHandler.register_atexit(plt.show)
 
 
 def pixels(soln: Solution) -> None:
@@ -405,7 +413,8 @@ def pixels(soln: Solution) -> None:
 
     """
 
-    from ..plotutils import pixel, show
+    from ..plotutils import pixel
+    from .._utils import ExitHandler
 
     # Get needed domains
     an, ca = soln._sim.an, soln._sim.ca
@@ -509,4 +518,6 @@ def pixels(soln: Solution) -> None:
 
     # Adjust spacing
     fig.get_layout_engine().set(hspace=0.1, wspace=0.1)
-    show(fig)
+
+    if not plt.isinteractive():
+        ExitHandler.register_atexit(plt.show)

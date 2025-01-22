@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 
 @pytest.fixture(scope='module')
 def sim():
-    sim = bm.SPM.Simulation()
+    with pytest.warns(UserWarning):
+        sim = bm.SPM.Simulation()
     return sim
 
 

@@ -39,7 +39,7 @@ def test_templates():
     bm.templates('spm', 0)
     bm.templates('spm', 'graphite_nmc532')
     bm.templates('spm', 'graphite_nmc532.yaml')
-    
+
     bm.templates('p2d')
     bm.templates('p2d', 0)
     bm.templates('p2d', 'graphite_nmc532')

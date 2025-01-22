@@ -50,13 +50,14 @@ class Simulation:
 
         See also
         --------
-        bmlite.SPM.templates :
+        bmlite.templates :
             Get help making your own ``.yaml`` file by starting with the
             default template.
 
         """
 
         from .. import Constants
+        from .._utils import short_warn
         from .domains import Battery, Electrolyte, Electrode
 
         if '.yaml' not in yamlfile:
@@ -65,8 +66,7 @@ class Simulation:
         defaults = os.listdir(os.path.dirname(__file__) + '/templates')
         if yamlfile in defaults:
             path = os.path.dirname(__file__) + '/templates/' + yamlfile
-            print('\n[BatMods WARNING]\n'
-                  f'\tSPM Simulation: Using default {yamlfile}\n')
+            short_warn(f"SPM Simulation: Using default {yamlfile}")
             yamlpath = Path(path)
 
         elif os.path.exists(yamlfile):
@@ -170,8 +170,9 @@ class Simulation:
         """
 
         from .dae import residuals
+        from .._utils import ExitHandler
         from .._core._idasolver import bandwidth
-        from bmlite.plotutils import format_ticks, show
+        from bmlite.plotutils import format_ticks
 
         t0 = 0.
         y0 = np.hstack([self.an.sv0(), self.el.sv0(), self.ca.sv0()])
@@ -189,15 +190,17 @@ class Simulation:
                                         return_pattern=True)
 
         if plot:
-            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 4],
-                                layout='constrained')
+            _, ax = plt.subplots(nrows=1, ncols=1, figsize=[4, 4],
+                                 layout='constrained')
 
             ax.spy(j_pat)
             ax.text(0.1, 0.2, 'lband: ' + str(lband), transform=ax.transAxes)
             ax.text(0.1, 0.1, 'uband: ' + str(uband), transform=ax.transAxes)
 
             format_ticks(ax)
-            show(fig)
+
+            if not plt.isinteractive():
+                ExitHandler.register_atexit(plt.show)
 
         if return_bands:
             return lband, uband

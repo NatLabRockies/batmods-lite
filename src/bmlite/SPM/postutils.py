@@ -146,7 +146,8 @@ def potentials(soln: Solution) -> None:
 
     """
 
-    from ..plotutils import format_ticks, show
+    from .._utils import ExitHandler
+    from ..plotutils import format_ticks
 
     fig, ax = plt.subplots(nrows=1, ncols=3, figsize=[12, 3],
                            layout='constrained')
@@ -164,7 +165,9 @@ def potentials(soln: Solution) -> None:
         format_ticks(ax[i])
 
     fig.get_layout_engine().set(wspace=0.1)
-    show(fig)
+
+    if not plt.isinteractive():
+        ExitHandler.register_atexit(plt.show)
 
 
 def intercalation(soln: Solution) -> None:
@@ -189,7 +192,8 @@ def intercalation(soln: Solution) -> None:
 
     import matplotlib.colors as clrs
 
-    from ..plotutils import format_ticks, show
+    from .._utils import ExitHandler
+    from ..plotutils import format_ticks
 
     # Pull sim and exp from sol
     sim = soln._sim
@@ -232,7 +236,8 @@ def intercalation(soln: Solution) -> None:
         ax[i].set_ylim([0., 1.05])
         format_ticks(ax[i])
 
-    show(fig)
+    if not plt.isinteractive():
+        ExitHandler.register_atexit(plt.show)
 
 
 def pixels(soln: Solution) -> None:
@@ -255,7 +260,8 @@ def pixels(soln: Solution) -> None:
 
     """
 
-    from ..plotutils import pixel, show
+    from ..plotutils import pixel
+    from .._utils import ExitHandler
 
     # Get needed domains
     an, ca = soln._sim.an, soln._sim.ca
@@ -289,4 +295,6 @@ def pixels(soln: Solution) -> None:
 
     # Adjust spacing
     fig.get_layout_engine().set(hspace=0.1, wspace=0.1)
-    show(fig)
+
+    if not plt.isinteractive():
+        ExitHandler.register_atexit(plt.show)
