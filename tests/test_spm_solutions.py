@@ -14,7 +14,7 @@ def soln():
     sim = bm.SPM.Simulation()
 
     expr = bm.Experiment()
-    expr.add_step('current_C', -2., (3600., 10.), limits=('voltage_V', 3.))
+    expr.add_step('current_C', 2., (3600., 10.), limits=('voltage_V', 3.))
     expr.add_step('current_A', 0., (600., 10.))
 
     soln = sim.run(expr)

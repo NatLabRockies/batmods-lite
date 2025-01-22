@@ -108,7 +108,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
                            - np.flip(div_r(ca.rm, ca.rp, Js_ca))
 
     # External current [A/m^2]
-    i_ext = -sdot_an*an.A_s*an.thick*c.F
+    i_ext = sdot_an*an.A_s*an.thick*c.F
 
     # Boundary conditions -----------------------------------------------------
     mode = exp['mode']
@@ -123,15 +123,15 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     # Electrolyte - potential (algebraic)
     if mode == 'current' and units == 'A':
         res[ca.ptr['phi_ed']] = sdot_ca*ca.A_s*ca.thick*c.F \
-                              - value(t) / bat.area
-        res[el.ptr['phi_el']] = sdot_an*an.A_s*an.thick*c.F \
                               + value(t) / bat.area
+        res[el.ptr['phi_el']] = sdot_an*an.A_s*an.thick*c.F \
+                              - value(t) / bat.area
 
     elif mode == 'current' and units == 'C':
         res[ca.ptr['phi_ed']] = sdot_ca*ca.A_s*ca.thick*c.F \
-                              - value(t)*bat.cap / bat.area
-        res[el.ptr['phi_el']] = sdot_an*an.A_s*an.thick*c.F \
                               + value(t)*bat.cap / bat.area
+        res[el.ptr['phi_el']] = sdot_an*an.A_s*an.thick*c.F \
+                              - value(t)*bat.cap / bat.area
 
     elif mode == 'voltage':
         res[ca.ptr['phi_ed']] = voltage_V - value(t)

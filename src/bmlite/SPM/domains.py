@@ -358,9 +358,9 @@ class Electrode:
         c, T = sim.c, bat.temp
 
         if self._name == 'anode':
-            sign, ed = -1., 'an'
+            sign, ed = +1., 'an'
         elif self._name == 'cathode':
-            sign, ed = +1., 'ca'
+            sign, ed = -1., 'ca'
 
         phis = soln.vars[ed]['phis']
         xs = soln.vars[ed]['xs'][:, -1]

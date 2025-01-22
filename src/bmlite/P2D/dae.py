@@ -147,8 +147,8 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     value = exp['value']
 
     # External current [A/m^2]
-    i_ext = sdot_ca[-1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) \
-          + ca.sigma_s*ca.eps_s**ca.p_sol \
+    i_ext = -sdot_ca[-1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) \
+          - ca.sigma_s*ca.eps_s**ca.p_sol \
               * (phi_ca[-1] - phi_ca[-2]) / (ca.x[-1] - ca.x[-2])
 
     if mode == 'current' and units == 'A':
@@ -176,7 +176,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     s_eff = an.sigma_s*an.eps_s**an.p_sol
     ip_ed = -s_eff*grad_x(an.x, phi_an)
 
-    im_ed = np.concat([[-i_ext], ip_ed])
+    im_ed = np.concat([[i_ext], ip_ed])
     ip_ed = np.concat([ip_ed, [0.]])
 
     # Weighted solid particle properties
@@ -260,7 +260,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     ip_ed = -s_eff*grad_x(ca.x, phi_ca)
 
     im_ed = np.concat([[0.], ip_ed])
-    ip_ed = np.concat([ip_ed, [-i_ext]])
+    ip_ed = np.concat([ip_ed, [i_ext]])
 
     # Weighted solid particle properties
     wt_m = 0.5*(ca.rp[:-1] - ca.rm[:-1]) / (ca.r[1:] - ca.r[:-1])

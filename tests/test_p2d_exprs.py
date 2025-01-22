@@ -15,11 +15,11 @@ def soln(sim):
     sinusoid = lambda t: 3.8 + 10e-3*np.sin(2.*np.pi*t / 15.)  # 10 mV, 15 Hz
 
     expr = bm.Experiment()
-    expr.add_step('current_C', -2., (3600., 10.), limits=('voltage_V', 3.))
+    expr.add_step('current_C', 2., (3600., 10.), limits=('voltage_V', 3.))
     expr.add_step('current_A', 0., (600., 10.))
-    expr.add_step('current_C', 2., (3600., 10.), limits=('voltage_V', 4.3))
+    expr.add_step('current_C', -2., (3600., 10.), limits=('voltage_V', 4.3))
     expr.add_step('voltage_V', 4.3, (600., 10.))
-    expr.add_step('power_W', -0.15, (3600., 10.), limits=('voltage_V', 3.8))
+    expr.add_step('power_W', 0.15, (3600., 10.), limits=('voltage_V', 3.8))
     expr.add_step('voltage_V', sinusoid, (60., 1.))
 
     soln = sim.run(expr)

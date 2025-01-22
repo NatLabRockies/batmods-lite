@@ -457,8 +457,8 @@ class Electrode:
             sdot = i0 / c.F * (  np.exp( an.alpha_a*c.F*eta / c.R / T)
                                - np.exp(-an.alpha_c*c.F*eta / c.R / T)  )
 
-            i_ext = -sdot[:, 0]*an.A_s*c.F*(an.xp[0] - an.xm[0]) \
-                  + an.sigma_s*an.eps_s**an.p_sol \
+            i_ext = sdot[:, 0]*an.A_s*c.F*(an.xp[0] - an.xm[0]) \
+                  - an.sigma_s*an.eps_s**an.p_sol \
                       * (phis[:, 1] - phis[:, 0]) / (an.x[1] - an.x[0])
 
         elif self.name == 'cathode':
@@ -474,8 +474,8 @@ class Electrode:
             sdot = i0 / c.F * (  np.exp( ca.alpha_a*c.F*eta / c.R / T)
                                - np.exp(-ca.alpha_c*c.F*eta / c.R / T)  )
 
-            i_ext = sdot[:, -1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) \
-                  + ca.sigma_s*ca.eps_s**ca.p_sol \
+            i_ext = -sdot[:, -1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) \
+                  - ca.sigma_s*ca.eps_s**ca.p_sol \
                       * (phis[:, -1] - phis[:, -2]) / (ca.x[-1] - ca.x[-2])
 
         current_A = i_ext*bat.area

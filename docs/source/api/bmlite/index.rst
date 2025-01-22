@@ -120,7 +120,9 @@ Package Contents
 
       :param mode: Control mode, {'current_A', 'current_C', 'voltage_V', 'power_W'}.
       :type mode: str
-      :param value: Value of boundary contion mode, in the appropriate units.
+      :param value: Value of boundary contion mode, in the appropriate units. Note that
+                    negative and positive values of current and power reference charge
+                    and discharge directions, respectively.
       :type value: float | Callable
       :param tspan: Relative times for recording solution [s]. Providing a tuple as
                     (t_max: float, Nt: int) or (t_max: float, dt: float) constructs
@@ -134,7 +136,9 @@ Package Contents
                      'voltage_V', 'power_W', 'time_s', 'time_min', 'time_h'}. Values for
                      each limit should immediately follow a corresponding name and match
                      its units. Time limits are in reference to total experiment time.
-                     The default is None.
+                     The default is None. Current and power limits should follow the
+                     same sign convention as the mode, i.e., negative values for charge
+                     and positive for discharge.
       :type limits: tuple[str, float], optional
       :param \*\*kwargs: IDASolver keyword arguments specific to the new step only.
       :type \*\*kwargs: dict, optional

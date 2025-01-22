@@ -409,21 +409,21 @@ class BaseSolution(IDAResult):
         j_ca_tot = np.sum(self.vars['ca']['sdot']*ca.A_s*dxb_ca*c.F, axis=1)
 
         checks = {
-            'j_a': np.allclose(i_mod, -j_an_tot, rtol=rtol, atol=atol),
-            'j_c': np.allclose(i_mod, j_ca_tot, rtol=rtol, atol=atol),
+            'j_a': np.allclose(i_mod, j_an_tot, rtol=rtol, atol=atol),
+            'j_c': np.allclose(i_mod, -j_ca_tot, rtol=rtol, atol=atol),
             'cs': np.allclose(1., Li_ed_t / Li_ed_0, rtol=rtol, atol=atol),
             'ce': np.allclose(1., Li_el_t / Li_el_0, rtol=rtol, atol=atol),
         }
 
         if plot:
-            fig, ax = plt.subplots(nrows=2, ncols=3, figsize=[12, 6],
-                                   layout='constrained')
+            _, ax = plt.subplots(nrows=2, ncols=3, figsize=[12, 6],
+                                 layout='constrained')
 
             # Faradaic currents
-            ax[0, 0].set_ylabel(r'$i_{\rm ext} / j_{\rm far}$ [A/m$^2$]')
+            ax[0, 0].set_ylabel(r'$i_{\rm ext} $\pm$ j_{\rm far}$ [A/m$^2$]')
 
-            ax[0, 0].plot(self.t, i_mod / j_an_tot, '-C3', label='anode')
-            ax[0, 0].plot(self.t, i_mod / j_ca_tot, '-C2', label='cathode')
+            ax[0, 0].plot(self.t, i_mod - j_an_tot, '-C3', label='anode')
+            ax[0, 0].plot(self.t, i_mod + j_ca_tot, '-C2', label='cathode')
 
             ax[0, 0].legend(loc='best')
 

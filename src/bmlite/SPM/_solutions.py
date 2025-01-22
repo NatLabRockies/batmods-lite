@@ -349,8 +349,8 @@ class BaseSolution(IDAResult):
         j_ca_tot = self.vars['ca']['sdot']*ca.A_s*ca.thick*c.F
 
         checks = {
-            'j_a': np.allclose(i_mod, -j_an_tot, rtol=rtol, atol=atol),
-            'j_c': np.allclose(i_mod, j_ca_tot, rtol=rtol, atol=atol),
+            'j_a': np.allclose(i_mod, j_an_tot, rtol=rtol, atol=atol),
+            'j_c': np.allclose(i_mod, -j_ca_tot, rtol=rtol, atol=atol),
             'cs': np.allclose(1., Li_ed_t / Li_ed_0, rtol=rtol, atol=atol),
         }
 
@@ -359,11 +359,11 @@ class BaseSolution(IDAResult):
                                    layout='constrained')
 
             # Faradaic currents
-            ax[0].set_ylabel(r'$i_{\rm ext} / j_{\rm an}$ [A/m$^2$]')
-            ax[1].set_ylabel(r'$i_{\rm ext} / j_{\rm ca}$ [A/m$^2$]')
+            ax[0].set_ylabel(r'$i_{\rm ext} - j_{\rm an}$ [A/m$^2$]')
+            ax[1].set_ylabel(r'$i_{\rm ext} + j_{\rm ca}$ [A/m$^2$]')
 
-            ax[0].plot(self.t, i_mod / j_an_tot, '-C3')
-            ax[1].plot(self.t, i_mod / j_ca_tot, '-C2')
+            ax[0].plot(self.t, i_mod - j_an_tot, '-C3')
+            ax[1].plot(self.t, i_mod + j_ca_tot, '-C2')
 
             ymin = min([ax[i].get_ylim()[0] for i in range(1)])
             ymax = max([ax[i].get_ylim()[1] for i in range(1)])

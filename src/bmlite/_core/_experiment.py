@@ -107,7 +107,9 @@ class Experiment:
         mode : str
             Control mode, {'current_A', 'current_C', 'voltage_V', 'power_W'}.
         value : float | Callable
-            Value of boundary contion mode, in the appropriate units.
+            Value of boundary contion mode, in the appropriate units. Note that
+            negative and positive values of current and power reference charge
+            and discharge directions, respectively.
         tspan : tuple | 1D np.array
             Relative times for recording solution [s]. Providing a tuple as
             (t_max: float, Nt: int) or (t_max: float, dt: float) constructs
@@ -121,7 +123,9 @@ class Experiment:
             'voltage_V', 'power_W', 'time_s', 'time_min', 'time_h'}. Values for
             each limit should immediately follow a corresponding name and match
             its units. Time limits are in reference to total experiment time.
-            The default is None.
+            The default is None. Current and power limits should follow the
+            same sign convention as the mode, i.e., negative values for charge
+            and positive for discharge.
         **kwargs : dict, optional
             IDASolver keyword arguments specific to the new step only.
 
