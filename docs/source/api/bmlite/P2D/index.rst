@@ -157,7 +157,7 @@ Package Contents
 
 
 
-   .. py:method:: run(expr, reset_state = True, t_shift = 0.001)
+   .. py:method:: run(expr, reset_state = True, t_shift = 0.001, bar = False)
 
       Run a full experiment.
 
@@ -167,11 +167,14 @@ Package Contents
                           back to a rested condition at 'soc0' at the end of all steps. When
                           False, the state does not reset. Instead it will update to match
                           the final state of the last experimental step.
-      :type reset_state: bool
+      :type reset_state: bool, optional
       :param t_shift: Time (in seconds) to shift step solutions by when stitching them
                       together. If zero the end time of each step overlaps the starting
                       time of its following step. The default is 1e-3.
-      :type t_shift: float
+      :type t_shift: float, optional
+      :param bar: Displays a progress bar showing percentage of completed steps when
+                  True. The default is False.
+      :type bar: bool, optional
 
       :returns: :class:`~bmlite.P2D.CycleSolution` -- A stitched solution with all experimental steps.
 

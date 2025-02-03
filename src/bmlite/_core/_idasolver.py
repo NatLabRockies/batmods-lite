@@ -81,8 +81,8 @@ def bandwidth(resfn: Callable, t0: float, y0: ArrayLike, yp0: ArrayLike,
         raise ValueError("'resfn' signature must have either 4 or 5 inputs.")
 
     # Perturbed variables
-    y = np.asarray(y0, copy=True)
-    yp = np.asarray(yp0, copy=True)
+    y = np.array(y0)
+    yp = np.array(yp0)
 
     # Initial residuals
     res = np.zeros_like(y)

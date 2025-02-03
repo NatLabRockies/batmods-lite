@@ -10,6 +10,9 @@ so the ``'band'`` linear solver option can be used in the ``IDASolver`` class.
 
 import numpy as np
 
+if not hasattr(np, 'concat'):  # pragma: no cover
+    np.concat = np.concatenate
+
 
 def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
               inputs: tuple[object, dict]) -> None | tuple[np.ndarray]:

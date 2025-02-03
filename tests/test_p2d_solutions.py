@@ -14,8 +14,8 @@ def soln():
     sim = bm.P2D.Simulation()
 
     expr = bm.Experiment()
-    expr.add_step('current_C', 2., (3600., 10.), limits=('voltage_V', 3.))
-    expr.add_step('current_A', 0., (600., 10.))
+    expr.add_step('current_C', 1., (3600., 10.), limits=('voltage_V', 3.9))
+    expr.add_step('current_A', 0., (300., 10.))
 
     soln = sim.run(expr)
 

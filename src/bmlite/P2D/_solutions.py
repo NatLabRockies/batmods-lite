@@ -12,6 +12,9 @@ from bmlite import IDAResult
 if TYPE_CHECKING:  # pragma: no cover
     from ._simulation import Simulation
 
+if not hasattr(np, 'concat'):  # pragma: no cover
+    np.concat = np.concatenate
+
 
 class BaseSolution(IDAResult):
     """Base SPM solution."""
