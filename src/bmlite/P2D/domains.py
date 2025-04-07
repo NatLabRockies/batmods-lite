@@ -220,6 +220,8 @@ class Electrode:
 
         """
 
+        from . import options
+
         if name not in ['anode', 'cathode']:
             raise ValueError("'name' must be either 'anode' or 'cathode'.")
 
@@ -242,9 +244,12 @@ class Electrode:
         self.Ds_deg = kwargs.get('Ds_deg')
         self.material = kwargs.get('material')
 
-        self.g_hyst = 1.0
-        self.M_hyst = 0.03
-        self.hyst0 = 0.
+        self._options = {}
+
+        all_options = kwargs.get('options', {})
+        if 'Hysteresis' in all_options:
+            Hysteresis, opt = options.Hysteresis, all_options['Hysteresis']
+            self._options['Hysteresis'] = Hysteresis(self, **opt)
 
         self.update()
 
@@ -393,21 +398,50 @@ class Electrode:
         self.ptr['phi_ed'] = self.ptr['Li_ed'] + self.Nr
         self.ptr['Li_el'] = self.ptr['phi_ed'] + 1
         self.ptr['phi_el'] = self.ptr['Li_el'] + 1
-        self.ptr['hyst'] = self.ptr['phi_el'] + 1
-        self.ptr['x_off'] = self.Nr + 4
 
-        self.ptr['shift'] = self.Nx * self.ptr['x_off']
+        xvars = ['phi_ed', 'Li_el', 'phi_el']
+        last_xvar = 'phi_el'
 
-        x_ptr(self, ['phi_ed', 'Li_el', 'phi_el', 'hyst'])
+        # Options only support new x variables (like hysteresis... not xr)
+        for opt in self._options.values():
+            new_xvar = opt.make_mesh(last_xvar, pshift)
+            xvars.append(new_xvar)
+            last_xvar = new_xvar
+
+        opt_count = len(self._options)
+
+        self.ptr['x_off'] = self.Nr + 3 + opt_count
+
+        self.ptr['start'] = pshift
+        self.ptr['size'] = self.ptr['x_off']*self.Nx
+        self.ptr['shift'] = self.ptr['size']
+
+        x_ptr(self, xvars)
         xr_ptr(self, ['Li_ed'])
 
     def sv0(self, el: object) -> np.ndarray:
-        return np.tile(
-            np.hstack([self.x_0 * np.ones(self.Nr),
-                       self.phi_0, el.Li_0, el.phi_0, self.hyst0]), self.Nx)
+
+        start = self.ptr['start']
+        size = self.ptr['size']
+
+        sv0 = np.zeros(size)
+        sv0[self.xr_ptr['Li_ed'].flatten() - start] = self.x_0
+        sv0[self.x_ptr['phi_ed'] - start] = self.phi_0
+        sv0[self.x_ptr['Li_el'] - start] = el.Li_0
+        sv0[self.x_ptr['phi_el'] - start] = el.phi_0
+
+        for opt in self._options.values():
+            opt.sv0(sv0)
+
+        return sv0
 
     def algidx(self) -> np.ndarray:
-        return np.hstack([self.x_ptr['phi_ed'], self.x_ptr['phi_el']])
+        algidx = np.hstack([self.x_ptr['phi_ed'], self.x_ptr['phi_el']])
+
+        for opt in self._options.values():
+            opt.algidx(algidx)
+
+        return np.sort(algidx)
 
     def to_dict(self, sol: object) -> dict:
 
@@ -424,8 +458,11 @@ class Electrode:
             'phis': sol.y[:, self.x_ptr['phi_ed']],
             'ce': sol.y[:, self.x_ptr['Li_el']],
             'phie': sol.y[:, self.x_ptr['phi_el']],
-            'hyst': sol.y[:, self.x_ptr['hyst']],
         }
+
+        for opt in self._options.values():
+            outputs = opt.to_dict(sol)
+            ed_sol.update(outputs)
 
         return ed_sol
 
@@ -452,37 +489,33 @@ class Electrode:
         c, T = sim.c, bat.temp
 
         if self.name == 'anode':
-            phis = soln.vars['an']['phis']
-            xs = soln.vars['an']['xs'][:, :, -1]
-            hyst = soln.vars['an']['hyst']
+            ed, ed_str = an, 'an'
+        elif self.name == 'cathode':
+            ed, ed_str = ca, 'ca'
 
-            phie = soln.vars['an']['phie']
-            ce = soln.vars['an']['ce']
+        phis = soln.vars[ed_str]['phis']
+        xs = soln.vars[ed_str]['xs'][:, :, -1]
+        phie = soln.vars[ed_str]['phie']
+        ce = soln.vars[ed_str]['ce']
 
-            eta = phis - phie - (an.get_Eeq(xs) + an.M_hyst*hyst)
+        if 'Hysteresis' in ed._options:
+            hyst = soln.vars[ed_str]['hyst']
+            Hyst = ed.M_hyst*hyst
+        else:
+            Hyst = 0.
 
-            i0 = an.get_i0(xs, ce, T)
-            sdot = i0 / c.F * (  np.exp( an.alpha_a*c.F*eta / c.R / T)
-                               - np.exp(-an.alpha_c*c.F*eta / c.R / T)  )
+        eta = phis - phie - (ed.get_Eeq(xs) + Hyst)
 
+        i0 = ed.get_i0(xs, ce, T)
+        sdot = i0 / c.F * (  np.exp( ed.alpha_a*c.F*eta / c.R / T)
+                           - np.exp(-ed.alpha_c*c.F*eta / c.R / T)  )
+
+        if self.name == 'anode':
             i_ext = sdot[:, 0]*an.A_s*c.F*(an.xp[0] - an.xm[0]) \
-                  - an.sigma_s*an.eps_s**an.p_sol \
-                      * (phis[:, 1] - phis[:, 0]) / (an.x[1] - an.x[0])
+                    - an.sigma_s*an.eps_s**an.p_sol \
+                        * (phis[:, 1] - phis[:, 0]) / (an.x[1] - an.x[0])
 
         elif self.name == 'cathode':
-            phis = soln.vars['ca']['phis']
-            xs = soln.vars['ca']['xs'][:, :, -1]
-            hyst = soln.vars['ca']['hyst']
-
-            phie = soln.vars['ca']['phie']
-            ce = soln.vars['ca']['ce']
-
-            eta = phis - phie - (ca.get_Eeq(xs) + ca.M_hyst*hyst)
-
-            i0 = ca.get_i0(xs, ce, T)
-            sdot = i0 / c.F * (  np.exp( ca.alpha_a*c.F*eta / c.R / T)
-                               - np.exp(-ca.alpha_c*c.F*eta / c.R / T)  )
-
             i_ext = -sdot[:, -1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) \
                   - ca.sigma_s*ca.eps_s**ca.p_sol \
                       * (phis[:, -1] - phis[:, -2]) / (ca.x[-1] - ca.x[-2])
