@@ -7,6 +7,7 @@ on:
       - "docs/**"
       - "images/**"
       - "LICENSE"
+      - ".github/ISSUE_TEMPLATE/**"
 
   pull_request:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - "docs/**"
       - "images/**"
       - "LICENSE"
+      - ".github/ISSUE_TEMPLATE/**"
 
 jobs:
   lint:
