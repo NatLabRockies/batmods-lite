@@ -17,7 +17,7 @@ class NMC532Fast:
         alpha_c : float
             Cathodic symmetry factor in Butler-Volmer expression [-].
         Li_max : float
-            Maximum lithium concentration in solid phase [kmol/m^3].
+            Maximum lithium concentration in solid phase [kmol/m3].
 
         """
 
@@ -25,7 +25,8 @@ class NMC532Fast:
         self.alpha_c = alpha_c
         self.Li_max = Li_max
 
-    def get_Ds(self, x: float | np.ndarray, T: float) -> float | np.ndarray:
+    def get_Ds(self, x: float | np.ndarray, T: float,
+               fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the lithium diffusivity in the solid phase given the local
         intercalation fraction ``x`` and temperature ``T``.
@@ -36,11 +37,15 @@ class NMC532Fast:
             Lithium intercalation fraction [-].
         T : float
             Battery temperature [K].
+        fluxdir : float | 1D array
+            Lithiation direction: +1 for lithiation, -1 for delithiation, 0 for
+            rest. Used for direction-dependent parameters. Ensure the zero case
+            is handled explicitly or via a default (lithiating or delithiating).
 
         Returns
         -------
         Ds : float | 1D array
-            Lithium diffusivity in the solid phase [m^2/s].
+            Lithium diffusivity in the solid phase [m2/s].
 
         """
 
@@ -68,7 +73,7 @@ class NMC532Fast:
         return Ds
 
     def get_i0(self, x: float | np.ndarray, C_Li: float | np.ndarray,
-               T: float) -> float | np.ndarray:
+               T: float, fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the exchange current density given the intercalation
         fraction ``x`` at the particle surface, the local lithium ion
@@ -81,14 +86,18 @@ class NMC532Fast:
         x : float | 1D array
             Lithium intercalation fraction at ``r = R_s`` [-].
         C_Li : float | 1D array
-            Lithium ion concentration in the local electrolyte [kmol/m^3].
+            Lithium ion concentration in the local electrolyte [kmol/m3].
         T : float
             Battery temperature [K].
+        fluxdir : float | 1D array
+            Lithiation direction: +1 for lithiation, -1 for delithiation, 0 for
+            rest. Used for direction-dependent parameters. Ensure the zero case
+            is handled explicitly or via a default (lithiating or delithiating).
 
         Returns
         -------
         i0 : float | 1D array
-            Exchange current density [A/m^2].
+            Exchange current density [A/m2].
 
         """
 
@@ -112,16 +121,17 @@ class NMC532Fast:
 
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
-        Calculate the equilibrium potential given the intercalation fraction.
+        Calculate the equilibrium potential given the surface intercalation
+        fraction ``x`` at the particle surface.
 
         Parameters
         ----------
-        x : float | 1D array
+        x : float
             Lithium intercalation fraction at ``r = R_s`` [-].
 
         Returns
         -------
-        Eeq : float | 1D array
+        Eeq : float
             Equilibrium potential [V].
 
         """
@@ -154,6 +164,29 @@ class NMC532Fast:
 
         return Eeq
 
+    def get_Mhyst(self, x: float | np.ndarray) -> float | np.ndarray:
+        """
+        Calculate the hysteresis magnitude given the surface intercalation
+        fraction ``x`` at the particle surface.
+
+        Parameters
+        ----------
+        x : float | 1D array
+            Lithium intercalation fraction at ``r = R_s`` [-].
+
+        Returns
+        -------
+        M_hyst : float | 1D array
+            Hysteresis magnitude [V].
+
+        """
+
+        M_hyst = 0.03
+        if isinstance(x, np.ndarray):
+            M_hyst *= np.ones_like(x)
+
+        return M_hyst
+
 
 class NMC532Slow(NMC532Fast):
 
@@ -171,7 +204,7 @@ class NMC532Slow(NMC532Fast):
         alpha_c : float
             Cathodic symmetry factor in Butler-Volmer expression [-].
         Li_max : float
-            Maximum lithium concentration in solid phase [kmol/m^3].
+            Maximum lithium concentration in solid phase [kmol/m3].
 
         """
 
@@ -193,22 +226,18 @@ class NMC532Slow(NMC532Fast):
 
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
-        Calculate the equilibrium potential given the intercalation fraction.
+        Calculate the equilibrium potential given the surface intercalation
+        fraction ``x`` at the particle surface.
 
         Parameters
         ----------
-        x : float | 1D array
+        x : float
             Lithium intercalation fraction at ``r = R_s`` [-].
 
         Returns
         -------
-        Eeq : float | 1D array
+        Eeq : float
             Equilibrium potential [V].
-
-        Raises
-        ------
-        ValueError :
-            x is out of bounds [x_min, x_max].
 
         """
 
@@ -241,7 +270,7 @@ class NMC532SlowExtrap(NMC532Fast):
         alpha_c : float
             Cathodic symmetry factor in Butler-Volmer expression [-].
         Li_max : float
-            Maximum lithium concentration in solid phase [kmol/m^3].
+            Maximum lithium concentration in solid phase [kmol/m3].
 
         """
 
@@ -263,22 +292,18 @@ class NMC532SlowExtrap(NMC532Fast):
 
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
-        Calculate the equilibrium potential given the intercalation fraction.
+        Calculate the equilibrium potential given the surface intercalation
+        fraction ``x`` at the particle surface.
 
         Parameters
         ----------
-        x : float | 1D array
+        x : float
             Lithium intercalation fraction at ``r = R_s`` [-].
 
         Returns
         -------
-        Eeq : float | 1D array
+        Eeq : float
             Equilibrium potential [V].
-
-        Raises
-        ------
-        ValueError :
-            x is out of bounds [x_min, x_max].
 
         """
 

@@ -7,7 +7,10 @@ __pycache__/
 *$py.class
 
 # C extensions
+*.c
 *.so
+*.pyd
+*.pxi
 
 # VSCode 
 .vscode
@@ -76,7 +79,9 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/build/
+docs/build
+docs/source/api
+docs/jupyter_execute
 
 # PyBuilder
 .pybuilder/

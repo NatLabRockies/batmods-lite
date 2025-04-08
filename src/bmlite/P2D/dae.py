@@ -14,6 +14,11 @@ if not hasattr(np, 'concat'):  # pragma: no cover
     np.concat = np.concatenate
 
 
+def sign(x):
+    """Return +1 for x >= 0, -1 for x < 0."""
+    return (x >= 0).astype(float) * 2 - 1
+
+
 def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
               inputs: tuple[object, dict]) -> None | tuple[np.ndarray]:
     """
@@ -47,10 +52,10 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
         div_i_an   divergence in anode volume [A/m3] (*1D array*)
         div_i_sep  divergence in separator volume [A/m3] (*1D array*)
         div_i_ca   divergence in cathode volume [A/m3] (*1D array*)
-        sdot_an    Li+ production at each x_a [kmol/m^3/s] (*1D array*)
-        sdot_ca    Li+ production at each x_c [kmol/m^3/s] (*1D array*)
-        sum_ip     i_ed + i_el at "plus" interfaces [A/m^2] (*1D array*)
-        i_el_x     i_el at each x interface [A/m^2] (*1D array*)
+        sdot_an    Li+ production at each x_a [kmol/m3/s] (*1D array*)
+        sdot_ca    Li+ production at each x_c [kmol/m3/s] (*1D array*)
+        sum_ip     i_ed + i_el at "plus" interfaces [A/m2] (*1D array*)
+        i_el_x     i_el at each x interface [A/m2] (*1D array*)
         ========== ======================================================
 
     """
@@ -70,6 +75,16 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     Li_el_an = sv[an.x_ptr['Li_el']]
     phi_el_an = sv[an.x_ptr['phi_el']]
 
+    xs_an = sv[an.xr_ptr['Li_ed'].flatten()]
+    xs_an = xs_an.reshape([an.Nx, an.Nr])
+    Li_an = xs_an*an.Li_max
+
+    if 'Hysteresis' in an._submodels:
+        hyst_an = sv[an.x_ptr['hyst']]
+        Hyst_an = an.get_Mhyst(xs_an[:, -1])*hyst_an
+    else:
+        Hyst_an = 0.
+
     Li_el_sep = sv[sep.x_ptr['Li_el']]
     phi_el_sep = sv[sep.x_ptr['phi_el']]
 
@@ -77,15 +92,15 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     Li_el_ca = sv[ca.x_ptr['Li_el']]
     phi_el_ca = sv[ca.x_ptr['phi_el']]
 
-    # sv values for anode particles (both x and r)
-    xs_an = sv[an.xr_ptr['Li_ed'].flatten()]
-    xs_an = xs_an.reshape([an.Nx, an.Nr])
-    Li_an = xs_an*an.Li_max
-
-    # sv values for cathode particles (both x and r)
     xs_ca = sv[ca.xr_ptr['Li_ed'].flatten()]
     xs_ca = xs_ca.reshape([ca.Nx, ca.Nr])
     Li_ca = xs_ca*ca.Li_max
+
+    if 'Hysteresis' in ca._submodels:
+        hyst_ca = sv[ca.x_ptr['hyst']]
+        Hyst_ca = ca.get_Mhyst(xs_ca[:, -1])*hyst_ca
+    else:
+        Hyst_ca = 0.
 
     # Pre-calculate ln(Li_el)
     ln_Li_an = np.log(Li_el_an)
@@ -131,16 +146,18 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     # Reaction terms ----------------------------------------------------------
 
     # Anode overpotentials and Li+ productions
-    eta = phi_an - phi_el_an - an.get_Eeq(xs_an[:, -1])
+    eta = phi_an - phi_el_an - (an.get_Eeq(xs_an[:, -1]) + Hyst_an)
+    fluxdir_an = -np.sign(eta)
 
-    i0 = an.get_i0(xs_an[:, -1], Li_el_an, T)
+    i0 = an.get_i0(xs_an[:, -1], Li_el_an, T, fluxdir_an)
     sdot_an = i0 / c.F * (  np.exp( an.alpha_a*c.F*eta / c.R / T)
                           - np.exp(-an.alpha_c*c.F*eta / c.R / T)  )
 
     # Cathode overpotentials and Li+ productions
-    eta = phi_ca - phi_el_ca - ca.get_Eeq(xs_ca[:, -1])
+    eta = phi_ca - phi_el_ca - (ca.get_Eeq(xs_ca[:, -1]) + Hyst_ca)
+    fluxdir_ca = -np.sign(eta)
 
-    i0 = ca.get_i0(xs_ca[:, -1], Li_el_ca, T)
+    i0 = ca.get_i0(xs_ca[:, -1], Li_el_ca, T, fluxdir_ca)
     sdot_ca = i0 / c.F * (  np.exp( ca.alpha_a*c.F*eta / c.R / T)
                           - np.exp(-ca.alpha_c*c.F*eta / c.R / T)  )
 
@@ -149,7 +166,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     units = exp['units']
     value = exp['value']
 
-    # External current [A/m^2]
+    # External current [A/m2]
     i_ext = -sdot_ca[-1]*ca.A_s*c.F*(ca.xp[-1] - ca.xm[-1]) \
           - ca.sigma_s*ca.eps_s**ca.p_sol \
               * (phi_ca[-1] - phi_ca[-2]) / (ca.x[-1] - ca.x[-2])
@@ -186,7 +203,8 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     wt_m = 0.5*(an.rp[:-1] - an.rm[:-1]) / (an.r[1:] - an.r[:-1])
     wt_p = 0.5*(an.rp[1:] - an.rm[1:]) / (an.r[1:] - an.r[:-1])
 
-    Ds = wt_m*an.get_Ds(xs_an[:, :-1], T) + wt_p*an.get_Ds(xs_an[:, 1:], T)
+    Ds = wt_m*an.get_Ds(xs_an[:, :-1], T, fluxdir_an) \
+       + wt_p*an.get_Ds(xs_an[:, 1:], T, fluxdir_an)
 
     # Solid-phase radial diffusion
     Nk_ed = np.column_stack([
@@ -213,6 +231,12 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     # Electrolyte COC (algebraic)
     res[an.x_ptr['phi_el']] = (ip_el - im_el) / (an.xp - an.xm) \
                             - an.A_s*sdot_an*c.F
+
+    # Hysteresis (differential)
+    if 'Hysteresis' in an._submodels:
+        res[an.x_ptr['hyst']] = svdot[an.x_ptr['hyst']] \
+            - np.abs(sdot_an*c.F*an.g_hyst / 3600. / bat.cap) \
+            * (sign(sdot_an) - hyst_an)
 
     # Store some outputs for verification
     if mode == 'post':
@@ -269,7 +293,8 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     wt_m = 0.5*(ca.rp[:-1] - ca.rm[:-1]) / (ca.r[1:] - ca.r[:-1])
     wt_p = 0.5*(ca.rp[1:] - ca.rm[1:]) / (ca.r[1:] - ca.r[:-1])
 
-    Ds = wt_m*ca.get_Ds(xs_ca[:, :-1], T) + wt_p*ca.get_Ds(xs_ca[:, 1:], T)
+    Ds = wt_m*ca.get_Ds(xs_ca[:, :-1], T, fluxdir_ca) \
+       + wt_p*ca.get_Ds(xs_ca[:, 1:], T, fluxdir_ca)
 
     # Solid-phase radial diffusion
     Nk_ed = np.column_stack([
@@ -298,6 +323,12 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     # Electrolyte COC (algebraic)
     res[ca.x_ptr['phi_el']] = (ip_el - im_el) / (ca.xp - ca.xm) \
                             - ca.A_s*sdot_ca*c.F
+
+    # Hysteresis (differential)
+    if 'Hysteresis' in ca._submodels:
+        res[ca.x_ptr['hyst']] = svdot[ca.x_ptr['hyst']] \
+            - np.abs(sdot_ca*c.F*ca.g_hyst / 3600. / bat.cap) \
+            * (sign(sdot_ca) - hyst_ca)
 
     # Store some outputs for verification
     if mode == 'post':

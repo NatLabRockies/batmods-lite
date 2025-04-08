@@ -14,6 +14,11 @@ if not hasattr(np, 'concat'):  # pragma: no cover
     np.concat = np.concatenate
 
 
+def sign(x):
+    """Return +1 for x >= 0, -1 for x < 0."""
+    return (x >= 0).astype(float) * 2 - 1
+
+
 def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
               inputs: tuple[object, dict]) -> None | tuple[np.ndarray]:
     """
@@ -44,8 +49,8 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
         ========= =================================================
         Variable  Description [units] (*type*)
         ========= =================================================
-        sdot_an   anode Li+ production [kmol/m^3/s] (*1D array*)
-        sdot_ca   cathode Li+ production [kmol/m^3/s] (*1D array*)
+        sdot_an   anode Li+ production [kmol/m3/s] (*1D array*)
+        sdot_ca   cathode Li+ production [kmol/m3/s] (*1D array*)
         ========= =================================================
 
     """
@@ -71,17 +76,31 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     Li_an = xs_an*an.Li_max
     Li_ca = xs_ca*ca.Li_max
 
+    if 'Hysteresis' in an._submodels:
+        hyst_an = sv[an.ptr['hyst']]
+        Hyst_an = an.get_Mhyst(xs_an[-1])*hyst_an
+    else:
+        Hyst_an = 0.
+
+    if 'Hysteresis' in ca._submodels:
+        hyst_ca = sv[ca.ptr['hyst']]
+        Hyst_ca = ca.get_Mhyst(xs_ca[-1])*hyst_ca
+    else:
+        Hyst_ca = 0.
+
     # Anode -------------------------------------------------------------------
 
     # Reaction current
-    eta = phi_an - phi_el - an.get_Eeq(xs_an[-1])
+    eta = phi_an - phi_el - (an.get_Eeq(xs_an[-1]) + Hyst_an)
+    fluxdir_an = -np.sign(eta)
 
-    i0 = an.get_i0(xs_an[-1], el.Li_0, T)
+    i0 = an.get_i0(xs_an[-1], el.Li_0, T, fluxdir_an)
     sdot_an = i0 / c.F * (  np.exp( an.alpha_a*c.F*eta / c.R / T)
                           - np.exp(-an.alpha_c*c.F*eta / c.R / T)  )
 
     # Weighted solid particle properties
-    Ds_an = an._wtm*an.get_Ds(xs_an[:-1], T) + an._wtp*an.get_Ds(xs_an[1:], T)
+    Ds_an = an._wtm*an.get_Ds(xs_an[:-1], T, fluxdir_an) \
+          + an._wtp*an.get_Ds(xs_an[1:], T, fluxdir_an)
 
     # Solid-phase COM (differential)
     Js_an = np.concat([[0.], Ds_an*grad_r(an.r, Li_an), [-sdot_an]])
@@ -92,17 +111,25 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     # Solid-phase COC (algebraic)
     res[an.ptr['phi_ed']] = phi_an - 0.
 
+    # Hysteresis (differential)
+    if 'Hysteresis' in an._submodels:
+        res[an.ptr['hyst']] = svdot[an.ptr['hyst']] \
+            - np.abs(sdot_an*c.F*an.g_hyst / 3600. / bat.cap) \
+            * (sign(sdot_an) - hyst_an)
+
     # Cathode -----------------------------------------------------------------
 
     # Reaction current
-    eta = phi_ca - phi_el - ca.get_Eeq(xs_ca[-1])
+    eta = phi_ca - phi_el - (ca.get_Eeq(xs_ca[-1]) + Hyst_ca)
+    fluxdir_ca = -np.sign(eta)
 
-    i0 = ca.get_i0(xs_ca[-1], el.Li_0, T)
+    i0 = ca.get_i0(xs_ca[-1], el.Li_0, T, fluxdir_ca)
     sdot_ca = i0 / c.F * (  np.exp( ca.alpha_a*c.F*eta / c.R / T)
                           - np.exp(-ca.alpha_c*c.F*eta / c.R / T)  )
 
     # Weighted solid particle properties
-    Ds_ca = ca._wtm*ca.get_Ds(xs_ca[:-1], T) + ca._wtp*ca.get_Ds(xs_ca[1:], T)
+    Ds_ca = ca._wtm*ca.get_Ds(xs_ca[:-1], T, fluxdir_ca) \
+          + ca._wtp*ca.get_Ds(xs_ca[1:], T, fluxdir_ca)
 
     # Solid-phase COM (differential)
     Js_ca = np.concat([[0.], Ds_ca*grad_r(ca.r, Li_ca), [-sdot_ca]])
@@ -110,7 +137,13 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     res[ca.r_ptr['Li_ed']] = ca.Li_max*svdot[ca.r_ptr['Li_ed']] \
                            - np.flip(div_r(ca.rm, ca.rp, Js_ca))
 
-    # External current [A/m^2]
+    # Hysteresis (differential)
+    if 'Hysteresis' in ca._submodels:
+        res[ca.ptr['hyst']] = svdot[ca.ptr['hyst']] \
+            - np.abs(sdot_ca*c.F*ca.g_hyst / 3600. / bat.cap) \
+            * (sign(sdot_ca) - hyst_ca)
+
+    # External current [A/m2]
     i_ext = sdot_an*an.A_s*an.thick*c.F
 
     # Boundary conditions -----------------------------------------------------

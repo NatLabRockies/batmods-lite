@@ -29,7 +29,7 @@ class Battery:
             ====== =====================================================
             cap    nominal battery capacity [A*h] (*float*)
             temp   temperature [K] (*float*)
-            area   area normal to the current collectors [m^2] (*float*)
+            area   area normal to the current collectors [m2] (*float*)
             ====== =====================================================
 
         """
@@ -68,7 +68,7 @@ class Electrolyte:
             ======== ==============================================
             Key      Description [units] (type)
             ======== ==============================================
-            li_0     initial Li+ concentration [kmol/m^3] (*float*)
+            li_0     initial Li+ concentration [kmol/m3] (*float*)
             ======== ==============================================
 
         """
@@ -126,25 +126,28 @@ class Electrode:
             Keyword arguments to set the electrode attributes. The required
             keys and descriptions are given below:
 
-            ========= =========================================================
-            Key       Description [units] (type)
-            ========= =========================================================
-            Nr        number of ``r`` discretizations [-] (*int*)
-            thick     electrode thickness [m] (*float*)
-            R_s       represenatative particle radius [m] (*float*)
-            eps_el    electrolyte volume fraction [-] (*float*)
-            eps_CBD   carbon binder domain volume fraction [-] (*float*)
-            eps_void  Void volume fraction [-] (*float*)
-            alpha_a   Butler-Volmer anodic symmetry factor [-] (*float*)
-            alpha_c   Butler-Volmer cathodic symmetry factor [-] (*float*)
-            Li_max    max solid-phase lithium concentration [kmol/m^3] (*float*)
-            x_0       initial solid-phase intercalation fraction [-] (*float*)
-            i0_deg    ``i0`` degradation factor [-] (*float*)
-            Ds_deg    ``Ds`` degradation factor [-] (*float*)
-            material  class name from ``bmlite.materials`` [-] (*str*)
-            ========= =========================================================
+            ========== ======================================================
+            Key        Description [units] (type)
+            ========== ======================================================
+            Nr         number of ``r`` discretizations [-] (*int*)
+            thick      electrode thickness [m] (*float*)
+            R_s        represenatative particle radius [m] (*float*)
+            eps_el     electrolyte volume fraction [-] (*float*)
+            eps_CBD    carbon binder domain volume fraction [-] (*float*)
+            eps_void   Void volume fraction [-] (*float*)
+            alpha_a    Butler-Volmer anodic symmetry factor [-] (*float*)
+            alpha_c    Butler-Volmer cathodic symmetry factor [-] (*float*)
+            Li_max     max solid-phase Li concentration [kmol/m3] (*float*)
+            x_0        initial solid Li intercalation fraction [-] (*float*)
+            i0_deg     ``i0`` degradation factor [-] (*float*)
+            Ds_deg     ``Ds`` degradation factor [-] (*float*)
+            material   class name from ``bmlite.materials`` [-] (*str*)
+            submodels  ``submodels`` classes to include (*dict[dict]*)
+            ========== ======================================================
 
         """
+
+        from . import submodels
 
         if name not in ['anode', 'cathode']:
             raise ValueError("'name' must be either 'anode' or 'cathode'.")
@@ -167,6 +170,12 @@ class Electrode:
 
         self.update()
 
+        self._submodels = {}
+        all_submodels = kwargs.get('submodels', {})
+        if 'Hysteresis' in all_submodels:
+            Hysteresis, opt = submodels.Hysteresis, all_submodels['Hysteresis']
+            self._submodels['Hysteresis'] = Hysteresis(self, **opt)
+
     def update(self) -> None:
         """
         Updates any secondary/dependent parameters. For the ``Electrode``
@@ -176,7 +185,7 @@ class Electrode:
             ``eps_void = 1 - eps_s - eps_el``
         * Activate material volume fraction [-]:
             ``eps_AM = eps_s - eps_CBD``
-        * Specific particle surface area [m^2/m^3]:
+        * Specific particle surface area [m2/m3]:
             ``A_s = 3 * eps_AM / R_s``
 
         Returns
@@ -197,7 +206,8 @@ class Electrode:
         Material = getattr(materials, self.material)
         self._material = Material(self.alpha_a, self.alpha_c, self.Li_max)
 
-    def get_Ds(self, x: float | np.ndarray, T: float) -> float | np.ndarray:
+    def get_Ds(self, x: float | np.ndarray, T: float,
+               fluxdir: float) -> float | np.ndarray:
         """
         Calculate the lithium diffusivity in the solid phase given the local
         intercalation fraction ``x`` and temperature ``T``.
@@ -208,17 +218,21 @@ class Electrode:
             Lithium intercalation fraction [-].
         T : float
             Battery temperature [K].
+        fluxdir : float
+            Lithiation direction: +1 for lithiation, -1 for delithiation, 0 for
+            rest. Used for direction-dependent parameters. Ensure the zero case
+            is handled explicitly or via a default (lithiating or delithiating).
 
         Returns
         -------
         Ds : float | 1D array
-            Lithium diffusivity in the solid phase [m^2/s].
+            Lithium diffusivity in the solid phase [m2/s].
 
         """
+        return self.Ds_deg * self._material.get_Ds(x, T, fluxdir)
 
-        return self.Ds_deg * self._material.get_Ds(x, T)
-
-    def get_i0(self, x: float, C_Li: float, T: float) -> float:
+    def get_i0(self, x: float, C_Li: float, T: float,
+               fluxdir: float) -> float:
         """
         Calculate the exchange current density given the surface intercalation
         fraction ``x`` at the particle surface, the local lithium ion
@@ -229,23 +243,26 @@ class Electrode:
         x : float
             Lithium intercalation fraction at ``r = R_s`` [-].
         C_Li : float
-            Lithium ion concentration in the local electrolyte [kmol/m^3].
+            Lithium ion concentration in the local electrolyte [kmol/m3].
         T : float
             Battery temperature [K].
+        fluxdir : float
+            Lithiation direction: +1 for lithiation, -1 for delithiation, 0 for
+            rest. Used for direction-dependent parameters. Ensure the zero case
+            is handled explicitly or via a default (lithiating or delithiating).
 
         Returns
         -------
         i0 : float
-            Exchange current density [A/m^2].
+            Exchange current density [A/m2].
 
         """
-
-        return self.i0_deg * self._material.get_i0(x, C_Li, T)
+        return self.i0_deg * self._material.get_i0(x, C_Li, T, fluxdir)
 
     def get_Eeq(self, x: float) -> float:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface and temperature ``T``.
+        fraction ``x`` at the particle surface.
 
         Parameters
         ----------
@@ -258,8 +275,25 @@ class Electrode:
             Equilibrium potential [V].
 
         """
-
         return self._material.get_Eeq(x)
+
+    def get_Mhyst(self, x: float | np.ndarray) -> float | np.ndarray:
+        """
+        Calculate the hysteresis magnitude given the surface intercalation
+        fraction ``x`` at the particle surface.
+
+        Parameters
+        ----------
+        x : float | 1D array
+            Lithium intercalation fraction at ``r = R_s`` [-].
+
+        Returns
+        -------
+        M_hyst : float | 1D array
+            Hysteresis magnitude [V].
+
+        """
+        return self._material.get_Mhyst(x)
 
     def make_mesh(self, pshift: int = 0):
         """
@@ -293,30 +327,51 @@ class Electrode:
 
         # Pointers
         # [[ptr_an], phi_el, [ptr_ca]]
-        # ptr_an -> [[Li_ed(0->R_s)], phi_ed]
-        # ptr_ca -> [phi_ed, [Li_ed(R_s->0)]]
+        # ptr_an -> [[Li_ed(0->R_s)], phi_ed, ...]
+        # ptr_ca -> [..., phi_ed, [Li_ed(R_s->0)]]
 
         self.ptr = {}
         if self._name == 'anode':
             self.ptr['Li_ed'] = 0 + pshift
             self.ptr['phi_ed'] = self.ptr['Li_ed'] + self.Nr
+
         elif self._name == 'cathode':
             self.ptr['phi_ed'] = 0 + pshift
             self.ptr['Li_ed'] = self.ptr['phi_ed'] + 1
 
+        for model in self._submodels.values():
+            model.make_mesh(pshift)
+
+        submodel_count = len(self._submodels)
+
         self.ptr['r_off'] = 1
-        self.ptr['shift'] = self.Nr + 1
+        self.ptr['start'] = pshift
+        self.ptr['size'] = self.Nr + 1 + submodel_count
+        self.ptr['shift'] = self.ptr['size']
 
         r_ptr(self, ['Li_ed'])
 
     def sv0(self):
-        if self._name == 'anode':
-            return np.hstack([self.x_0*np.ones(self.Nr), self.phi_0])
-        elif self._name == 'cathode':
-            return np.hstack([self.phi_0, self.x_0*np.ones(self.Nr)])
+
+        start = self.ptr['start']
+        size = self.ptr['size']
+
+        sv0 = np.zeros(size)
+        sv0[self.r_ptr['Li_ed'] - start] = self.x_0*np.ones(self.Nr)
+        sv0[self.ptr['phi_ed'] - start] = self.phi_0
+
+        for model in self._submodels.values():
+            model.sv0(sv0)
+
+        return sv0
 
     def algidx(self):
-        return np.array([self.ptr['phi_ed']])
+
+        algidx = np.array([self.ptr['phi_ed']], dtype=int)
+        for model in self._submodels.values():
+            model.algidx(algidx)
+
+        return np.sort(algidx)
 
     def to_dict(self, sol: object) -> dict:
 
@@ -332,6 +387,10 @@ class Electrode:
             'xs': xs,
             'cs': xs*self.Li_max,
         }
+
+        for model in self._submodels.values():
+            outputs = model.to_dict(sol)
+            ed_sol.update(outputs)
 
         return ed_sol
 
@@ -363,12 +422,18 @@ class Electrode:
             sign, ed = -1., 'ca'
 
         phis = soln.vars[ed]['phis']
-        xs = soln.vars[ed]['xs'][:, -1]
+        xs_R = soln.vars[ed]['xs'][:, -1]
         phie = soln.vars['el']['phie']
 
-        eta = phis - phie - self.get_Eeq(xs)
+        if 'Hysteresis' in self._submodels:
+            hyst = self.get_Mhyst(xs_R)*soln.vars[ed]['hyst']
+        else:
+            hyst = 0.
 
-        i0 = self.get_i0(xs, el.Li_0, T)
+        eta = phis - phie - (self.get_Eeq(xs_R) + hyst)
+        fluxdir = -np.sign(eta)
+
+        i0 = self.get_i0(xs_R, el.Li_0, T, fluxdir)
         sdot = i0 / c.F * (  np.exp( self.alpha_a*c.F*eta / c.R / T)
                            - np.exp(-self.alpha_c*c.F*eta / c.R / T)  )
 
