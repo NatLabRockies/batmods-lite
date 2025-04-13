@@ -8,6 +8,7 @@
 - Simplified `run` and `run_step` methods to work with generalized `Experiment` class
 - New solver now provides additional statistics, e.g., number of function and Jacobian evaluations
 - Control-specific `Solution` classes are replaced with generalized `StepSolution` and `CycleSolution`
+- Add degradation parameters for the electrolyte (applies to P2D only)
 
 ### Optimizations
 - Replaced `scikits-odes` solver with `scikit-sundae` to improve installation
