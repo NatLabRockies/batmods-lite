@@ -348,10 +348,10 @@ class BaseSolution(IDAResult):
         sim = self._sim
 
         # domain variables - placeholders
-        self.vars['an'] = {}
-        self.vars['sep'] = {}
-        self.vars['ca'] = {}
-        self.vars['el'] = {}
+        self.vars['an'] = 'Run soln.post() to populate'
+        self.vars['sep'] = 'Run soln.post() to populate'
+        self.vars['ca'] = 'Run soln.post() to populate'
+        self.vars['el'] = 'Run soln.post() to populate'
 
         # stored time
         time_s = self.t
