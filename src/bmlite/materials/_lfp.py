@@ -27,21 +27,11 @@ class LFPInterp:
         self.alpha_c = alpha_c
         self.Li_max = Li_max
 
-        # Positive lithiation
-        Dsp_x = [-10, 0, 0.034, 0.068, 0.136, 0.204, 0.272, 0.340, 0.408,
-                 0.476, 0.544, 0.612, 0.680, 1, 10]
-        Dsp_y = [7e-15, 7e-15, 7e-15, 8e-15, 9e-15, 6.3e-15, 8.9e-15, 12e-15,
-                 20e-15, 56e-15, 90e-15, 110e-15, 230e-15, 230e-15, 230e-15]
-
-        self._Dsp_interp = CubicSpline(Dsp_x, Dsp_y)
-
-        # Negative lithiation (i.e., delithiating)
-        Dsn_x = [-10, 0, 0.456, 0.558, 0.660, 0.728, 0.762, 0.796, 0.830,
-                 0.932, 0.976, 1, 10]
-        Dsn_y = [85e-15, 85e-15, 85e-15, 45e-15, 25e-15, 12e-15, 14e-15,
-                 12e-15, 10e-15, 6.0e-15, 6.0e-15, 6.0e-15, 6.0e-15]
-
-        self._Dsn_interp = CubicSpline(Dsn_x, Dsn_y)
+        # Diffusivity polynomial coeffs, for Ds = 10**P(x)
+        self._Ds_coeffs = np.array([
+             349.29800720, -925.34470810, 875.56218099, -268.24357721,
+            -102.31082863,  100.13715321, -27.74353094, -17.700056810,
+        ])
 
         # OCV and hysteresis, from csv data file
         csvfile = os.path.dirname(__file__) + '/data/lfp_ocv.csv'
@@ -74,16 +64,9 @@ class LFPInterp:
 
         """
 
-        scalar = np.isscalar(x)
+        Ds = 4.014e-17*np.ones_like(x)  # 10**np.polyval(self._Ds_coeffs, x)
 
-        x = np.asarray(x)
-        cond = np.asarray(fluxdir) >= 0
-
-        Ds = np.empty_like(x)
-        Ds[cond] = 0.0001 * self._Dsp_interp(x[cond])
-        Ds[~cond] = 0.0001 * self._Dsn_interp(x[~cond])
-
-        return Ds.item() if scalar else Ds
+        return Ds.item() if np.isscalar(x) else Ds
 
     def get_i0(self, x: float | np.ndarray, C_Li: float | np.ndarray,
                T: float, fluxdir: float | np.ndarray) -> float | np.ndarray:

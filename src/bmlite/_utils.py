@@ -59,7 +59,7 @@ class ProgressBar(tqdm):
 
         if manual and iterable is not None:
             raise ValueError("'iterable' and 'manual' values are conflicting.")
-        elif iterable is None:
+        elif not manual and iterable is None:
             raise ValueError("'iterable' cannot be None if 'manual' is False.")
 
         kwargs.setdefault('desc', desc)
@@ -145,7 +145,8 @@ class ProgressBar(tqdm):
 
     def reset(self) -> None:
         """
-        Resets to 0 iterations for repeated use.
+        Resets the iteration count to zero for repeated use. Only works for
+        manual mode. For iterables you will need to create a new instance.
 
         Returns
         -------
@@ -155,17 +156,21 @@ class ProgressBar(tqdm):
         self._iter = 0
         super().reset()
 
+    def __del__(self) -> None:
+        if hasattr(self, 'disable'):  # if super().__init__() ran
+            super().__del__()
+
 
 def formatwarning(message, category, filename, lineno, line=None):
     """Shortened warning format - used for parameter/pre warnings."""
     return f"\n[bmlite {category.__name__}] {message}\n\n"
 
 
-def short_warn(message, category=None, stacklevel=1, source=None):
+def short_warn(message, category=UserWarning, filename='None', lineno=0):
     """Print a warning with the short format from ``formatwarning``."""
     original_format = warnings.formatwarning
 
     warnings.formatwarning = formatwarning
-    warnings.warn(message, category, stacklevel, source)
+    warnings.warn_explicit(message, category, filename, lineno)
 
     warnings.formatwarning = original_format
