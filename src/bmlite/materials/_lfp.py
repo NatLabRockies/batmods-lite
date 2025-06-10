@@ -1,3 +1,5 @@
+from numbers import Real
+
 import numpy as np
 
 
@@ -102,7 +104,7 @@ class LFPInterp:
         c = Constants()
 
         # Avoid floating point errors
-        if isinstance(x, (np.float64, np.float32, float)):
+        if isinstance(x, Real):
             if (x < 0 and self.alpha_c < 1) or (x > 1 and self.alpha_a < 1):
                 raise ValueError('x is out of [0, 1] during i0 calculation')
         elif isinstance(x, np.ndarray):
