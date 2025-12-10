@@ -27,7 +27,7 @@ None.
 - Renamed some attributes so they are no longer user-facing (`_sv0`, `_algidx`, etc.)
 
 ### Chores
-None.
+- Rebrand NREL to NLR, and include name change for Alliance as well ([#20](https://github.com/NREL/batmods-lite/pull/20))
 
 ## [v0.0.1](https://github.com/NREL/BATMODS-lite/tree/v0.0.1)
 This is the first release of BATMODS-lite. Main features/capabilities are listed below.
