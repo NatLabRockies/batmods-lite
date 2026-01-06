@@ -37,6 +37,8 @@ pip install -e .[dev]     (editable installation with developer options)
 
 The editable installation is useful if you plan to make changes to your local package. It ensures that any changes are immediately available each time the package is imported, without needing to reinstall. The developer options will likely be helpful if you are modifying the package.
 
+If you run into issues with installation due to the [scikit-sundae](https://github.com/NREL/scikit-sundae) dependency, please submit an issue [here](https://github.com/NREL/scikit-sundae/issues). We also manage this solver package, but distribute it separately since it is not developed in pure Python.
+
 ## Get Started
 The API is organized around three main classes that allow you to construct simulations, define experiments, and interact with solutions. Two basic examples are given below. These demonstrate a 2C discharge for both the single particle model (SPM) and pseudo-2D (P2D) model. Note that the experiment class interfaces with all simulations. The simulations and their respective solutions, however, will depend on the model subpackage they are loaded from. For a more detailed tutorial, please check `docs/source/examples`. If you installed the editable version with developer options, you can also build the documentation locally using `nox -s docs`.
 
