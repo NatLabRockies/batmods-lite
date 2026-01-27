@@ -14,11 +14,11 @@ description = "Packaged battery models and material properties."
 keywords = ["battery", "models", "lithium", "NMC", "LFP"]
 authors = [
     { name = "Corey R. Randall" },
-    { email = "corey.randall@nrel.gov" },
+    { email = "corey.r.randall@gmail.com" },
 ]
 maintainers = [
     { name = "Corey R. Randall" },
-    { email = "corey.randall@nrel.gov" },
+    { email = "corey.r.randall@gmail.com" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -76,7 +76,7 @@ dev = [
 
 
 [project.urls]
-Homepage = "https://github.com/NREL/BATMODS-lite"
+Homepage = "https://github.com/NatLabRockies/BATMODS-lite"
 Documentation = "https://batmods-lite.readthedocs.io/"
-Repository = "https://github.com/NREL/BATMODS-lite"
-Issues = "https://github.com/NREL/BATMODS-lite/issues"
+Repository = "https://github.com/NatLabRockies/BATMODS-lite"
+Issues = "https://github.com/NatLabRockies/BATMODS-lite/issues"

@@ -72,7 +72,7 @@ html_theme_options = {
     'icon_links': [
         {
             'name': 'GitHub',
-            'url': 'https://github.com/NREL/BATMODS-lite',
+            'url': 'https://github.com/NatLabRockies/BATMODS-lite',
             'icon': 'fa-brands fa-github',
         },
         # {
