@@ -1,7 +1,7 @@
 <!-- <img alt='Logo' style='width: 75%; min-width: 250px; max-width: 500px;' 
- src='https://github.com/NREL/batmods-lite/blob/main/images/dark.png?raw=true#gh-dark-mode-only'/>
+ src='https://github.com/NatLabRockies/batmods-lite/blob/main/images/dark.png?raw=true#gh-dark-mode-only'/>
 <img alt='Logo' style='width: 75%; min-width: 250px; max-width: 500px;' 
- src='https://github.com/NREL/batmods-lite/blob/main/images/light.png?raw=true#gh-light-mode-only'/> -->
+ src='https://github.com/NatLabRockies/batmods-lite/blob/main/images/light.png?raw=true#gh-light-mode-only'/> -->
 
 # BATMODS-lite
 
@@ -10,11 +10,11 @@
 ![coverage][cov-b] &nbsp;
 [![pep8][pep-b]][pep-l]
 
-[ci-b]: https://github.com/NREL/batmods-lite/actions/workflows/ci.yml/badge.svg
-[ci-l]: https://github.com/NREL/batmods-lite/actions/workflows/ci.yml
+[ci-b]: https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml/badge.svg
+[ci-l]: https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml
 
-[test-b]: https://github.com/NREL/batmods-lite/blob/main/images/tests.svg?raw=true
-[cov-b]: https://github.com/NREL/batmods-lite/blob/main/images/coverage.svg?raw=true
+[test-b]: https://github.com/NatLabRockies/batmods-lite/blob/main/images/tests.svg?raw=true
+[cov-b]: https://github.com/NatLabRockies/batmods-lite/blob/main/images/coverage.svg?raw=true
 
 [pep-b]: https://img.shields.io/badge/code%20style-pep8-orange.svg
 [pep-l]: https://www.python.org/dev/peps/pep-0008
@@ -37,7 +37,7 @@ pip install -e .[dev]     (editable installation with developer options)
 
 The editable installation is useful if you plan to make changes to your local package. It ensures that any changes are immediately available each time the package is imported, without needing to reinstall. The developer options will likely be helpful if you are modifying the package.
 
-If you run into issues with installation due to the [scikit-sundae](https://github.com/NREL/scikit-sundae) dependency, please submit an issue [here](https://github.com/NREL/scikit-sundae/issues). We also manage this solver package, but distribute it separately since it is not developed in pure Python.
+If you run into issues with installation due to the [scikit-sundae](https://github.com/NatLabRockies/scikit-sundae) dependency, please submit an issue [here](https://github.com/NatLabRockies/scikit-sundae/issues). We also manage this solver package, but distribute it separately since it is not developed in pure Python.
 
 ## Get Started
 The API is organized around three main classes that allow you to construct simulations, define experiments, and interact with solutions. Two basic examples are given below. These demonstrate a 2C discharge for both the single particle model (SPM) and pseudo-2D (P2D) model. Note that the experiment class interfaces with all simulations. The simulations and their respective solutions, however, will depend on the model subpackage they are loaded from. For a more detailed tutorial, please check `docs/source/examples`. If you installed the editable version with developer options, you can also build the documentation locally using `nox -s docs`.
@@ -76,7 +76,7 @@ soln.simple_plot('time_s', 'voltage_V')
 ## Citing this Work
 This work was authored by researchers at the National Laboratory of the Rockies (NLR). If you use this package in your work, please include the following citation:
 
-> Randall, Corey R. "BATMODS-lite: Packaged battery models and material properties [SWR-25-108]." Computer software, Jun. 2025. url: [github.com/NREL/batmods-lite](https://github.com/NREL/batmods-lite). doi: [10.11578/dc.20260114.1](https://doi.org./10.11578/dc.20260114.1).
+> Randall, Corey R. "BATMODS-lite: Packaged battery models and material properties [SWR-25-108]." Computer software, Jun. 2025. url: [github.com/NatLabRockies/batmods-lite](https://github.com/NatLabRockies/batmods-lite). doi: [10.11578/dc.20260114.1](https://doi.org./10.11578/dc.20260114.1).
 
 For convenience, we also provide the following for your BibTex:
 
@@ -84,7 +84,7 @@ For convenience, we also provide the following for your BibTex:
 @misc{randall2025bmlite,
   author = {Randall, Corey R.},
   title = {{BATMODS-lite: Packaged battery models and material properties [SWR-25-108]}},
-  url = {github.com/NREL/batmods-lite},
+  url = {github.com/NatLabRockies/batmods-lite},
   month = {Jun.},
   year = {2025},
   doi = {10.11578/dc.20260114.1},
@@ -92,7 +92,7 @@ For convenience, we also provide the following for your BibTex:
 ```
 
 ## Contributing
-If you'd like to contribute to this package, please look through the existing [issues](https://github.com/NREL/batmods-lite/issues). If the bug you've caught or the feature you'd like to add isn't already being worked on, please submit a new issue before getting started. 
+If you'd like to contribute to this package, please look through the existing [issues](https://github.com/NatLabRockies/batmods-lite/issues). If the bug you've caught or the feature you'd like to add isn't already being worked on, please submit a new issue before getting started. 
 
 <!-- You should also read through the [developer guidelines](https://batmods-lite.readthedocs.io/latest/development). Need to get on readthedocs first... -->
 
