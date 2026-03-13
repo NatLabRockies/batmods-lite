@@ -3,7 +3,7 @@
 ## [Unreleased](https://github.com/NatLabRockies/BATMODS-lite/)
 
 ### New Features
-- Adding NMC 811 material ([#22](https://github.com/NatLabRockies/BATMODS-lite/pull/22))
+- Adding NMC811 and GraphiteSiOx material ([#22](https://github.com/NatLabRockies/BATMODS-lite/pull/22))
 - Check bounds of intercalation fraction before calculating exchange current density ([#19](https://github.com/NatLabRockies/BATMODS-lite/pull/19))
 - Update `materials` module with new LFP properties, from ICI ([#18](https://github.com/NatLabRockies/BATMODS-lite/pull/18))
 - Use `CubicSpline` interpolations for LFP properties ([#15](https://github.com/NatLabRockies/BATMODS-lite/pull/15))

@@ -1,7 +1,7 @@
 battery:
     cap:        4.56                # Nominal capacity                   [A*h]
     temp:       303.15              # Temperature                          [K]
-    area:       1.4e-3              # Cell area                           [m2]
+    area:       0.103675            # Cell area                           [m2]
 
 electrolyte:
     Li_0:       1.0                 # Initial Li+ conc.              [kmol/m3]
@@ -19,7 +19,7 @@ anode:
     x_0:        0.07                # Initial intercalation frac.          [-]
     i0_deg:     1.0                 # Degradation factor for i0            [-]
     Ds_deg:     1.0                 # Degradation factor for Ds            [-]
-    material:   GraphiteSlowExtrap  # Anode active material class          [-]
+    material:   GraphiteSiOx        # Anode active material class          [-]
 
 cathode:
     Nr:         30                  # Number of r discretizations          [-]
