@@ -1,7 +1,7 @@
 battery:
     cap:        4.56                # Nominal capacity                   [A*h]
     temp:       303.15              # Temperature                          [K]
-    area:                           # Cell area                           [m2]
+    area:       1.4e-3              # Cell area                           [m2]
 
 electrolyte:
     Li_0:       1.0                 # Initial Li+ conc.              [kmol/m3]
