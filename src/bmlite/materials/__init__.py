@@ -12,6 +12,7 @@ from ._graphite import GraphiteFast, GraphiteSlow, GraphiteSlowExtrap
 
 from ._lfp import LFPInterp
 from ._nmc_532 import NMC532Fast, NMC532Slow, NMC532SlowExtrap
+from ._nmc_811 import NMC811
 
 __all__ = [
     Gen2Electrolyte,
@@ -22,4 +23,5 @@ __all__ = [
     NMC532Fast,
     NMC532Slow,
     NMC532SlowExtrap,
+    NMC811,
 ]
