@@ -288,7 +288,7 @@ class Electrode:
         self.sigma_s = 10. * self.eps_s
         self.A_s = 3. * self.eps_AM / self.R_s
 
-        if self.eps_void < 0.:
+        if self.eps_void < -1.e-12:
             raise ValueError('eps_s + eps_el > 1.0')
 
         Material = getattr(materials, self.material)
