@@ -126,3 +126,43 @@ def test_nmc_532_slow(args):
 
     with pytest.raises(ValueError):
         nmc.get_Eeq(nmc.x_max * np.ones(5) + 0.01)
+
+
+def test_nmc_811(args):
+    nmc = bm.materials.NMC811(args[0], args[1], args[2])
+
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/nmc811.npz')
+
+    x, C_Li, T = data['x'], data['C_Li'], data['T']
+
+    Ds = nmc.get_Ds(x, T, fluxdir=0)
+    assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
+
+    i0 = nmc.get_i0(x, C_Li, T, fluxdir=0)
+    assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
+
+    Eeq = nmc.get_Eeq(x)
+    assert np.allclose(Eeq / max(Eeq), data['Eeq'] / max(Eeq))
+
+    data.close()
+
+
+def test_graphite_siox(args):
+    nmc = bm.materials.GraphiteSiOx(args[0], args[1], args[2])
+
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/graphite_SiOx.npz')
+
+    x, C_Li, T = data['x'], data['C_Li'], data['T']
+
+    Ds = nmc.get_Ds(x, T, fluxdir=0)
+    assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
+
+    i0 = nmc.get_i0(x, C_Li, T, fluxdir=0)
+    assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
+
+    Eeq = nmc.get_Eeq(x)
+    assert np.allclose(Eeq / max(Eeq), data['Eeq'] / max(Eeq))
+
+    data.close()

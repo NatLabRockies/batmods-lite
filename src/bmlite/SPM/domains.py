@@ -200,8 +200,13 @@ class Electrode:
         self.eps_AM = self.eps_s - self.eps_CBD
         self.A_s = 3. * self.eps_AM / self.R_s
 
-        if self.eps_void < 0.:
+        if self.eps_void < -np.finfo(float).eps:
             raise ValueError('eps_s + eps_el > 1.0')
+
+        self.eps_void = max(self.eps_void, 0.)
+
+        if self.eps_AM <= 0.:
+            raise ValueError('eps_s <= eps_CBD')
 
         Material = getattr(materials, self.material)
         self._material = Material(self.alpha_a, self.alpha_c, self.Li_max)
