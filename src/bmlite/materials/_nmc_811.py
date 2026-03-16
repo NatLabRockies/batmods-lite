@@ -5,7 +5,7 @@ class NMC811:
 
     def __init__(self, alpha_a: float, alpha_c: float, Li_max: float) -> None:
         """
-        Computationally NMC811 kinetic and transport properties.
+        Computationally fast NMC811 kinetic and transport properties.
 
         Parameters
         ----------
@@ -25,7 +25,7 @@ class NMC811:
     def get_Ds(self, x: float | np.ndarray, T: float,
                fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
-        Calculate the lithium diffusivity in the solid phase given the local
+        Calculate the lithium diffusivity in the solid phase, given the local
         intercalation fraction ``x`` and temperature ``T``.
 
         From Table V in
@@ -33,7 +33,7 @@ class NMC811:
         "of Multi-scale Lithium-ion Battery Models",
         Chen et al., J. of the Electrochemical Society, 2020 Vol. 167
         The functional form is the same as NMC532 but is scaled so
-        the average over x matches the paper above at 30C
+        the average over x matches the paper above at 30C.
 
         Parameters
         ----------
@@ -89,7 +89,7 @@ class NMC811:
         of Multi-scale Lithium-ion Battery Models",
         Chen et al., J. of the Electrochemical Society, 2020 Vol. 167
         The functional form is the same as NMC532 but is scaled so
-        the average over x matches the paper above at 30C
+        the average over x matches the paper above at 30C.
 
         Parameters
         ----------
