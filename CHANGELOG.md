@@ -28,6 +28,7 @@ None.
 - Renamed some attributes so they are no longer user-facing (`_sv0`, `_algidx`, etc.)
 
 ### Chores
+- Improve development tools (use `ruff`, add `codecov`, host docs on RTD) ([#24](https://github.com/NatLabRockies/batmods-lite/pull/24))
 - Make GitHub hyperlinks reference new org name `NREL` -> `NatLabRockies` ([#21](https://github.com/NatLabRockies/batmods-lite/pull/21))
 - Rebrand NREL to NLR, and include name change for Alliance as well ([#20](https://github.com/NatLabRockies/batmods-lite/pull/20))
 
