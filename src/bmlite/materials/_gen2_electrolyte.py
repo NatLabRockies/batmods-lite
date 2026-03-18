@@ -6,6 +6,11 @@ class Gen2Electrolyte:
     def __init__(self) -> None:
         """
         Gen 2 Electrolyte transport and material properties.
+
+        References
+        ----------
+        TODO: cite publication with Gen2 properties.
+
         """
         pass
 
@@ -26,8 +31,8 @@ class Gen2Electrolyte:
         -------
         D : float | 1D array
             Lithium ion diffusivity in the electrolyte [m2/s].
-        """
 
+        """
         import numpy as np
 
         A = np.array([[-0.568822600, 1607.003, -24.83763, 64.07366],
@@ -58,8 +63,8 @@ class Gen2Electrolyte:
         -------
         t0 : float | 1D array
             Lithium ion transference number [-].
-        """
 
+        """
         import numpy as np
 
         A = np.array([[-0.0000002876102,  0.0002077407, -0.03881203],
@@ -88,8 +93,8 @@ class Gen2Electrolyte:
         -------
         kappa : float | 1D array
             Electrolyte conductivity [S/m].
-        """
 
+        """
         import numpy as np
 
         A = np.array([
@@ -121,8 +126,8 @@ class Gen2Electrolyte:
         -------
         gamma : float | 1D array
             Thermodynamic factor [-].
-        """
 
+        """
         import numpy as np
 
         gamma = 0.54000*np.exp(329./T)*C_Li**2 - 0.00225*np.exp(1360./T)*C_Li \

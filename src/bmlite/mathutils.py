@@ -36,7 +36,6 @@ def grad_x(x: np.ndarray, f: np.ndarray, axis: int = -1) -> np.ndarray:
     This function is valid for any Cartesian direction, not just x.
 
     """
-
     new_axis = [1] * f.ndim
     new_axis[axis] = -1
 
@@ -67,7 +66,6 @@ def grad_r(r: np.ndarray, f: np.ndarray, axis: int = -1) -> np.ndarray:
         specified axis.
 
     """
-
     new_axis = [1] * f.ndim
     new_axis[axis] = -1
 
@@ -118,7 +116,6 @@ def div_x(xm: np.ndarray, xp: np.ndarray, f: np.ndarray,
     volumes.
 
     """
-
     new_axis = [1] * f.ndim
     new_axis[axis] = -1
 
@@ -152,7 +149,6 @@ def div_r(rm: np.ndarray, rp: np.ndarray, f: np.ndarray,
         than ``f`` along the specified axis.
 
     """
-
     new_axis = [1] * f.ndim
     new_axis[axis] = -1
 
@@ -199,7 +195,6 @@ def int_x(xm: np.ndarray, xp: np.ndarray, f: np.ndarray,
     assumed uniform within a volume defined by ``xm[i] < x < xp[i]``.
 
     """
-
     new_axis = [1] * f.ndim
     new_axis[axis] = -1
 
@@ -243,7 +238,6 @@ def int_r(rm: np.ndarray, rp: np.ndarray, f: np.ndarray,
     assumed uniform within a volume defined by ``rm[i] < r < rp[i]``.
 
     """
-
     new_axis = [1] * f.ndim
     new_axis[axis] = -1
 
@@ -279,7 +273,6 @@ def param_combinations(params: list[str],
             parameter values.
 
     """
-
     from itertools import product
 
     combinations = []

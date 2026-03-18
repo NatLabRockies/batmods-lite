@@ -13,7 +13,7 @@ __pycache__/
 *.pxi
 
 # VSCode 
-.vscode
+.vscode/
 
 # Distribution / packaging
 .Python
@@ -29,6 +29,7 @@ parts/
 sdist/
 var/
 wheels/
+wheelhouse/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -45,6 +46,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+references/
 reports/
 htmlcov/
 .tox/

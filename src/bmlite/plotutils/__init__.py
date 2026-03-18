@@ -27,7 +27,6 @@ def format_ticks(ax: object) -> None:
     None.
 
     """
-
     from matplotlib.ticker import AutoMinorLocator
 
     if ax.get_xaxis().get_scale() != 'log':
@@ -65,7 +64,6 @@ def pixel(ax: object, xlims: list[float], ylims: list[float], z: np.ndarray,
     None.
 
     """
-
     import matplotlib.pyplot as plt
 
     ax.set_xticks([])

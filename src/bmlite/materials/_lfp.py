@@ -19,7 +19,6 @@ class LFPInterp:
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         import os
 
         import pandas as pd
@@ -65,7 +64,6 @@ class LFPInterp:
             Lithium diffusivity in the solid phase [m2/s].
 
         """
-
         Ds = 4.014e-17*np.ones_like(x)  # 10**np.polyval(self._Ds_coeffs, x)
 
         return Ds.item() if np.isscalar(x) else Ds
@@ -98,7 +96,6 @@ class LFPInterp:
             Exchange current density [A/m2].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -134,7 +131,6 @@ class LFPInterp:
             Equilibrium potential [V].
 
         """
-
         return self._Eeq_interp(x)
 
     def get_Mhyst(self, x: float | np.ndarray) -> float | np.ndarray:
@@ -153,5 +149,4 @@ class LFPInterp:
             Hysteresis magnitude [V].
 
         """
-
         return self._Mhyst_interp(x)

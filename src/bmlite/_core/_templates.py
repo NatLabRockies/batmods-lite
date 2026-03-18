@@ -25,16 +25,15 @@ def templates(model: str, file: str | int = None) -> None:
     Raises
     ------
     AttributeError
-        'model' is not a valid model package.
+        'model' is not a valid subpackage.
     FileNotFoundError
         'model' has no 'templates' directory.
 
     """
-
     try:
         path = getattr(bm, model.upper()).__path__[0]
     except AttributeError:
-        raise AttributeError(f"{model=} is not a valid model package.")
+        raise AttributeError(f"{model=} is not a valid subpackage.") from None
 
     if not os.path.exists(path + '/templates/'):  # pragma: no cover
         raise FileNotFoundError(f"{model=} has no 'templates' directory.")

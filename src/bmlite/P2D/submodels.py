@@ -47,7 +47,6 @@ class Hysteresis:
             enable 'Hysteresis'.
 
         """
-
         from .domains import Electrode
 
         if not isinstance(domain, Electrode):
@@ -81,7 +80,6 @@ class Hysteresis:
             The new name (key) of the variable added to the domain pointer.
 
         """
-
         domain = self.domain
         domain.ptr['hyst'] = domain.ptr[last_xvar] + 1
         return 'hyst'
@@ -101,7 +99,6 @@ class Hysteresis:
         None.
 
         """
-
         domain = self.domain
         start = domain.ptr['start']
         sv0[domain.x_ptr['hyst'] - start] = domain.hyst0
@@ -136,7 +133,6 @@ class Hysteresis:
             and output variables.
 
         """
-
         domain = self.domain
 
         xs_ptr = domain.xr_ptr['xs']

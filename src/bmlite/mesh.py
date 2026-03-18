@@ -45,8 +45,8 @@ def x_ptr(domain: object, keys: list[str]) -> dict:
     Returns
     -------
     None.
-    """
 
+    """
     from numpy import array
 
     domain.x_ptr = {}
@@ -82,8 +82,8 @@ def r_ptr(domain: object, keys: list[str]) -> None:
     Returns
     -------
     None.
-    """
 
+    """
     from numpy import array
 
     domain.r_ptr = {}
@@ -120,8 +120,8 @@ def xr_ptr(domain: object, keys: list[str]) -> None:
     Returns
     -------
     None.
-    """
 
+    """
     from numpy import array, tile
 
     domain.xr_ptr = {}
@@ -168,8 +168,8 @@ def uniform_mesh(Lx: float, Nx: int, x0: float = 0.) -> tuple[_ndarray]:
     -----
     Although the inputs and outputs are labeled using ``x`` as the variable,
     this mesh is equally valid for other directions (e.g., radial).
-    """
 
+    """
     from numpy import linspace
 
     xm = x0 + linspace(0., Lx * (1 - 1 / Nx), Nx)
@@ -203,8 +203,8 @@ def param_weights(xm: _ndarray, xp: _ndarray) -> tuple[_ndarray]:
 
     wt_p : 1D array
         Parameter weights for each of the "plus" half volumes.
-    """
 
+    """
     x = 0.5 * (xm + xp)
 
     wt_m = 0.5 * (xp[:-1] - xm[:-1]) / (x[1:] - x[:-1])

@@ -44,13 +44,12 @@ def post(soln: Solution) -> dict:
         i_el_x      ``i_el`` at t, x interfaces [A/m2] (*2D array*)
         =========== ========================================================
 
-    See also
+    See Also
     --------
     ~bmlite.P2D.solutions.StepSolution
     ~bmlite.P2D.solutions.CycleSolution
 
     """
-
     from .dae import residuals
 
     # Pull sim and exp from soln
@@ -115,7 +114,6 @@ def _liquid_phase_Li(soln: Solution) -> np.ndarray:
         Solution's liquid-phase lithium [kmol/m2] vs. time [s].
 
     """
-
     el, an, sep, ca = soln._sim.el, soln._sim.an, soln._sim.sep, soln._sim.ca
 
     # Initial total liquid-phase lithium [kmol/m2]
@@ -152,7 +150,6 @@ def _solid_phase_Li(soln: Solution) -> np.ndarray:
         Solution's solid-phase lithium [kmol/m2] vs. time [s].
 
     """
-
     an, ca = soln._sim.an, soln._sim.ca
 
     # Initial total solid-phase lithium [kmol/m2]
@@ -201,7 +198,6 @@ def potentials(soln: Solution) -> None:
     None.
 
     """
-
     import matplotlib.colors as clrs
 
     from .._utils import ExitHandler
@@ -285,7 +281,6 @@ def electrolyte(soln: Solution) -> None:
     None.
 
     """
-
     import matplotlib.colors as clrs
 
     from .._utils import ExitHandler
@@ -342,7 +337,6 @@ def intercalation(soln: Solution) -> None:
     None.
 
     """
-
     import matplotlib.colors as clrs
 
     from .._utils import ExitHandler
@@ -412,7 +406,6 @@ def pixels(soln: Solution) -> None:
     None.
 
     """
-
     from ..plotutils import pixel
     from .._utils import ExitHandler
 

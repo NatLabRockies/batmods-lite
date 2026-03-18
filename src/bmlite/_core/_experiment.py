@@ -22,14 +22,13 @@ class Experiment:
         **kwargs : dict, optional
             IDASolver keyword arguments that span all steps.
 
-        See also
+        See Also
         --------
         ~bmlite.IDASolver :
             The solver class, with documentation for most keyword arguments
             that you might want to adjust.
 
         """
-
         self._steps = []
         self._step_options = []
         self._all_options = kwargs.copy()
@@ -44,7 +43,6 @@ class Experiment:
             A console-readable instance representation.
 
         """
-
         keys = ['num_steps', 'options']
         values = [self.num_steps, self._all_options]
 
@@ -152,7 +150,7 @@ class Experiment:
         ValueError
             'tspan' arrays must be monotonically increasing.
 
-        See also
+        See Also
         --------
         ~bmlite.IDASolver :
             The solver class, with documentation for most keyword arguments
@@ -181,7 +179,6 @@ class Experiment:
             with a value other than zero then an error is raised.
 
         """
-
         _check_mode(mode)
         _check_limits(limits)
 
@@ -246,7 +243,6 @@ def _check_mode(mode: str) -> None:
         'mode' is invalid.
 
     """
-
     valid = ['current_A', 'current_C', 'voltage_V', 'power_W']
 
     if mode not in valid:
@@ -274,7 +270,6 @@ def _check_limits(limits: tuple[str, float]) -> None:
         A 'limits' name is invalid.
 
     """
-
     valid = [
         'current_A',
         'current_C',

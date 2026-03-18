@@ -50,14 +50,13 @@ class Simulation:
         if they do so. Otherwise, the dependent parameters may not be
         consistent with the user-defined inputs.
 
-        See also
+        See Also
         --------
         bmlite.templates :
             Get help making your own ``.yaml`` file by starting with the
             default template.
 
         """
-
         from .. import Constants
         from .._utils import short_warn
         from .domains import Battery, Electrolyte, Electrode, Separator
@@ -116,7 +115,6 @@ class Simulation:
         consistent with the user-defined inputs.
 
         """
-
         # Update dependent parameters
         self.bat.update()
         self.el.update()
@@ -175,7 +173,6 @@ class Simulation:
             The upper half bandwidth. Only returned if `return_bands=True`.
 
         """
-
         from .dae import residuals
         from .._utils import ExitHandler
         from .._core._idasolver import bandwidth
@@ -241,7 +238,7 @@ class Simulation:
         in between if you want the following experiment to pick up from the
         same state that the last experiment ended.
 
-        See also
+        See Also
         --------
         Experiment : Build an experiment.
         StepSolution : Wrapper for a single-step solution.
@@ -255,7 +252,6 @@ class Simulation:
         or control decisions in the middle of an experiment.
 
         """
-
         from bmlite import IDASolver
 
         from .dae import residuals
@@ -331,14 +327,13 @@ class Simulation:
         can bypass this by using ``reset_state=False``, which keeps the state
         at the end of the final experimental step.
 
-        See also
+        See Also
         --------
         Experiment : Build an experiment.
         StepSolution : Wrapper for a single-step solution.
         CycleSolution : Wrapper for an all-steps solution.
 
         """
-
         from bmlite._utils import ProgressBar
         from ._solutions import CycleSolution
 
@@ -380,7 +375,7 @@ class _EventsFunction:
 
     def __init__(self, limits: tuple[str, float]) -> None:
         """
-        This class is a generalized events function callable.
+        A class to generalize events function callables.
 
         Parameters
         ----------
@@ -389,7 +384,6 @@ class _EventsFunction:
             limit names and values, e.g., ('time_h', 10., 'voltage_V', 4.2).
 
         """
-
         self.keys = limits[0::2]
         self.values = limits[1::2]
         self.size = len(self.keys)
@@ -424,7 +418,6 @@ class _EventsFunction:
         None.
 
         """
-
         inputs = inputs[1]
 
         for i, (key, value) in enumerate(zip(self.keys, self.values)):
@@ -454,7 +447,6 @@ def _setup_eventsfn(limits: tuple[str, float], kwargs: dict) -> None:
     None.
 
     """
-
     eventsfn = _EventsFunction(limits)
 
     kwargs['eventsfn'] = eventsfn

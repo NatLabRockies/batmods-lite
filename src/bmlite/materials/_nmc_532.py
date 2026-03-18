@@ -20,7 +20,6 @@ class NMC532Fast:
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         self.alpha_a = alpha_a
         self.alpha_c = alpha_c
         self.Li_max = Li_max
@@ -48,7 +47,6 @@ class NMC532Fast:
             Lithium diffusivity in the solid phase [m2/s].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -100,7 +98,6 @@ class NMC532Fast:
             Exchange current density [A/m2].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -135,7 +132,6 @@ class NMC532Fast:
             Equilibrium potential [V].
 
         """
-
         A = np.array([
             -3.640117692001490e+3,
              1.317657544484270e+4,
@@ -180,7 +176,6 @@ class NMC532Fast:
             Hysteresis magnitude [V].
 
         """
-
         M_hyst = 0.03
         if isinstance(x, np.ndarray):
             M_hyst *= np.ones_like(x)
@@ -207,7 +202,6 @@ class NMC532Slow(NMC532Fast):
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         import os
 
         import pandas as pd
@@ -240,7 +234,6 @@ class NMC532Slow(NMC532Fast):
             Equilibrium potential [V].
 
         """
-
         if isinstance(x, float):
             if x < self.x_min or x > self.x_max:
                 raise ValueError(f'x is out of bounds [{self.x_min},'
@@ -273,7 +266,6 @@ class NMC532SlowExtrap(NMC532Fast):
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         import os
 
         import pandas as pd
@@ -306,5 +298,4 @@ class NMC532SlowExtrap(NMC532Fast):
             Equilibrium potential [V].
 
         """
-
         return self._Eeq_spline(x)
