@@ -6,7 +6,7 @@
 # BATMODS-lite
 
 [![ci](https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml/badge.svg)](https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml) &nbsp;
-![coverage](https://github.com/NatLabRockies/batmods-lite/blob/main/images/coverage.svg?raw=true) &nbsp;
+[![codecov](https://codecov.io/gh/NatLabRockies/batmods-lite/graph/badge.svg?token=MPuSOeIurf)](https://codecov.io/gh/NatLabRockies/batmods-lite) &nbsp;
 [![license](https://img.shields.io/badge/license-BSD--3-blue.svg)](https://github.com/NatLabRockies/batmods-lite/blob/main/LICENSE) &nbsp;
 
 ## Summary
