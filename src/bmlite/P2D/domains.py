@@ -33,7 +33,6 @@ class Battery:
             ====== =================================================
 
         """
-
         self.cap = kwargs.get('cap')
         self.temp = kwargs.get('temp')
         self.area = kwargs.get('area')
@@ -77,7 +76,6 @@ class Electrolyte:
             ========== ================================================
 
         """
-
         self.Li_0 = kwargs.get('Li_0')
         self.D_deg = kwargs.get('D_deg')
         self.t0_deg = kwargs.get('t0_deg')
@@ -95,7 +93,6 @@ class Electrolyte:
         None.
 
         """
-
         from .. import materials
 
         ElyteMaterial = getattr(materials, self.material)
@@ -119,7 +116,6 @@ class Electrolyte:
             Lithium ion diffusivity in the electrolyte [m2/s].
 
         """
-
         return self.D_deg * self._material.get_D(C_Li, T)
 
     def get_t0(self, C_Li: float | np.ndarray, T: float) -> float | np.ndarray:
@@ -140,7 +136,6 @@ class Electrolyte:
             Lithium ion transference number [-].
 
         """
-
         return self.t0_deg * self._material.get_t0(C_Li, T)
 
     def get_kappa(self, C_Li: float | np.ndarray,
@@ -162,7 +157,6 @@ class Electrolyte:
             Electrolyte conductivity [S/m].
 
         """
-
         return self.kappa_deg * self._material.get_kappa(C_Li, T)
 
     def get_gamma(self, C_Li: float | np.ndarray,
@@ -184,7 +178,6 @@ class Electrolyte:
             Thermodynamic factor [-].
 
         """
-
         return self.gamma_deg * self._material.get_gamma(C_Li, T)
 
 
@@ -228,7 +221,6 @@ class Electrode:
             ========== ========================================================
 
         """
-
         from . import submodels
 
         if name not in ['anode', 'cathode']:
@@ -280,7 +272,6 @@ class Electrode:
         None.
 
         """
-
         from .. import materials
 
         self.eps_void = 1. - self.eps_s - self.eps_el
@@ -411,12 +402,11 @@ class Electrode:
         -------
         None.
 
-        See also
+        See Also
         --------
         batmods.mesh.x_ptr, batmods.mesh.xr_ptr, batmods.mesh.uniform_mesh
 
         """
-
         from ..mesh import x_ptr, xr_ptr, uniform_mesh
 
         # Mesh locations
@@ -517,7 +507,6 @@ class Electrode:
             Boundary voltage, in volts.
 
         """
-
         if self._name == 'anode':
             idx = 0
         elif self._name == 'cathode':
@@ -544,7 +533,6 @@ class Electrode:
             Boundary current, in amps.
 
         """
-
         sim = soln._sim
 
         bat, an, ca = sim.bat, sim.an, sim.ca
@@ -611,7 +599,6 @@ class Separator:
             ======== ========================================================
 
         """
-
         self.Nx = kwargs.get('Nx')
         self.thick = kwargs.get('thick')
         self.eps_el = kwargs.get('eps_el')
@@ -632,7 +619,6 @@ class Separator:
         None.
 
         """
-
         self.eps_s = 1 - self.eps_el
 
     def make_mesh(self, xshift: float = 0., pshift: int = 0) -> None:
@@ -651,12 +637,11 @@ class Separator:
         -------
         None.
 
-        See also
+        See Also
         --------
         batmods.mesh.x_ptr, batmods.mesh.xr_ptr, batmods.mesh.uniform_mesh
 
         """
-
         from ..mesh import x_ptr, uniform_mesh
 
         # Mesh locations

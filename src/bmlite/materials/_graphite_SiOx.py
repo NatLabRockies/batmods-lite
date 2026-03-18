@@ -19,7 +19,6 @@ class GraphiteSiOx:
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         self.alpha_a = alpha_a
         self.alpha_c = alpha_c
         self.Li_max = Li_max
@@ -54,7 +53,6 @@ class GraphiteSiOx:
             Lithium diffusivity in the solid phase [m2/s].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -102,7 +100,6 @@ class GraphiteSiOx:
             Exchange current density [A/m2].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -144,7 +141,6 @@ class GraphiteSiOx:
             Equilibrium potential [V].
 
         """
-
         x = np.atleast_1d(x)
 
         Eeq = 1.9793*np.exp(-39.3631*x) + 0.2482 \
@@ -175,7 +171,6 @@ class GraphiteSiOx:
             Hysteresis magnitude [V].
 
         """
-
         M_hyst = 0.03
         if isinstance(x, np.ndarray):
             M_hyst *= np.ones_like(x)

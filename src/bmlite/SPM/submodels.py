@@ -47,7 +47,6 @@ class Hysteresis:
             enable 'Hysteresis'.
 
         """
-
         from .domains import Electrode
 
         if not isinstance(domain, Electrode):
@@ -77,7 +76,6 @@ class Hysteresis:
         None.
 
         """
-
         domain = self.domain
         if domain._name == 'anode':
             domain.ptr['hyst'] = domain.ptr['phis'] + 1
@@ -102,7 +100,6 @@ class Hysteresis:
         None.
 
         """
-
         domain = self.domain
         start = domain.ptr['start']
         sv0[domain.ptr['hyst'] - start] = domain.hyst0
@@ -137,7 +134,6 @@ class Hysteresis:
             and output variables.
 
         """
-
         domain = self.domain
 
         xs_ptr = domain.r_ptr['xs']

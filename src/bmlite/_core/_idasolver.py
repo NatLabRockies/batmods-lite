@@ -56,18 +56,17 @@ def bandwidth(resfn: Callable, t0: float, y0: ArrayLike, yp0: ArrayLike,
     j_pattern : np.ndarray, shape(m, m)
         Jacobian pattern. Only returned if `return_pattern=True`.
 
-    Warnings
-    --------
-    UserWarning
-        'resfn' signature has 5 inputs, but 'userdata=None'.
-
     Raises
     ------
     ValueError
         'resfn' signature must have either 4 or 5 inputs.
 
-    """
+    Warnings
+    --------
+    UserWarning
+        'resfn' signature has 5 inputs, but 'userdata=None'.
 
+    """
     # Wrap resfn for cases w/ and w/o userdata
     signature = inspect.signature(resfn)
 

@@ -32,7 +32,6 @@ class BaseSolution(IDAResult):
         None.
 
         """
-
         self.vars = {}
         self._postvars = False
 
@@ -46,7 +45,6 @@ class BaseSolution(IDAResult):
             A console-readable instance representation.
 
         """
-
         classname = self.__class__.__name__
 
         def wrap_string(label: str, value: list, width: int):
@@ -133,7 +131,6 @@ class BaseSolution(IDAResult):
         None.
 
         """
-
         from .._utils import ExitHandler
 
         plt.figure()
@@ -175,7 +172,6 @@ class BaseSolution(IDAResult):
         None.
 
         """
-
         if not self._postvars:
             self.post()
 
@@ -238,7 +234,6 @@ class BaseSolution(IDAResult):
             A dictionary containing the solution
 
         """
-
         if not self._postvars:
             self.post()
 
@@ -319,7 +314,6 @@ class BaseSolution(IDAResult):
         None.
 
         """
-
         import os
 
         if '.npz' not in savename:
@@ -344,7 +338,6 @@ class BaseSolution(IDAResult):
         None.
 
         """
-
         sim = self._sim
 
         # domain variables - placeholders
@@ -399,7 +392,6 @@ class BaseSolution(IDAResult):
             specify whether each check passed or not.
 
         """
-
         from .._utils import ExitHandler
         from ..plotutils import format_ticks
         from .postutils import _solid_phase_Li, _liquid_phase_Li
@@ -516,7 +508,6 @@ class StepSolution(BaseSolution):
             Amount of time it took for IDASolver to perform the integration.
 
         """
-
         super().__init__()
 
         self._sim = sim.copy()
@@ -575,7 +566,6 @@ class CycleSolution(BaseSolution):
             time of its following step. The default is 1e-3.
 
         """
-
         super().__init__()
 
         self._solns = soln
@@ -673,7 +663,6 @@ class CycleSolution(BaseSolution):
             requested steps when 'idx' is a tuple.
 
         """
-
         if isinstance(idx, int):
             return deepcopy(self._solns[idx])
         elif isinstance(idx, (tuple, list)):

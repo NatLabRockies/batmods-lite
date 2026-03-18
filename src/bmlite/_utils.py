@@ -16,6 +16,7 @@ class ExitHandler:
     forgets to explicitly call it.
 
     """
+
     _registered = []
 
     @classmethod
@@ -56,7 +57,6 @@ class ProgressBar(tqdm):
             'iterable' cannot be None if 'manual' is False.
 
         """
-
         if manual and iterable is not None:
             raise ValueError("'iterable' and 'manual' values are conflicting.")
         elif not manual and iterable is None:
@@ -121,7 +121,6 @@ class ProgressBar(tqdm):
             Formatted meter and stats, ready to display.
 
         """
-
         if self._manual:
             kwargs['rate'] = self._iter / elapsed if elapsed > 0 else 0
 

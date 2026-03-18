@@ -22,7 +22,6 @@ class GraphiteFast:
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         self.alpha_a = alpha_a
         self.alpha_c = alpha_c
         self.Li_max = Li_max
@@ -50,7 +49,6 @@ class GraphiteFast:
             Lithium diffusivity in the solid phase [m2/s].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -90,7 +88,6 @@ class GraphiteFast:
             Exchange current density [A/m2].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -126,7 +123,6 @@ class GraphiteFast:
             Equilibrium potential [V].
 
         """
-
         x = np.atleast_1d(x)
 
         A = np.array([
@@ -212,7 +208,6 @@ class GraphiteFast:
             Hysteresis magnitude [V].
 
         """
-
         M_hyst = 0.03
         if isinstance(x, np.ndarray):
             M_hyst *= np.ones_like(x)
@@ -239,7 +234,6 @@ class GraphiteSlow(GraphiteFast):
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         import os
 
         import pandas as pd
@@ -270,7 +264,6 @@ class GraphiteSlow(GraphiteFast):
             Equilibrium potential [V].
 
         """
-
         if isinstance(x, float):
             if x < self.x_min or x > self.x_max:
                 raise ValueError(f'x is out of bounds [{self.x_min},'
@@ -303,7 +296,6 @@ class GraphiteSlowExtrap(GraphiteFast):
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         import os
 
         import pandas as pd

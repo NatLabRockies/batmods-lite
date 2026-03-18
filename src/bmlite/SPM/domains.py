@@ -33,7 +33,6 @@ class Battery:
             ====== =====================================================
 
         """
-
         self.cap = kwargs.get('cap')
         self.temp = kwargs.get('temp')
         self.area = kwargs.get('area')
@@ -72,7 +71,6 @@ class Electrolyte:
             ======== ==============================================
 
         """
-
         self.Li_0 = kwargs.get('Li_0', 1.2)
 
     def update(self) -> None:
@@ -146,7 +144,6 @@ class Electrode:
             ========== ======================================================
 
         """
-
         from . import submodels
 
         if name not in ['anode', 'cathode']:
@@ -193,7 +190,6 @@ class Electrode:
         None.
 
         """
-
         from .. import materials
 
         self.eps_void = 1. - self.eps_s - self.eps_el
@@ -315,12 +311,11 @@ class Electrode:
         -------
         None.
 
-        See also
+        See Also
         --------
         batmods.mesh.r_ptr, batmods.mesh.uniform_mesh
 
         """
-
         from ..mesh import r_ptr, uniform_mesh
 
         # Mesh locations
@@ -414,7 +409,6 @@ class Electrode:
             Boundary voltage, in volts.
 
         """
-
         V_ptr = self.ptr['phis']
 
         return soln.y[:, V_ptr]
@@ -434,7 +428,6 @@ class Electrode:
             Boundary current, in amps.
 
         """
-
         sim = soln._sim
 
         bat, el = sim.bat, sim.el

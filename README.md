@@ -5,19 +5,9 @@
 
 # BATMODS-lite
 
-[![CI][ci-b]][ci-l] &nbsp;
-![tests][test-b] &nbsp;
-![coverage][cov-b] &nbsp;
-[![pep8][pep-b]][pep-l]
-
-[ci-b]: https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml/badge.svg
-[ci-l]: https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml
-
-[test-b]: https://github.com/NatLabRockies/batmods-lite/blob/main/images/tests.svg?raw=true
-[cov-b]: https://github.com/NatLabRockies/batmods-lite/blob/main/images/coverage.svg?raw=true
-
-[pep-b]: https://img.shields.io/badge/code%20style-pep8-orange.svg
-[pep-l]: https://www.python.org/dev/peps/pep-0008
+[![ci](https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml/badge.svg)](https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml) &nbsp;
+[![codecov](https://codecov.io/gh/NatLabRockies/batmods-lite/graph/badge.svg?token=MPuSOeIurf)](https://codecov.io/gh/NatLabRockies/batmods-lite) &nbsp;
+[![license](https://img.shields.io/badge/license-BSD--3-blue.svg)](https://github.com/NatLabRockies/batmods-lite/blob/main/LICENSE) &nbsp;
 
 ## Summary
 Battery Analysis and Training Models for Optimization and Design Studies (BATMODS) is a Python package with an API for pre-built battery models. The original purpose of the package was to quickly generate synthetic data for machine learning models to train with. However, the models are generally useful for any battery simulations or analysis. BATMODS-lite includes the following: 

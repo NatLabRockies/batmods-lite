@@ -54,7 +54,6 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
         ========= =================================================
 
     """
-
     from ..mathutils import grad_r, div_r
 
     # Break inputs into separate objects

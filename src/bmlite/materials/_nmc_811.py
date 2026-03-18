@@ -17,7 +17,6 @@ class NMC811:
             Maximum lithium concentration in solid phase [kmol/m3].
 
         """
-
         self.alpha_a = alpha_a
         self.alpha_c = alpha_c
         self.Li_max = Li_max
@@ -52,7 +51,6 @@ class NMC811:
             Lithium diffusivity in the solid phase [m2/s].
 
         """
-
         from .. import Constants
 
         c = Constants()
@@ -110,7 +108,6 @@ class NMC811:
             Exchange current density [A/m2].
 
         """
-
         from .. import Constants
 
         c = Constants()

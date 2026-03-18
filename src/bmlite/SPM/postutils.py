@@ -39,13 +39,12 @@ def post(soln: Solution) -> dict:
         sdot_ca   cathode Faradaic current at t [kmol/m2/s] (*1D array*)
         ========= ========================================================
 
-    See also
+    See Also
     --------
     ~bmlite.SPM.solutions.StepSolution
     ~bmlite.SPM.solutions.CycleSolution
 
     """
-
     from .dae import residuals
 
     # Pull sim and exp from sol
@@ -92,13 +91,12 @@ def _solid_phase_Li(soln: Solution) -> np.array:
     Li_ed_t : 1D array
         Solution's solid-phase lithium [kmol/m2] vs. time [s].
 
-    See also
+    See Also
     --------
     ~bmlite.SPM.solutions.StepSolution
     ~bmlite.SPM.solutions.CycleSolution
 
     """
-
     from ..mathutils import int_r
 
     an, ca = soln._sim.an, soln._sim.ca
@@ -139,13 +137,12 @@ def potentials(soln: Solution) -> None:
     -------
     None.
 
-    See also
+    See Also
     --------
     ~bmlite.SPM.solutions.StepSolution
     ~bmlite.SPM.solutions.CycleSolution
 
     """
-
     from .._utils import ExitHandler
     from ..plotutils import format_ticks
 
@@ -183,13 +180,12 @@ def intercalation(soln: Solution) -> None:
     -------
     None.
 
-    See also
+    See Also
     --------
     ~bmlite.SPM.solutions.StepSolution
     ~bmlite.SPM.solutions.CycleSolution
 
     """
-
     import matplotlib.colors as clrs
 
     from .._utils import ExitHandler
@@ -253,13 +249,12 @@ def pixels(soln: Solution) -> None:
     -------
     None.
 
-    See also
+    See Also
     --------
     ~bmlite.SPM.solutions.StepSolution
     ~bmlite.SPM.solutions.CycleSolution
 
     """
-
     from ..plotutils import pixel
     from .._utils import ExitHandler
 
