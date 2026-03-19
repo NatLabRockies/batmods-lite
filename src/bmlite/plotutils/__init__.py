@@ -1,9 +1,7 @@
 """
-Plotting Utilities
-------------------
 A module with functions for plotting data and formatting figures. Functions
 here are generally useful for all models in BATMODS-lite. More specific plots
-are written within the ``postutils`` modules of their respective model.
+are written within the `postutils` modules of their respective model.
 
 """
 
@@ -12,7 +10,7 @@ import numpy as np
 
 def format_ticks(ax: object) -> None:
     """
-    Formats an ``axis`` object by adjusting the ticks.
+    Formats an `axis` object by adjusting the ticks.
 
     Specifically, the top and right ticks are added, minor ticks are turned
     on, and all ticks are set to face inward.
@@ -20,7 +18,7 @@ def format_ticks(ax: object) -> None:
     Parameters
     ----------
     ax : object
-        An ``axis`` instance from a ``matplotlib`` figure.
+        An `axis` instance from a `matplotlib` figure.
 
     Returns
     -------
@@ -47,14 +45,14 @@ def pixel(ax: object, xlims: list[float], ylims: list[float], z: np.ndarray,
     Parameters
     ----------
     ax : object
-        An ``axis`` instance from a ``matplotlib`` figure.
+        An `axis` instance from a `matplotlib` figure.
     xlims : list[float]
         Limits for the x-axis [x_low, x_high].
     ylims : list[float]
         Limits for the y-axis [y_low, y_high].
     z : 2D array
-        Data to plot against x and y. ``z[0, 0]`` corresponds to x_low, y_low,
-        and ``z[-1, -1]`` corresponds to x_high, y_high.
+        Data to plot against x and y. `z[0, 0]` corresponds to x_low, y_low,
+        and `z[-1, -1]` corresponds to x_high, y_high.
 
     cblabel : str
         The colorbar label.

@@ -45,7 +45,7 @@ class LFPInterp:
                fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the lithium diffusivity in the solid phase given the local
-        intercalation fraction ``x`` and temperature ``T``.
+        intercalation fraction `x` and temperature `T`.
 
         Parameters
         ----------
@@ -72,15 +72,15 @@ class LFPInterp:
                T: float, fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the exchange current density given the intercalation
-        fraction ``x`` at the particle surface, the local lithium ion
-        concentration ``C_Li``, and temperature ``T``. The input types for
-        ``x`` and ``C_Li`` should both be the same (i.e., both float or both
+        fraction `x` at the particle surface, the local lithium ion
+        concentration `C_Li`, and temperature `T`. The input types for
+        `x` and `C_Li` should both be the same (i.e., both float or both
         1D arrays).
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
         C_Li : float | 1D array
             Lithium ion concentration in the local electrolyte [kmol/m3].
         T : float
@@ -118,12 +118,12 @@ class LFPInterp:
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -136,12 +136,12 @@ class LFPInterp:
     def get_Mhyst(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the hysteresis magnitude given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------

@@ -1,10 +1,8 @@
 """
-Domains Module
---------------
 Contains classes to construct the battery for P2D simulations. Each class reads
 in keyword arguments that define parameters relevant to its specific domain.
-For example, the area and temperature are ``Battery`` level parameters because
-they are the same everywhere, but the discretizations ``Nx`` and ``Nr`` may be
+For example, the area and temperature are `Battery` level parameters because
+they are the same everywhere, but the discretizations `Nx` and `Nr` may be
 different for the anode, separator, and cathode domains.
 
 """
@@ -42,7 +40,7 @@ class Battery:
     def update(self):
         """
         Updates any secondary/dependent parameters. At present, this method
-        does not do anything for the ``Battery`` class.
+        does not do anything for the `Battery` class.
 
         Returns
         -------
@@ -68,11 +66,11 @@ class Electrolyte:
             Key        Description [units] (type)
             ========== ================================================
             li_0       initial Li+ concentration [kmol/m3] (*float*)
-            D_deg      ``D`` degradation factor [-] (*float*)
-            t0_deg     ``t0`` degradation factor [-] (*float*)
-            kappa_deg  ``kappa`` degradation factor [-] (*float*)
-            gamma_deg  ``gamma`` degradation factor [-] (*float*)
-            material   class name from ``bmlite.materials`` [-] (*str*)
+            D_deg      `D` degradation factor [-] (*float*)
+            t0_deg     `t0` degradation factor [-] (*float*)
+            kappa_deg  `kappa` degradation factor [-] (*float*)
+            gamma_deg  `gamma` degradation factor [-] (*float*)
+            material   class name from `bmlite.materials` [-] (*str*)
             ========== ================================================
 
         """
@@ -85,7 +83,7 @@ class Electrolyte:
 
     def update(self) -> None:
         """
-        Updates any secondary/dependent parameters. For the ``Electrolyte``
+        Updates any secondary/dependent parameters. For the `Electrolyte`
         class, this only initializes the material class.
 
         Returns
@@ -101,7 +99,7 @@ class Electrolyte:
     def get_D(self, C_Li: float | np.ndarray, T: float) -> float | np.ndarray:
         """
         Calculate the lithium ion diffusivity in the electrolyte solution at
-        concentration ``C_Li`` and temperature ``T``.
+        concentration `C_Li` and temperature `T`.
 
         Parameters
         ----------
@@ -120,8 +118,8 @@ class Electrolyte:
 
     def get_t0(self, C_Li: float | np.ndarray, T: float) -> float | np.ndarray:
         """
-        Calculate the lithium ion transference number at concentration ``C_Li``
-        and temperature ``T``.
+        Calculate the lithium ion transference number at concentration `C_Li`
+        and temperature `T`.
 
         Parameters
         ----------
@@ -141,8 +139,8 @@ class Electrolyte:
     def get_kappa(self, C_Li: float | np.ndarray,
                   T: float) -> float | np.ndarray:
         """
-        Calculate the electrolyte conductivity at concentration ``C_Li`` and
-        temperature ``T``.
+        Calculate the electrolyte conductivity at concentration `C_Li` and
+        temperature `T`.
 
         Parameters
         ----------
@@ -163,7 +161,7 @@ class Electrolyte:
                   T: float) -> float | np.ndarray:
         """
         Calculate the electrolyte thermodynamic factor at concentration
-        ``C_Li`` and temperature ``T``.
+        `C_Li` and temperature `T`.
 
         Parameters
         ----------
@@ -201,23 +199,23 @@ class Electrode:
             ========== ========================================================
             Key        Description [units] (type)
             ========== ========================================================
-            Nx         number of ``x`` discretizations [-] (*int*)
-            Nr         number of ``r`` discretizations [-] (*int*)
+            Nx         number of `x` discretizations [-] (*int*)
+            Nr         number of `r` discretizations [-] (*int*)
             thick      electrode thickness [m] (*float*)
             R_s        represenatative particle radius [m] (*float*)
             eps_el     electrolyte volume fraction [-] (*float*)
             eps_CBD    carbon binder domain volume fraction [-] (*float*)
             eps_void   void volume fraction [-] (*float*)
-            p_sol      solid Bruggeman factor, ``eps_s**p_sol`` [-] (*float*)
-            p_liq      liquid Bruggeman factor, ``eps_el**p_liq`` [-] (*float*)
+            p_sol      solid Bruggeman factor, `eps_s**p_sol` [-] (*float*)
+            p_liq      liquid Bruggeman factor, `eps_el**p_liq` [-] (*float*)
             alpha_a    Butler-Volmer anodic symmetry factor [-] (*float*)
             alpha_c    Butler-Volmer cathodic symmetry factor [-] (*float*)
             Li_max     max solid-phase Li concentration [kmol/m3] (*float*)
             x_0        initial solid Li intercalation fraction [-] (*float*)
-            i0_deg     ``i0`` degradation factor [-] (*float*)
-            Ds_deg     ``Ds`` degradation factor [-] (*float*)
-            material   class name from ``bmlite.materials`` [-] (*str*)
-            submodels  ``submodels`` classes to include (*dict[dict]*)
+            i0_deg     `i0` degradation factor [-] (*float*)
+            Ds_deg     `Ds` degradation factor [-] (*float*)
+            material   class name from `bmlite.materials` [-] (*str*)
+            submodels  `submodels` classes to include (*dict[dict]*)
             ========== ========================================================
 
         """
@@ -255,17 +253,17 @@ class Electrode:
 
     def update(self) -> None:
         """
-        Updates any secondary/dependent parameters. For the ``Electrode``
+        Updates any secondary/dependent parameters. For the `Electrode`
         class, this initializes the material class, and sets the following:
 
         * Void-phase volume fraction [-]:
-            ``eps_void = 1 - eps_s - eps_el``
+            `eps_void = 1 - eps_s - eps_el`
         * Activate material volume fraction [-]:
-            ``eps_AM = eps_s - eps_CBD``
+            `eps_AM = eps_s - eps_CBD`
         * Solid-phase conductivity [S/m]:
-            ``sigma_s = 10 * eps_s``
+            `sigma_s = 10 * eps_s`
         * Specific particle surface area [m2/m3]:
-            ``A_s = 3 * eps_AM / R_s``
+            `A_s = 3 * eps_AM / R_s`
 
         Returns
         -------
@@ -294,7 +292,7 @@ class Electrode:
                fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the lithium diffusivity in the solid phase given the local
-        intercalation fraction ``x`` and temperature ``T``.
+        intercalation fraction `x` and temperature `T`.
 
         Parameters
         ----------
@@ -319,15 +317,15 @@ class Electrode:
                T: float, fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the exchange current density given the surface intercalation
-        fraction ``x`` at the particle surface, the local lithium ion
-        concentration ``C_Li``, and temperature ``T``. The input types for
-        ``x`` and ``C_Li`` should both be the same (i.e., both float or both
+        fraction `x` at the particle surface, the local lithium ion
+        concentration `C_Li`, and temperature `T`. The input types for
+        `x` and `C_Li` should both be the same (i.e., both float or both
         1D arrays).
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
         C_Li : float | 1D array
             Lithium ion concentration in the local electrolyte [kmol/m3].
         T : float
@@ -348,12 +346,12 @@ class Electrode:
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -366,12 +364,12 @@ class Electrode:
     def get_Mhyst(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the hysteresis magnitude given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -383,14 +381,14 @@ class Electrode:
 
     def make_mesh(self, xshift: float = 0., pshift: int = 0) -> None:
         """
-        Determines/sets the ``x`` locations for all of the "minus" interfaces
-        ``xm``, "plus" interfaces ``xp``, and control volume centers ``x``
-        based on the electrode thickness and ``Nx`` discretization. At present,
+        Determines/sets the `x` locations for all of the "minus" interfaces
+        `xm`, "plus" interfaces `xp`, and control volume centers `x`
+        based on the electrode thickness and `Nx` discretization. At present,
         only a uniform mesh is supported.
 
-        Also determines/sets the ``r`` locations for all of the "minus"
-        interfaces ``rm``, "plus" interfaces ``rp``, and control volume centers
-        ``r`` based on the representative particle radius and ``Nr``
+        Also determines/sets the `r` locations for all of the "minus"
+        interfaces `rm`, "plus" interfaces `rp`, and control volume centers
+        `r` based on the representative particle radius and `Nr`
         discretization. At present, only a uniform mesh is supported.
 
         Parameters
@@ -592,10 +590,10 @@ class Separator:
             ======== ========================================================
             Key      Description [units] (type)
             ======== ========================================================
-            Nx       number of ``x`` discretizations [-] (*int*)
+            Nx       number of `x` discretizations [-] (*int*)
             thick    electrode thickness [m] (*float*)
             eps_el   electrolyte volume fraction [-] (*float*)
-            p_liq    liquid Bruggeman factor, ``eps_el**p_liq`` [-] (*float*)
+            p_liq    liquid Bruggeman factor, `eps_el**p_liq` [-] (*float*)
             ======== ========================================================
 
         """
@@ -608,11 +606,11 @@ class Separator:
 
     def update(self) -> None:
         """
-        Updates any secondary/dependent parameters. For the ``Separator``
+        Updates any secondary/dependent parameters. For the `Separator`
         class, this sets the following:
 
         * Solid-phase volume fraction [-]:
-            ``eps_s = 1 - eps_el``
+            `eps_s = 1 - eps_el`
 
         Returns
         -------
@@ -623,9 +621,9 @@ class Separator:
 
     def make_mesh(self, xshift: float = 0., pshift: int = 0) -> None:
         """
-        Determines/sets the ``x`` locations for all of the "minus" interfaces
-        ``xm``, "plus" interfaces ``xp``, and control volume centers ``x``
-        based on the electrode thickness and ``Nx`` discretization. At present,
+        Determines/sets the `x` locations for all of the "minus" interfaces
+        `xm`, "plus" interfaces `xp`, and control volume centers `x`
+        based on the electrode thickness and `Nx` discretization. At present,
         only a uniform mesh is supported.
 
         Parameters

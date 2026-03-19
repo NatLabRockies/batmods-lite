@@ -17,7 +17,7 @@ class Gen2Electrolyte:
     def get_D(self, C_Li: float | _ndarray, T: float) -> float | _ndarray:
         """
         Calculate the lithium ion diffusivity in the electrolyte solution at
-        concentration ``C_Li`` and temperature ``T``.
+        concentration `C_Li` and temperature `T`.
 
         Parameters
         ----------
@@ -48,8 +48,8 @@ class Gen2Electrolyte:
 
     def get_t0(self, C_Li: float | _ndarray, T: float) -> float | _ndarray:
         """
-        Calculate the lithium ion transference number at concentration ``C_Li``
-        and temperature ``T``.
+        Calculate the lithium ion transference number at concentration `C_Li`
+        and temperature `T`.
 
         Parameters
         ----------
@@ -78,8 +78,8 @@ class Gen2Electrolyte:
 
     def get_kappa(self, C_Li: float | _ndarray, T: float) -> float | _ndarray:
         """
-        Calculate the electrolyte conductivity at concentration ``C_Li`` and
-        temperature ``T``.
+        Calculate the electrolyte conductivity at concentration `C_Li` and
+        temperature `T`.
 
         Parameters
         ----------
@@ -112,7 +112,7 @@ class Gen2Electrolyte:
     def get_gamma(self, C_Li: float | _ndarray, T: float) -> float | _ndarray:
         """
         Calculate the electrolyte thermodynamic factor at concentration
-        ``C_Li`` and temperature ``T``.
+        `C_Li` and temperature `T`.
 
         Parameters
         ----------

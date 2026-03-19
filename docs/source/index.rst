@@ -1,25 +1,30 @@
-.. raw:: html
+.. .. raw:: html
 
-   <embed>
-     <img alt='BATMODS logo' class='onlight bg-transparent' src='_static/light.svg'
-      style='width: 75%; min-width: 250px; max-width: 500px;'>
-     <img alt='BATMODS logo' class='ondark bg-transparent' src='_static/dark.svg'
-      style='width: 75%; min-width: 250px; max-width: 500px;'>
-   </embed>
+..    <embed>
+..      <img alt='BATMODS logo' class='onlight bg-transparent' src='_static/light.svg'
+..       style='width: 75%; min-width: 250px; max-width: 500px;'>
+..      <img alt='BATMODS logo' class='ondark bg-transparent' src='_static/dark.svg'
+..       style='width: 75%; min-width: 250px; max-width: 500px;'>
+..    </embed>
 
 =======
 Summary
 =======
+Battery Analysis and Training Models for Optimization and Degradation Studies (BATMODS) is a Python package with an API for pre-built battery models. The original purpose of the package was to quickly generate synthetic data for machine learning models to train with. However, the models are generally useful for any battery simulation or analysis.
 
-.. raw:: html
+.. toctree:: 
+   :caption: User Guide
+   :hidden:
+   :maxdepth: 2
 
-   <p>
-   Battery Analysis and Training Models for Optimization and Degradation Studies
-   (BATMODS) is a Python package with an API for pre-built battery models. The 
-   original purpose of the package was to quickly generate synthetic data for
-   machine learning models to train with. However, the models are generally 
-   useful for any battery simulation or analysis.
-   </p>
+   User Guide <user_guide/index>
+
+.. toctree:: 
+   :caption: API Reference
+   :hidden:
+   :maxdepth: 2
+
+   API Reference <api/bmlite/index>
 
 .. toctree:: 
    :caption: Examples
@@ -29,23 +34,62 @@ Summary
    examples/index
 
 .. toctree:: 
-   :caption: API Reference
+   :caption: Development
    :hidden:
    :maxdepth: 2
 
-   API Reference <api/bmlite/index>
+   Development <development/index>
 
-**Version:** 0.0.1
+**Version:** |version|
 
 **Useful links:** 
 `anaconda <https://www.anaconda.com/download>`_ |
 `spyder <https://www.spyder-ide.org/>`_ |
 `numpy <https://numpy.org/doc/stable/>`_  |  
-`pandas <https://pandas.pydata.org/docs/>`_  |  
-`scikits.odes <https://bmcage.github.io/odes/dev/>`_ |
+`scikit-sundae <https://scikit-sundae.readthedocs.io/>`_ |
 `matplotlib <https://matplotlib.org/stable/users/>`_
 
 .. grid:: 1 2 2 2
+
+   .. grid-item-card:: User Guide
+      :class-footer: border-0
+      :padding: 2
+
+      Access installation instructions and in-depth
+      information on solver concepts and settings.
+
+      .. image:: _static/user_guide.svg
+         :class: bg-transparent
+         :align: center
+         :height: 75px
+
+      +++
+      .. button-ref:: user_guide/index
+         :expand:
+         :color: primary
+         :click-parent:
+
+         To the user guide
+
+   .. grid-item-card:: API Reference
+      :class-footer: border-0
+      :padding: 2
+
+      Get detailed documentation on all of the modules,
+      functions, classes, etc.
+
+      .. image:: _static/api_reference.svg
+         :class: bg-transparent
+         :align: center
+         :height: 75px
+
+      +++
+      .. button-ref:: api/bmlite/index
+         :expand:
+         :color: primary
+         :click-parent:
+
+         Go to the docs
 
    .. grid-item-card:: Examples
          :class-footer: border-0
@@ -67,24 +111,22 @@ Summary
 
             See some examples
 
-   .. grid-item-card:: API Reference
-         :class-footer: border-0
-         :padding: 2
+   .. grid-item-card:: Development
+      :class-footer: border-0
+      :padding: 2
+         
+      Trying to fix a typo in the documentation? Looking
+      to improve or add a new feature?
 
-         Get detailed documentation on all of the 
-         modules, functions, classes, etc.
+      .. image:: _static/development.svg
+         :class: bg-transparent
+         :align: center
+         :height: 75px
 
-         .. image:: _static/api_reference.svg
-            :class: bg-transparent
-            :align: center
-            :height: 75px
+      +++
+      .. button-ref:: development/index
+         :expand:
+         :color: primary
+         :click-parent:
 
-         +++
-         .. button-ref:: api/bmlite/index
-            :expand:
-            :color: primary
-            :click-parent:
-
-            Go to the docs
-
-
+         Read contributor guidelines

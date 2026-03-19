@@ -1,7 +1,5 @@
 """
-Core Subpackage
----------------
-This subpackage hosts all of the functions, classes, etc. that should be made
+A subpackage to host all of the functions, classes, etc. that should be made
 available at the base-level of the package.
 
 """

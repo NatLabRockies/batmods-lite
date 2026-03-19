@@ -1,18 +1,17 @@
 """
-Mesh Module
------------
-This module contains functions to build pointers and meshes. Pointers are
+The `mesh` module has functions to build pointers and meshes. Pointers are
 the integer indices for state variables. State variables in a model may be
-defined in different dimensions. For example, ``phi_ed`` is 0D in the single
-particle model and ``Li_ed`` is 1D in the ``r`` direction. Therefore, within
-any given model, it may be useful to have a combination of ``ptr`` for 0D,
-``x_ptr`` for 1D in ``x``, ``xr_ptr`` for 2D in ``x`` and ``r``, etc.
+defined in different dimensions. For example, `phi_ed` is 0D in the single
+particle model and `Li_ed` is 1D in the `r` direction. Therefore, within
+any given model, it may be useful to have a combination of `ptr` for 0D,
+`x_ptr` for 1D in `x`, `xr_ptr` for 2D in `x` and `r`, etc.
 
 This module also contains functions to build meshes. In finite volume methods,
 the mesh specifies the locations of the control volume centers as well as the
 interfaces between two control volumes. It makes sense to store both pointers
 and mesh functions in the same module because the pointers must be self
 consistent for any given model.
+
 """
 
 from numpy import ndarray as _ndarray
@@ -20,11 +19,11 @@ from numpy import ndarray as _ndarray
 
 def x_ptr(domain: object, keys: list[str]) -> dict:
     """
-    Add an ``x`` pointer dictionary to the domain object.
+    Add an `x` pointer dictionary to the domain object.
 
-    An ``x`` pointer is a dictionary where the keys are variables and the
-    values are 1D ``int`` arrays that specify the solution vector indices for
-    all of the specified variable's values in the ``x`` direction. Using this
+    An `x` pointer is a dictionary where the keys are variables and the
+    values are 1D `int` arrays that specify the solution vector indices for
+    all of the specified variable's values in the `x` direction. Using this
     pointer removes for loops from the model DAEs and makes it easier to
     vectorize expressions.
 
@@ -32,15 +31,15 @@ def x_ptr(domain: object, keys: list[str]) -> dict:
     ----------
     domain : domain object
         A domain (anode, separator, cathode, etc.) object from one of the
-        model domain modules. The domain should already have ``ptr`` and
-        ``Nx`` attributes. The ``ptr`` attribute is a dictionary where the
+        model domain modules. The domain should already have `ptr` and
+        `Nx` attributes. The `ptr` attribute is a dictionary where the
         keys are variable names and the values are the indices for the first
-        occurrence of that variable. ``Nx`` is the number of ``x`` control
+        occurrence of that variable. `Nx` is the number of `x` control
         volumes.
 
     keys : list[str]
-        A list of the variable names defined in the ``x`` direction. This
-        list should be a subset of the domain's existing ``ptr`` keys.
+        A list of the variable names defined in the `x` direction. This
+        list should be a subset of the domain's existing `ptr` keys.
 
     Returns
     -------
@@ -57,11 +56,11 @@ def x_ptr(domain: object, keys: list[str]) -> dict:
 
 def r_ptr(domain: object, keys: list[str]) -> None:
     """
-    Add an ``r`` pointer dictionary to the domain object.
+    Add an `r` pointer dictionary to the domain object.
 
-    An ``r`` pointer is a dictionary where the keys are variables and the
-    values are 1D ``int`` arrays that specify the solution vector indices for
-    all of the specified variable's values in the ``r`` direction. Using this
+    An `r` pointer is a dictionary where the keys are variables and the
+    values are 1D `int` arrays that specify the solution vector indices for
+    all of the specified variable's values in the `r` direction. Using this
     pointer removes for loops from the model DAEs and makes it easier to
     vectorize expressions.
 
@@ -69,15 +68,15 @@ def r_ptr(domain: object, keys: list[str]) -> None:
     ----------
     domain : domain object
         A domain (anode, separator, cathode, etc.) object from one of the
-        model domain modules. The domain should already have ``ptr`` and
-        ``Nr`` attributes. The ``ptr`` attribute is a dictionary where the
+        model domain modules. The domain should already have `ptr` and
+        `Nr` attributes. The `ptr` attribute is a dictionary where the
         keys are variable names and the values are the indices for the first
-        occurrence of that variable. ``Nr`` is the number of ``r`` control
+        occurrence of that variable. `Nr` is the number of `r` control
         volumes.
 
     keys : list[str]
-        A list of the variable names defined in the ``r`` direction. This
-        list should be a subset of the domain's existing ``ptr`` keys.
+        A list of the variable names defined in the `r` direction. This
+        list should be a subset of the domain's existing `ptr` keys.
 
     Returns
     -------
@@ -94,11 +93,11 @@ def r_ptr(domain: object, keys: list[str]) -> None:
 
 def xr_ptr(domain: object, keys: list[str]) -> None:
     """
-    Add an ``xr`` pointer dictionary to the domain object.
+    Add an `xr` pointer dictionary to the domain object.
 
-    An ``xr`` pointer is a dictionary where the keys are variables and the
-    values are 2D ``int`` arrays that specify the solution vector indices for
-    all of the specified variable's values in the ``x`` (rows) and ``r`` (cols)
+    An `xr` pointer is a dictionary where the keys are variables and the
+    values are 2D `int` arrays that specify the solution vector indices for
+    all of the specified variable's values in the `x` (rows) and `r` (cols)
     directions. Using this pointer removes for loops from the model DAEs and
     makes it easier to vectorize expressions.
 
@@ -106,16 +105,16 @@ def xr_ptr(domain: object, keys: list[str]) -> None:
     ----------
     domain : domain object
         A domain (anode, separator, cathode, etc.) object from one of the
-        model domain modules. The domain should already have ``ptr``, ``Nx``,
-        and ``Nr`` attributes. The ``ptr`` attribute is a dictionary where the
+        model domain modules. The domain should already have `ptr`, `Nx`,
+        and `Nr` attributes. The `ptr` attribute is a dictionary where the
         keys are variable names and the values are the indices for the first
-        occurrence of that variable. ``Nx`` and ``Nr`` are the number of ``x``
-        and ``r`` control volumes, respectively.
+        occurrence of that variable. `Nx` and `Nr` are the number of `x`
+        and `r` control volumes, respectively.
 
     keys : list[str]
-        A list of the variable names defined in both the ``x`` and ``r``
+        A list of the variable names defined in both the `x` and `r`
         directions. This list should be a subset of the domain's existing
-        ``ptr`` keys.
+        `ptr` keys.
 
     Returns
     -------
@@ -155,18 +154,18 @@ def uniform_mesh(Lx: float, Nx: int, x0: float = 0.) -> tuple[_ndarray]:
     Returns
     -------
     xm : 1D array
-        The "minus" interface locations. Note that ``xm[0] = x0``.
+        The "minus" interface locations. Note that `xm[0] = x0`.
 
     xp : 1D array
-        The "plus" interface locations. Note that ``xp[0] = x0 + Lx``.
+        The "plus" interface locations. Note that `xp[0] = x0 + Lx`.
 
     x : 1D array
-        The locations of the control volume centers. ``xm[i] < x[i] < xp[i]``
-        for all control volumes ``i``.
+        The locations of the control volume centers. `xm[i] < x[i] < xp[i]`
+        for all control volumes `i`.
 
     Notes
     -----
-    Although the inputs and outputs are labeled using ``x`` as the variable,
+    Although the inputs and outputs are labeled using `x` as the variable,
     this mesh is equally valid for other directions (e.g., radial).
 
     """

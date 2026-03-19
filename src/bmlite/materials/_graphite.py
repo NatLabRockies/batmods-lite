@@ -9,7 +9,7 @@ class GraphiteFast:
         """
         Computationally fast Graphite kinetic and transport properties.
 
-        Differs from ``GraphiteSlow`` because the equilibrium potential is
+        Differs from `GraphiteSlow` because the equilibrium potential is
         not piecewise here, making it less accurate, but faster to evaluate.
 
         Parameters
@@ -30,7 +30,7 @@ class GraphiteFast:
                fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the lithium diffusivity in the solid phase given the local
-        intercalation fraction ``x`` and temperature ``T``.
+        intercalation fraction `x` and temperature `T`.
 
         Parameters
         ----------
@@ -64,15 +64,15 @@ class GraphiteFast:
                T: float, fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the exchange current density given the intercalation
-        fraction ``x`` at the particle surface, the local lithium ion
-        concentration ``C_Li``, and temperature ``T``. The input types for
-        ``x`` and ``C_Li`` should both be the same (i.e., both float or both
+        fraction `x` at the particle surface, the local lithium ion
+        concentration `C_Li`, and temperature `T`. The input types for
+        `x` and `C_Li` should both be the same (i.e., both float or both
         1D arrays).
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
         C_Li : float | 1D array
             Lithium ion concentration in the local electrolyte [kmol/m3].
         T : float
@@ -110,12 +110,12 @@ class GraphiteFast:
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -195,12 +195,12 @@ class GraphiteFast:
     def get_Mhyst(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the hysteresis magnitude given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -221,7 +221,7 @@ class GraphiteSlow(GraphiteFast):
         """
         Computationally fast Graphite kinetic and transport properties.
 
-        Differs from ``GraphiteSlow`` because the equilibrium potential is
+        Differs from `GraphiteSlow` because the equilibrium potential is
         not piecewise here, making it less accurate, but faster to evaluate.
 
         Parameters
@@ -251,12 +251,12 @@ class GraphiteSlow(GraphiteFast):
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -283,7 +283,7 @@ class GraphiteSlowExtrap(GraphiteFast):
         """
         Computationally fast Graphite kinetic and transport properties.
 
-        Differs from ``GraphiteSlow`` because the piecewise equilibrium
+        Differs from `GraphiteSlow` because the piecewise equilibrium
         potential is extrapolated to be valid on the full [0, 1] range.
 
         Parameters
@@ -313,12 +313,12 @@ class GraphiteSlowExtrap(GraphiteFast):
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
