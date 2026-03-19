@@ -134,7 +134,7 @@ class BaseSolution(IDAResult):
 
     def complex_plot(self, *args: str) -> None:
         """
-        Generates requested plots based on ``*args``.
+        Generates requested plots based on `*args`.
 
         Parameters
         ----------
@@ -220,7 +220,7 @@ class BaseSolution(IDAResult):
 
     def save_sliced(self, savename: str, overwrite: bool = False) -> None:
         """
-        Save a ``.npz`` file with all spatial, time, and state variables
+        Save a `.npz` file with all spatial, time, and state variables
         separated into 1D and 2D arrays. The keys are given below. The index
         order of the 2D arrays is given with the value descriptions.
 
@@ -242,14 +242,14 @@ class BaseSolution(IDAResult):
         Parameters
         ----------
         savename : str
-            Either a file name or the absolute/relative file path. The ``.npz``
+            Either a file name or the absolute/relative file path. The `.npz`
             extension will be added to the end of the string if it is not
             already there. If only the file name is given, the file will be
             saved in the user's current working directory.
 
         overwrite : bool, optional
-            A flag to overwrite an existing ``.npz`` file with the same name
-            if one exists. The default is ``False``.
+            A flag to overwrite an existing `.npz` file with the same name
+            if one exists. The default is `False`.
 
         Returns
         -------

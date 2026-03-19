@@ -1,10 +1,8 @@
 """
-DAE Module
-----------
-This module includes the system of differential algebraic equations (DAE) for
-the P2D model. In addition, the ``bandwidth`` function is included in this
-module, which helps determine the lower and upper bandwidths of ``residuals``
-so the ``'band'`` linear solver option can be used in the ``IDASolver`` class.
+The `dae` module provides the system of differential algebraic equations (DAE)
+for the P2D model. In addition, the `bandwidth` function is included in this
+module, which helps determine the lower and upper bandwidths of `residuals`
+so the `'band'` linear solver option can be used in the `IDASolver` class.
 
 """
 
@@ -22,19 +20,19 @@ def sign(x):
 def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
               inputs: tuple[object, dict]) -> None | tuple[np.ndarray]:
     """
-    The DAE residuals ``res = M*y' - f(t, y)`` for the P2D model.
+    The DAE residuals `res = M*y' - f(t, y)` for the P2D model.
 
     Parameters
     ----------
     t : float
         Value of time [s].
     sv : 1D array
-        Solution/state variables at time ``t``.
+        Solution/state variables at time `t`.
     svdot : 1D array
-        Solution/state variable time derivatives at time ``t``.
+        Solution/state variable time derivatives at time `t`.
     res : 1D array
-        An array the same size as ``sv`` and ``svdot``. The values are filled
-        in with ``res = M*y' - f(t, y)`` inside this function.
+        An array the same size as `sv` and `svdot`. The values are filled
+        in with `res = M*y' - f(t, y)` inside this function.
     inputs : (sim : P2D Simulation object, exp : experiment dict)
         The simulation object and experimental details dictionary inputs that
         describe the specific battery and experiment to simulate.

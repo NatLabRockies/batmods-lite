@@ -31,9 +31,9 @@ class ProgressBar(tqdm):
     def __init__(self, iterable: Iterable = None, manual: bool = False,
                  desc: str = None, ncols: int = 80, **kwargs) -> None:
         """
-        Wraps the progress bar from ``tqdm``, with different defaults. Also
+        Wraps the progress bar from `tqdm`, with different defaults. Also
         enables a custom "manual" mode in which the user manually sets the
-        progress as a fraction in [0, 1] using ``set_progress``.
+        progress as a fraction in [0, 1] using `set_progress`.
 
         Parameters
         ----------
@@ -100,7 +100,7 @@ class ProgressBar(tqdm):
     def format_meter(self, n: int | float, total: int | float, elapsed: float,
                      **kwargs) -> str:
         """
-        Wraps the parent ``format_meter`` method to customize stats for the
+        Wraps the parent `format_meter` method to customize stats for the
         "manual" mode. Users should not need to call this method directly.
 
         Parameters
@@ -166,7 +166,7 @@ def formatwarning(message, category, filename, lineno, line=None):
 
 
 def short_warn(message, category=UserWarning, filename='None', lineno=0):
-    """Print a warning with the short format from ``formatwarning``."""
+    """Print a warning with the short format from `formatwarning`."""
     original_format = warnings.formatwarning
 
     warnings.formatwarning = formatwarning

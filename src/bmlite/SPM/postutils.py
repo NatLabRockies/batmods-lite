@@ -1,10 +1,6 @@
 """
-Post-processing Utilities
--------------------------
-This module contains all post-processing functions for the SPM package. The
-available post-processing options for a given experiment are specific to that
-experiment. Therefore, not all ``Solution`` classes may have access to all of
-the following functions.
+Routines in this submodule contains all post-processing functions for the SPM
+package.
 
 """
 
@@ -87,7 +83,7 @@ def _solid_phase_Li(soln: Solution) -> np.array:
     Returns
     -------
     Li_ed_0 : float
-        Solid-phase lithium [kmol/m2] based on ``an.x_0`` and ``ca.x_0``.
+        Solid-phase lithium [kmol/m2] based on `an.x_0` and `ca.x_0`.
     Li_ed_t : 1D array
         Solution's solid-phase lithium [kmol/m2] vs. time [s].
 

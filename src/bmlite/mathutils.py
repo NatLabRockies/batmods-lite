@@ -1,10 +1,8 @@
 """
-Math Module
------------
 The math module defines common mathematical operators, e.g., the gradient and
 divergence operators. Functions in this module are built to operate using
 arrays. Generally speaking, using vectorized math provides significant speed
-boosts in computational modeling by removing slower ``for`` loops and ``if``
+boosts in computational modeling by removing slower `for` loops and `if`
 statements.
 
 """
@@ -28,7 +26,7 @@ def grad_x(x: np.ndarray, f: np.ndarray, axis: int = -1) -> np.ndarray:
     Returns
     -------
     df_dx : np.array
-        The gradient ``df/dx``. The shape is one fewer than ``f`` along the
+        The gradient `df/dx`. The shape is one fewer than `f` along the
         specified axis.
 
     Notes
@@ -62,7 +60,7 @@ def grad_r(r: np.ndarray, f: np.ndarray, axis: int = -1) -> np.ndarray:
     Returns
     -------
     df_dr : np.array
-        The gradient ``df/dr``. The shape is one fewer than ``f`` along the
+        The gradient `df/dr`. The shape is one fewer than `f` along the
         specified axis.
 
     """
@@ -95,7 +93,7 @@ def div_x(xm: np.ndarray, xp: np.ndarray, f: np.ndarray,
     Returns
     -------
     df_dx : np.array
-        The divergence ``df/dx``. The shape is one fewer than ``f`` along the
+        The divergence `df/dx`. The shape is one fewer than `f` along the
         specified axis.
 
     Notes
@@ -109,9 +107,9 @@ def div_x(xm: np.ndarray, xp: np.ndarray, f: np.ndarray,
         div_f = div_x(xm, xp, fx, 0) + div_x(ym, yp, fy, 1)
               + div_x(zm, zp, fz, 2)
 
-    The ``fx``, ``fy``, and ``fz`` terms must be evaluated at the ``x``, ``y``,
-    and ``z`` boundaries, respectively. For example, a grid with (Nx, Ny, Nz)
-    volume discretizations will have an ``fx`` with shape (Nx + 1, Ny, Nz)
+    The `fx`, `fy`, and `fz` terms must be evaluated at the `x`, `y`,
+    and `z` boundaries, respectively. For example, a grid with (Nx, Ny, Nz)
+    volume discretizations will have an `fx` with shape (Nx + 1, Ny, Nz)
     because the number of boundaries is always one greater than the number of
     volumes.
 
@@ -145,8 +143,8 @@ def div_r(rm: np.ndarray, rp: np.ndarray, f: np.ndarray,
     Returns
     -------
     df_dr : np.array
-        The divergence ``1/r**2 * d(r**2 * f)/dr``. The shape is one fewer
-        than ``f`` along the specified axis.
+        The divergence `1/r**2 * d(r**2 * f)/dr`. The shape is one fewer
+        than `f` along the specified axis.
 
     """
     new_axis = [1] * f.ndim
@@ -186,13 +184,13 @@ def int_x(xm: np.ndarray, xp: np.ndarray, f: np.ndarray,
     -------
     int_x : np.array
         The result of integration. The dimension of the result is one fewer
-        than ``f`` along the specified axis.
+        than `f` along the specified axis.
 
     Notes
     -----
     The integral is written for numerical results from finite volume solutions.
-    Integration is performed over meshed control volumes, where ``f[i]`` is
-    assumed uniform within a volume defined by ``xm[i] < x < xp[i]``.
+    Integration is performed over meshed control volumes, where `f[i]` is
+    assumed uniform within a volume defined by `xm[i] < x < xp[i]`.
 
     """
     new_axis = [1] * f.ndim
@@ -226,16 +224,16 @@ def int_r(rm: np.ndarray, rp: np.ndarray, f: np.ndarray,
     -------
     int_r : np.array
         The result of integration. The dimension of the result is one fewer
-        than ``f`` along the specified axis.
+        than `f` along the specified axis.
 
     Notes
     -----
-    The result is over all spherical dimensions (r, theta, phi) assuming ``f``
+    The result is over all spherical dimensions (r, theta, phi) assuming `f`
     is independent of theta and phi.
 
     The integral is written for numerical results from finite volume solutions.
-    Integration is performed over meshed control volumes, where ``f[i]`` is
-    assumed uniform within a volume defined by ``rm[i] < r < rp[i]``.
+    Integration is performed over meshed control volumes, where `f[i]` is
+    assumed uniform within a volume defined by `rm[i] < r < rp[i]`.
 
     """
     new_axis = [1] * f.ndim
@@ -260,10 +258,10 @@ def param_combinations(params: list[str],
     Parameters
     ----------
         params : list[str]
-            List of parameter names, including the domain, e.g. ``an.i0_deg``.
+            List of parameter names, including the domain, e.g. `an.i0_deg`.
         values : list[1D array]
             List of possible values for each parameter. The array in each
-            index ``i`` should correspond to the variable given in ``params``
+            index `i` should correspond to the variable given in `params`
             with the same index.
 
     Returns

@@ -27,33 +27,33 @@ class Simulation:
         Make a P2D simulation capable of running various experiments.
 
         The initialization will add all of the battery attributes from the
-        ``.yaml`` file under its ``bat``, ``el``, ``an``, ``sep``, and ``ca``
-        attributes. The ``pre()`` method runs at the end of the initialization
+        `.yaml` file under its `bat`, `el`, `an`, `sep`, and `ca`
+        attributes. The `pre()` method runs at the end of the initialization
         to add dependent parameters, including the mesh, algebraic indices,
-        etc. to the simulation instance. This only happens in ``__init__``,
+        etc. to the simulation instance. This only happens in `__init__`,
         which has some implications if the user modifies parameters after
         initialization (see the warning below).
 
         Parameters
         ----------
         yamlfile : str, optional
-            An absolute or relative path to the ``.yaml`` file that defines the
-            battery properties. The ``.yaml`` extension will be added to the
+            An absolute or relative path to the `.yaml` file that defines the
+            battery properties. The `.yaml` extension will be added to the
             end of the string if it is not already there. The default is
-            ``'default_P2D'``, which loads an internal file from the ``bmlite``
+            `'default_P2D'`, which loads an internal file from the `bmlite`
             library.
 
         Warning
         -------
-        The user may choose to modify parameters after loading in a ``.yaml``
-        file, however, they will need to manually re-run the ``pre()`` method
+        The user may choose to modify parameters after loading in a `.yaml`
+        file, however, they will need to manually re-run the `pre()` method
         if they do so. Otherwise, the dependent parameters may not be
         consistent with the user-defined inputs.
 
         See Also
         --------
         bmlite.templates :
-            Get help making your own ``.yaml`` file by starting with the
+            Get help making your own `.yaml` file by starting with the
             default template.
 
         """
@@ -96,11 +96,11 @@ class Simulation:
         """
         Pre-process the dependent parameters.
 
-        The dependent parameters include ``A_s``, ``eps_s``, ``eps_AM``,
-        ``sigma_s``, and setting the ``material`` classes for each domain. In
+        The dependent parameters include `A_s`, `eps_s`, `eps_AM`,
+        `sigma_s`, and setting the `material` classes for each domain. In
         addition, this method determines the mesh, pointers, algebraic indices,
-        bandwidth, and initial solution. ``pre()`` is automatically executed
-        in the ``__init__()`` method which has some implications if the user
+        bandwidth, and initial solution. `pre()` is automatically executed
+        in the `__init__()` method which has some implications if the user
         modifies parameters after initialization (see the warning below).
 
         Returns
@@ -109,8 +109,8 @@ class Simulation:
 
         Warning
         -------
-        The user may choose to modify parameters after loading in a ``.yaml``
-        file, however, they will need to manually re-run the ``pre()`` method
+        The user may choose to modify parameters after loading in a `.yaml`
+        file, however, they will need to manually re-run the `pre()` method
         if they do so. Otherwise, the dependent parameters may not be
         consistent with the user-defined inputs.
 
@@ -231,8 +231,8 @@ class Simulation:
         -------
         The model's internal state is changed at the end of each experimental
         step. Consequently, you should not run steps out of order. You should
-        always start with ``stepidx = 0`` and then progress to the subsequent
-        steps afterward. Run ``pre()`` after your last step to reset the state
+        always start with `stepidx = 0` and then progress to the subsequent
+        steps afterward. Run `pre()` after your last step to reset the state
         back to a rested condition at 'soc0', if needed. Alternatively, you
         can continue running experiments back-to-back without a pre-processing
         in between if you want the following experiment to pick up from the
@@ -245,7 +245,7 @@ class Simulation:
 
         Notes
         -----
-        Using the ``run()`` loops through all steps in an experiment and then
+        Using the `run()` loops through all steps in an experiment and then
         stitches their solutions together. Most of the time, this is more
         convenient. However, advantages for running step-by-step is that it
         makes it easier to fine tune solver options, and allows for analyses
@@ -320,11 +320,11 @@ class Simulation:
         Warning
         -------
         The default behavior resets the model's internal state back to a rested
-        condition at 'soc0' by calling the ``pre()`` method at the end of all
+        condition at 'soc0' by calling the `pre()` method at the end of all
         steps. This means that if you run a second experiment afterward, it
         will not start where the previous one left off. Instead, it will start
         from the original rested condition that the model initialized with. You
-        can bypass this by using ``reset_state=False``, which keeps the state
+        can bypass this by using `reset_state=False`, which keeps the state
         at the end of the final experimental step.
 
         See Also

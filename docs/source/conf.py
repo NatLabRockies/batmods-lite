@@ -114,21 +114,9 @@ napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_numpy_docstring = True
 napoleon_custom_sections = [
-    'BATMODS-lite', 
-    'How to use the documentation', 
-    'Viewing documentation using IPython',
-    'Material Properties Package',
-    'Math Module',
-    'Mesh Module',
-    'Plotting Utilities',
-    'Single Particle Model Package',
-    'Pseudo-2D Model Package',
-    'Domains Module',
-    'DAE Module',
-    'Root Functions',
-    'Post-processing Utilities',
-    'Solution Classes',
-    ]
+    'Summary', 
+    'Accessing the documentation', 
+]
 
 
 # -- Options for autoapi -----------------------------------------------------

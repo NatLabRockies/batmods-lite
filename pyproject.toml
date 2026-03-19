@@ -97,7 +97,6 @@ dev = [
     "nox",
     "ruff",
     "codespell",
-    "genbadge[all]",
     "batmods-lite[docs,tests]",
 ]
 

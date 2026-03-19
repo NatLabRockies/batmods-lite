@@ -29,53 +29,16 @@ html[data-theme=dark] .ondark {
 }
 
 html[data-theme=dark] .onlight {
-  display: None;
+  display: none;
 }
 
 html[data-theme=light] .ondark {
-  display: None;
+  display: none;
 }
 
 html[data-theme=light] .onlight {
   display: block;
 }
-
-/* Main index page overview cards */
-/* html[data-theme=dark] .sd-card {
-  background-color:var(--pst-color-background);
-}
-
-html[data-theme=dark] .sd-shadow-sm {
-    box-shadow: 0 .1rem 1rem rgba(250, 250, 250, .6) !important
-}
-
-html[data-theme=dark] .sd-card .sd-card-header {
-  background-color: var(--pst-color-background);
-  color: #150458 !important;
-}
-
-html[data-theme=dark] .sd-card .sd-card-footer {
-  background-color: var(--pst-color-background);
-}
-
-html[data-theme=dark] h1 {
-  color: var(--pst-color-primary);
-}
-
-html[data-theme=dark] h3 {
-  color: #0a6774;
-}
-
-@media screen and (min-width: 959px) {
-  .bd-sidebar-secondary {display: none;}
-  .hide-md {display: none;}
-}
-
-@media screen and (max-width: 959px) {
-  .bd-sidebar-primary {display: none;}
-  .bd-sidebar-secondary {height: calc(100vh - 65px); margin-top: 65px;}
-  .sidebar-secondary-items {margin-top: -15px;}
-} */
 
 @media screen and (max-width: 540px) {
   h1 {font-size: 30px;}

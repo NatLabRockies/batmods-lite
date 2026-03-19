@@ -1,6 +1,6 @@
-# BATMODS Changelog
+# BATMODS-lite Changelog
 
-## [Unreleased](https://github.com/NatLabRockies/batmods-lite/)
+## [Unreleased](https://github.com/NatLabRockies/batmods-lite)
 
 ### New Features
 - Adding NMC811 and GraphiteSiOx material ([#22](https://github.com/NatLabRockies/batmods-lite/pull/22))
@@ -28,12 +28,13 @@ None.
 - Renamed some attributes so they are no longer user-facing (`_sv0`, `_algidx`, etc.)
 
 ### Chores
+- Add `Development` section/pages to the Read the Docs documentation ([#25](https://github.com/NatLabRockies/batmods-lite/pull/25))
 - Improve development tools (use `ruff`, add `codecov`, host docs on RTD) ([#24](https://github.com/NatLabRockies/batmods-lite/pull/24))
 - Make GitHub hyperlinks reference new org name `NREL` -> `NatLabRockies` ([#21](https://github.com/NatLabRockies/batmods-lite/pull/21))
 - Rebrand NREL to NLR, and include name change for Alliance as well ([#20](https://github.com/NatLabRockies/batmods-lite/pull/20))
 
 ## [v0.0.1](https://github.com/NatLabRockies/batmods-lite/tree/v0.0.1)
-This is the first release of BATMODS-lite. Main features/capabilities are listed below.
+This is the first release of `BATMODS-lite`. Main features/capabilities are listed below. The release is only available on GitHub. Future releases, however, will also be distributed on PyPI.
 
 ### Features
 - Working SPM and P2D models

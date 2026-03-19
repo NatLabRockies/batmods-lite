@@ -1,10 +1,6 @@
 """
-Post-processing Utilities
--------------------------
-This module contains all post-processing functions for the P2D package. The
-available post-processing options for a given experiment are specific to that
-experiment. Therefore, not all ``Solution`` classes may have access to all of
-the following functions.
+Routines in this submodule contains all post-processing functions for the P2D
+package.
 
 """
 
@@ -40,8 +36,8 @@ def post(soln: Solution) -> dict:
         div_i_ca    divergence of current at t, x_c [A/m3] (*2D array*)
         sdot_an     Faradaic current at t, x_a [kmol/m2/s] (*1D array*)
         sdot_ca     Faradaic current at t, x_c [kmol/m2/s] (*1D array*)
-        sum_ip      ``i_ed + i_el`` at t, xp interfaces [A/m2] (*2D array*)
-        i_el_x      ``i_el`` at t, x interfaces [A/m2] (*2D array*)
+        sum_ip      `i_ed + i_el` at t, xp interfaces [A/m2] (*2D array*)
+        i_el_x      `i_el` at t, x interfaces [A/m2] (*2D array*)
         =========== ========================================================
 
     See Also
@@ -109,7 +105,7 @@ def _liquid_phase_Li(soln: Solution) -> np.ndarray:
     Returns
     -------
     Li_ed_0 : float
-        liquid-phase lithium [kmol/m2] based on ``el.Li_0``.
+        liquid-phase lithium [kmol/m2] based on `el.Li_0`.
     Li_ed_t : 1D array
         Solution's liquid-phase lithium [kmol/m2] vs. time [s].
 
@@ -145,7 +141,7 @@ def _solid_phase_Li(soln: Solution) -> np.ndarray:
     Returns
     -------
     Li_ed_0 : float
-        Solid-phase lithium [kmol/m2] based on ``an.x_0`` and ``ca.x_0``.
+        Solid-phase lithium [kmol/m2] based on `an.x_0` and `ca.x_0`.
     Li_ed_t : 1D array
         Solution's solid-phase lithium [kmol/m2] vs. time [s].
 

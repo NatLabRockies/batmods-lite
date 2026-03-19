@@ -1,7 +1,5 @@
 """
-Material Properties Package
----------------------------
-The ``materials`` package contains kinetic and transport properties for common
+The `materials` package contains kinetic and transport properties for common
 battery materials, including both electrode active materials and electrolytes.
 
 """
@@ -16,14 +14,14 @@ from ._nmc_532 import NMC532Fast, NMC532Slow, NMC532SlowExtrap
 from ._nmc_811 import NMC811
 
 __all__ = [
-    Gen2Electrolyte,
-    GraphiteFast,
-    GraphiteSlow,
-    GraphiteSlowExtrap,
-    GraphiteSiOx,
-    LFPInterp,
-    NMC532Fast,
-    NMC532Slow,
-    NMC532SlowExtrap,
-    NMC811,
+    'Gen2Electrolyte',
+    'GraphiteFast',
+    'GraphiteSlow',
+    'GraphiteSlowExtrap',
+    'GraphiteSiOx',
+    'LFPInterp',
+    'NMC532Fast',
+    'NMC532Slow',
+    'NMC532SlowExtrap',
+    'NMC811',
 ]

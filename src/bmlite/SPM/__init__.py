@@ -1,10 +1,8 @@
 """
-Single Particle Model Package
------------------------------
-A packaged single particle model (SPM). Build a model using the ``Simulation``
-class, and run any available experiments using its "run" methods, e.g.
-``run_CC()``. The experiments return ``Solution`` class instances with post
-processing, plotting, and saving methods.
+A packaged single particle model (SPM). Build a model using the `Simulation`
+class, and run an experiment using either the `run()` or `run_step()` methods.
+These methods return `Solution` class instances with post processing, plotting,
+and saving methods.
 
 """
 

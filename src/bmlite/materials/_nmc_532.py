@@ -7,7 +7,7 @@ class NMC532Fast:
         """
         Computationally fast NMC532 kinetic and transport properties.
 
-        Differs from ``NMC532Slow`` because the equilibrium potential is not
+        Differs from `NMC532Slow` because the equilibrium potential is not
         piecewise here, making it less accurate, but faster to evaluate.
 
         Parameters
@@ -28,7 +28,7 @@ class NMC532Fast:
                fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the lithium diffusivity in the solid phase given the local
-        intercalation fraction ``x`` and temperature ``T``.
+        intercalation fraction `x` and temperature `T`.
 
         Parameters
         ----------
@@ -74,15 +74,15 @@ class NMC532Fast:
                T: float, fluxdir: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the exchange current density given the intercalation
-        fraction ``x`` at the particle surface, the local lithium ion
-        concentration ``C_Li``, and temperature ``T``. The input types for
-        ``x`` and ``C_Li`` should both be the same (i.e., both float or both
+        fraction `x` at the particle surface, the local lithium ion
+        concentration `C_Li`, and temperature `T`. The input types for
+        `x` and `C_Li` should both be the same (i.e., both float or both
         1D arrays).
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
         C_Li : float | 1D array
             Lithium ion concentration in the local electrolyte [kmol/m3].
         T : float
@@ -119,12 +119,12 @@ class NMC532Fast:
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -163,12 +163,12 @@ class NMC532Fast:
     def get_Mhyst(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the hysteresis magnitude given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float | 1D array
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -189,7 +189,7 @@ class NMC532Slow(NMC532Fast):
         """
         Computationally slow NMC532 kinetic and transport properties.
 
-        Differs from ``NMC532Fast`` because the equilibrium potential is
+        Differs from `NMC532Fast` because the equilibrium potential is
         piecewise here, making it more accurate, but slower to evaluate.
 
         Parameters
@@ -221,12 +221,12 @@ class NMC532Slow(NMC532Fast):
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
@@ -253,7 +253,7 @@ class NMC532SlowExtrap(NMC532Fast):
         """
         Computationally slow NMC532 kinetic and transport properties.
 
-        Differs from ``NMC532Slow`` because the piecewise equilibrium
+        Differs from `NMC532Slow` because the piecewise equilibrium
         potential is extrapolated to be valid on the full [0, 1] range.
 
         Parameters
@@ -285,12 +285,12 @@ class NMC532SlowExtrap(NMC532Fast):
     def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
         """
         Calculate the equilibrium potential given the surface intercalation
-        fraction ``x`` at the particle surface.
+        fraction `x` at the particle surface.
 
         Parameters
         ----------
         x : float
-            Lithium intercalation fraction at ``r = R_s`` [-].
+            Lithium intercalation fraction at `r = R_s` [-].
 
         Returns
         -------
