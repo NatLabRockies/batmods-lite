@@ -10,13 +10,15 @@
 [![license](https://img.shields.io/badge/license-BSD--3-blue.svg)](https://github.com/NatLabRockies/batmods-lite/blob/main/LICENSE) &nbsp;
 
 ## Summary
-Battery Analysis and Training Models for Optimization and Design Studies (BATMODS) is a Python package with an API for pre-built battery models. The original purpose of the package was to quickly generate synthetic data for machine learning models to train with. However, the models are generally useful for any battery simulations or analysis. BATMODS-lite includes the following: 
+Battery Analysis and Training Models for Optimization and Design Studies (BATMODS) is a Python package with an API for pre-built battery models. The original purpose of the package was to quickly generate synthetic data for machine learning models to train with. However, the models are generally useful for any battery simulations or analysis. `BATMODS-lite` includes the following: 
 
 1) A library and API for pre-built battery models
 2) Kinetic/transport properties for common battery materials
 
+Note that the package focuses on phsics-based models like the single-particle (SPM) and pseudo-2D (P2D) model. If you enjoy the interface but are looking to run equivalent circuit models (ECMs), you should check out [thevenin](https://github.com/NatLabRockies/thevenin), which is distributed separately, but is developed and maintained by the same team. Consequently, the interface to `thevenin` models is intentionally similar, allowing for a smooth transition between physics-based and ECM approaches.
+
 ## Installation
-BATMODS-lite is only available via GitHub. Please clone the repo or download the files. Also, make sure you have a Python installation with a version >=3.10. If you are new to Python, we recommend using [Anaconda](https://www.anaconda.com/download) to set up your installation. 
+`BATMODS-lite` is only available via GitHub. Please clone the repo or download the files. Also, make sure you have a Python installation with a version >=3.10. If you are new to Python, we recommend using [Anaconda](https://anaconda.com/download) to set up your installation. 
 
 Once the files are available on your machine, use your terminal to navigate into the folder and execute one of the following depending on your installation preference.
 

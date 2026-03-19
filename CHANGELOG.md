@@ -33,7 +33,7 @@ None.
 - Rebrand NREL to NLR, and include name change for Alliance as well ([#20](https://github.com/NatLabRockies/batmods-lite/pull/20))
 
 ## [v0.0.1](https://github.com/NatLabRockies/batmods-lite/tree/v0.0.1)
-This is the first release of BATMODS-lite. Main features/capabilities are listed below.
+This is the first release of `BATMODS-lite`. Main features/capabilities are listed below. The release is only available on GitHub. Future releases, however, will also be distributed on PyPI.
 
 ### Features
 - Working SPM and P2D models
