@@ -37,7 +37,7 @@ dependencies = [
     "openpyxl",
     "matplotlib",
     "ruamel.yaml",
-    "scikit-sundae>=1.1.0",
+    "scikit-sundae>=1.1.3",
 ]
 
 [tool.setuptools.dynamic]
