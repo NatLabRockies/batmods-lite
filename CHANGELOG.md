@@ -3,7 +3,8 @@
 ## [Unreleased](https://github.com/NatLabRockies/batmods-lite)
 
 ### New Features
-- Adding NMC811 and GraphiteSiOx material ([#22](https://github.com/NatLabRockies/batmods-lite/pull/22))
+- Remove `linspace` option for `tspan`, add auto timesteps as an option ([#26](https://github.com/NatLabRockies/batmods-lite/pull/26))
+- Adding NMC811 and GraphiteSiOx material for BatFIT calibrations ([#22](https://github.com/NatLabRockies/batmods-lite/pull/22))
 - Check bounds of intercalation fraction before calculating exchange current density ([#19](https://github.com/NatLabRockies/batmods-lite/pull/19))
 - Update `materials` module with new LFP properties, from ICI ([#18](https://github.com/NatLabRockies/batmods-lite/pull/18))
 - Use `CubicSpline` interpolations for LFP properties ([#15](https://github.com/NatLabRockies/batmods-lite/pull/15))
@@ -24,6 +25,7 @@
 None.
 
 ### Breaking Changes
+- Remove `linspace` option for `tspan`, add auto timesteps as an option ([#26](https://github.com/NatLabRockies/batmods-lite/pull/26))
 - Removal of `run_CC`, `run_CV`, and `run_CP` methods
 - Renamed some attributes so they are no longer user-facing (`_sv0`, `_algidx`, etc.)
 
