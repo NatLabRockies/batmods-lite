@@ -42,10 +42,6 @@ class Battery:
         Updates any secondary/dependent parameters. At present, this method
         does not do anything for the `Battery` class.
 
-        Returns
-        -------
-        None.
-
         """
         pass
 
@@ -75,10 +71,6 @@ class Electrolyte:
         """
         Updates any secondary/dependent parameters. At present, this method
         does not do anything for the `Electrolyte` class.
-
-        Returns
-        -------
-        None.
 
         """
         pass
@@ -182,10 +174,6 @@ class Electrode:
             `eps_AM = eps_s - eps_CBD`
         * Specific particle surface area [m2/m3]:
             `A_s = 3 * eps_AM / R_s`
-
-        Returns
-        -------
-        None.
 
         """
         from .. import materials
@@ -304,10 +292,6 @@ class Electrode:
         Parameters
         ----------
         pshift : int, optional
-
-        Returns
-        -------
-        None.
 
         See Also
         --------

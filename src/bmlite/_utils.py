@@ -1,7 +1,8 @@
 import atexit
 import warnings
+import textwrap
 
-from typing import Callable, Iterable
+from typing import Any, Callable, Iterable
 
 from tqdm import tqdm
 
@@ -88,10 +89,6 @@ class ProgressBar(tqdm):
         progress : float
             Progress fraction in [0, 1].
 
-        Returns
-        -------
-        None.
-
         """
         self._iter += 1
         self.n = progress
@@ -147,10 +144,6 @@ class ProgressBar(tqdm):
         Resets the iteration count to zero for repeated use. Only works for
         manual mode. For iterables you will need to create a new instance.
 
-        Returns
-        -------
-        None.
-
         """
         self._iter = 0
         super().reset()
@@ -173,3 +166,28 @@ def short_warn(message, category=UserWarning, filename='None', lineno=0):
     warnings.warn_explicit(message, category, filename, lineno)
 
     warnings.formatwarning = original_format
+
+
+def _repr(name: str, keys: list[str], values: list[Any]) -> str:
+    """
+    Return a readable repr string.
+
+    Parameters
+    ----------
+    name : str
+        The name of the class or object to represent.
+    keys : list[str]
+        The list of variable names to include in the representation.
+    values : list[Any]
+        The list of variable values to include in the representation.
+
+    Returns
+    -------
+    readable : str
+        A console-readable instance representation.
+
+    """
+    summary = "\n".join(f"{k}={v}," for k, v in zip(keys, values))
+    summary = textwrap.indent(summary, " " * 4)
+
+    return f"{name}(\n{summary}\n)"

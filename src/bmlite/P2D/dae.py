@@ -215,7 +215,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
 
     # Solid-phase COC (algebraic)
     res[an.x_ptr['phis']] = (ip_ed - im_ed) / (an.xp - an.xm) \
-                            + an.A_s*sdot_an*c.F
+                          + an.A_s*sdot_an*c.F
 
     # Reference potential BC (algebraic)
     res[an.x_ptr['phis'][0]] = phi_an[0] - 0.
@@ -227,7 +227,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
 
     # Electrolyte COC (algebraic)
     res[an.x_ptr['phie']] = (ip_el - im_el) / (an.xp - an.xm) \
-                            - an.A_s*sdot_an*c.F
+                          - an.A_s*sdot_an*c.F
 
     # Hysteresis (differential)
     if 'Hysteresis' in an._submodels:
@@ -305,7 +305,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
 
     # Solid-phase COC (algebraic)
     res[ca.x_ptr['phis']] = (ip_ed - im_ed) / (ca.xp - ca.xm) \
-                            + ca.A_s*sdot_ca*c.F
+                          + ca.A_s*sdot_ca*c.F
 
     if mode == 'voltage':
         res[ca.x_ptr['phis'][-1]] = voltage_V - value(t)
@@ -319,7 +319,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
 
     # Electrolyte COC (algebraic)
     res[ca.x_ptr['phie']] = (ip_el - im_el) / (ca.xp - ca.xm) \
-                            - ca.A_s*sdot_ca*c.F
+                          - ca.A_s*sdot_ca*c.F
 
     # Hysteresis (differential)
     if 'Hysteresis' in ca._submodels:

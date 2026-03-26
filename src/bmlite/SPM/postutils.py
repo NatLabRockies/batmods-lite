@@ -129,10 +129,6 @@ def potentials(soln: Solution) -> None:
     soln : Solution
         A single particle model solution object.
 
-    Returns
-    -------
-    None.
-
     See Also
     --------
     ~bmlite.SPM.solutions.StepSolution
@@ -171,10 +167,6 @@ def intercalation(soln: Solution) -> None:
     ----------
     soln : Solution
         A single particle model solution object.
-
-    Returns
-    -------
-    None.
 
     See Also
     --------
@@ -240,10 +232,6 @@ def pixels(soln: Solution) -> None:
     ----------
     soln : SPM Solution object
         A single particle model solution object.
-
-    Returns
-    -------
-    None.
 
     See Also
     --------

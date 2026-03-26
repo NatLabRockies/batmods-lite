@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import Iterable, TYPE_CHECKING
 
 import textwrap
+
 from copy import deepcopy
+from typing import Iterable, TYPE_CHECKING
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,10 +27,6 @@ class BaseSolution(IDAResult):
         solution instance a 'vars' dictionary, access to the 'plot' method,
         and ensures that the slicing of the solution vector into 'vars' is
         consistent between all solutions.
-
-        Returns
-        -------
-        None.
 
         """
         self.vars = {}
@@ -126,10 +123,6 @@ class BaseSolution(IDAResult):
             Keyword arguments to pass through to `plt.plot()`. For more info
             please refer to documentation for `maplotlib.pyplot.plot()`.
 
-        Returns
-        -------
-        None.
-
         """
         from .._utils import ExitHandler
 
@@ -166,10 +159,6 @@ class BaseSolution(IDAResult):
             intercalation  solid-phase Li profiles [-]
             pixels         pixel plots for a variety of variables
             ============== ===============================================
-
-        Returns
-        -------
-        None.
 
         """
         if not self._postvars:
@@ -223,10 +212,6 @@ class BaseSolution(IDAResult):
         j_a       Faradaic current at t, x_a [kmol/m2/s] (*2D array*)
         j_c       Faradaic current at t, x_c [kmol/m2/s] (*2D array*)
         ========= ====================================================
-
-        Parameters
-        ----------
-        None.
 
         Returns
         -------
@@ -309,10 +294,6 @@ class BaseSolution(IDAResult):
             A flag to overwrite an existing `.npz` file with the same name
             if one exists. The default is `False`.
 
-        Returns
-        -------
-        None.
-
         """
         import os
 
@@ -332,10 +313,6 @@ class BaseSolution(IDAResult):
         Fills the 'vars' dictionary by slicing the SolverReturn solution
         states. Users should generally only access the solution via 'vars'
         since names are more intuitive than interpreting 'y' directly.
-
-        Returns
-        -------
-        None.
 
         """
         sim = self._sim

@@ -1,11 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 import os
 import time
 
 from pathlib import Path
 from copy import deepcopy
+from typing import TYPE_CHECKING
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -102,10 +102,6 @@ class Simulation:
         in the `__init__()` method which has some implications if the user
         modifies parameters after initialization (see the warning below).
 
-        Returns
-        -------
-        None.
-
         Warning
         -------
         The user may choose to modify parameters after loading in a `.yaml`
@@ -147,8 +143,11 @@ class Simulation:
         self._lband = int(self.el.ptr['phie'] - self.an.r_ptr['xs'][-1])
         self._uband = int(self.el.ptr['phie'] - self.an.r_ptr['xs'][-1])
 
-    def j_pattern(self, plot: bool = True,
-                  return_bands: bool = False) -> tuple[int] | None:
+    def j_pattern(
+        self,
+        plot: bool = True,
+        return_bands: bool = False,
+    ) -> tuple[int] | None:
         """
         Determine the Jacobian pattern.
 
@@ -406,10 +405,6 @@ class _EventsFunction:
             Dictionary detailing an experimental step, with the 'roots' key
             added and filled within the `rhs_funcs()' method.
 
-        Returns
-        -------
-        None.
-
         """
         inputs = inputs[1]
 
@@ -434,10 +429,6 @@ def _setup_eventsfn(limits: tuple[str, float], kwargs: dict) -> None:
     kwargs : dict
         The IDASolver keyword argumnents dictionary. Both the 'eventsfn' and
         'num_events' keyword arguments must be added to 'kwargs'.
-
-    Returns
-    -------
-    None.
 
     """
     eventsfn = _EventsFunction(limits)

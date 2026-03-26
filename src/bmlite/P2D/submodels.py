@@ -94,10 +94,6 @@ class Hysteresis:
             An array instance with pre-allocated memory for the initial state
             vector.
 
-        Returns
-        -------
-        None.
-
         """
         domain = self.domain
         start = domain.ptr['start']

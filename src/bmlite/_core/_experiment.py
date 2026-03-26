@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from numbers import Real
 from typing import Callable
 
 import numpy as np
@@ -29,9 +31,9 @@ class Experiment:
             that you might want to adjust.
 
         """
-        self._steps = []
-        self._step_options = []
-        self._all_options = kwargs.copy()
+        self._steps: list[dict] = []
+        self._step_options: list[dict] = []
+        self._all_options: dict = kwargs.copy()
 
     def __repr__(self) -> str:  # pragma: no cover
         """
@@ -43,14 +45,12 @@ class Experiment:
             A console-readable instance representation.
 
         """
+        from bmlite._utils import _repr
+
         keys = ['num_steps', 'options']
         values = [self.num_steps, self._all_options]
 
-        summary = "\n    ".join(f"{k}={v}," for k, v in zip(keys, values))
-
-        readable = f"Experiment(\n    {summary}\n)"
-
-        return readable
+        return _repr('Experiment', keys, values)
 
     @property
     def steps(self) -> list[dict]:
@@ -79,14 +79,7 @@ class Experiment:
         return len(self._steps)
 
     def print_steps(self) -> None:
-        """
-        Prints a formatted/readable list of steps.
-
-        Returns
-        -------
-        None.
-
-        """
+        """Print a formatted/readable list of steps."""
         with np.printoptions(threshold=6, edgeitems=2):
             for i, step in enumerate(self.steps):
                 print(f"\nStep {i}\n" + "-"*20)
@@ -108,28 +101,32 @@ class Experiment:
             Value of boundary contion mode, in the appropriate units. Note that
             negative and positive values of current and power reference charge
             and discharge directions, respectively.
-        tspan : tuple | 1D np.array
-            Relative times for recording solution [s]. Providing a tuple as
-            (t_max: float, Nt: int) or (t_max: float, dt: float) constructs
-            tspan using `np.linspace` or `np.arange`, respectively. Given
-            an array uses the values supplied as the evaluation times. Arrays
-            must be monotonically increasing and start with zero. See the notes
-            for more information.
+        tspan : float or tuple[float, float] or 1D array
+            Relative times for recording solution [s]. Providing a float will
+            result in the solver picking time steps to save on its own. A tuple
+            is interpreted as `(tmax, dt)` where the first element is the max
+            time for the step (in seconds) and the second is the time interval
+            between steps (also seconds). You can also provide any custom array
+            of times at which to save the solution by providing a 1D `np.array`;
+            however, the first element must be zero and the array must be in a
+            monotonically increasing order, and there must be at least three
+            elements. An array like `np.array([0, tmax])` will will result in
+            the solver choosing its own time steps, similar to just providing a
+            float. See notes for more information.
         limits : tuple[str, float], optional
             Stopping criteria for the new step, must be entered in sequential
             name/value pairs. Allowable names are {'current_A', 'current_C',
-            'voltage_V', 'power_W', 'time_s', 'time_min', 'time_h'}. Values for
-            each limit should immediately follow a corresponding name and match
-            its units. Time limits are in reference to total experiment time.
+            'voltage_V', 'power_W', 'capacity_Ah','time_s', 'time_min',
+            'time_h'}. Multiple limits are allowed by entering consecutive pairs
+            of names and values. Capacity limits track the throughput of the
+            step and are calculated by integrating current over time. The time
+            limits are in reference to total experiment time. Step times are
+            controlled using the 'tspan' argument instead of the 'limits' input.
             The default is None. Current and power limits should follow the
             same sign convention as the mode, i.e., negative values for charge
             and positive for discharge.
         **kwargs : dict, optional
             IDASolver keyword arguments specific to the new step only.
-
-        Returns
-        -------
-        None.
 
         Raises
         ------
@@ -137,16 +134,18 @@ class Experiment:
             'mode' is invalid.
         ValueError
             A 'limits' name is invalid.
+        TypeError
+            'tspan' must be type float, tuple, or np.array.
         ValueError
             'tspan' tuple must be length 2.
         TypeError
-            'tspan[1]' must be type int or float.
+            'tspan' tuple values must be type float.
+        ValueError
+            'tspan[1]' must be less than 'tspan[0]' when given a tuple.
         ValueError
             'tspan' arrays must be one-dimensional.
         ValueError
             'tspan[0]' must be zero when given an array.
-        ValueError
-            'tspan' array length must be at least two.
         ValueError
             'tspan' arrays must be monotonically increasing.
 
@@ -158,25 +157,23 @@ class Experiment:
 
         Notes
         -----
-        For time-dependent loads, use a Callable for 'value' with a function
-        signature like `def load(t: float) -> float`, where 't' is the step's
+        For time-dependent loads, use a Callable for `value` with a function
+        signature like `def load(t: float) -> float`, where `t` is the step's
         relative time, in seconds.
 
-        Solution times are constructed and saved depending on the 'tspan' input
-        types that were supplied:
+        When `tspan` is given as a 2-tuple, like `(tmax, dt)`, the time span is
+        constructed as:
 
-        * Given (float, int):
-            `tspan = np.linspace(0., tspan[0], tspan[1])`
-        * Given (float, float):
-            `tspan = np.arange(0., tspan[0], tspan[1])`
+        .. code-block:: python
 
-            In this case, 't_max' is also appended to the end. This results
-            in the final 'dt' being different from the others if 't_max' is
-            not evenly divisible by the given 'dt'.
-        * Given 1D np.array:
-            When you provide a numpy array it is checked for compatibility.
-            If the array is not 1D, is not monotonically increasing, or starts
-            with a value other than zero then an error is raised.
+            tspan = np.arange(0., tspan[0], tspan[1])
+
+        In the case where `tmax` is not an integer multiple of `dt`, a final
+        time point is appended to ensure that `tspan[-1] == tmax`. If this is
+        too restrictive, you can instead provide a custom 1D `np.array` for the
+        `tspan` argument. However, the array is checked to make sure the first
+        element is zero and the array is monotonically increasing. If either of
+        these checks fail, a `ValueError` is raised.
 
         """
         _check_mode(mode)
@@ -184,25 +181,29 @@ class Experiment:
 
         mode, units = mode.split('_')
 
-        if isinstance(tspan, tuple):
+        if isinstance(tspan, Real):
+            tspan = np.array([0., tspan], dtype=float)
+
+        elif isinstance(tspan, tuple):
 
             if not len(tspan) == 2:
                 raise ValueError("'tspan' tuple must be length 2.")
+            elif not all(isinstance(val, Real) for val in tspan):
+                raise TypeError("'tspan' tuple values must be type float.")
+            elif tspan[1] >= tspan[0]:
+                raise ValueError("'tspan[1]' must be less than 'tspan[0]'"
+                                 " when given a tuple.")
 
-            if isinstance(tspan[1], int):
-                t_max, Nt = tspan
-                tspan = np.linspace(0., t_max, Nt)
-            elif isinstance(tspan[1], float):
-                t_max, dt = tspan
-                tspan = np.arange(0., t_max, dt, dtype=float)
-            else:
-                raise TypeError("'tspan[1]' must be type int or float.")
+            tmax, dt = tspan
+            tspan = np.arange(0., tmax, dt, dtype=float)
 
-            if tspan[-1] != t_max:
-                tspan = np.hstack([tspan, t_max])
+            if tspan[-1] != tmax:
+                tspan = np.hstack([tspan, tmax])
 
-        else:
-            tspan = np.asarray(tspan)
+        elif not isinstance(tspan, np.ndarray):
+            raise TypeError("'tspan' must be type float, tuple, or np.array.")
+
+        tspan = np.asarray(tspan, dtype=float)
 
         if tspan.ndim != 1:
             raise ValueError("'tspan' must be one-dimensional.")
@@ -233,10 +234,6 @@ def _check_mode(mode: str) -> None:
     mode : str
         Operating mode and units.
 
-    Returns
-    -------
-    None.
-
     Raises
     ------
     ValueError
@@ -257,10 +254,6 @@ def _check_limits(limits: tuple[str, float]) -> None:
     ----------
     limit : tuple[str, float]
         Stopping criteria and limiting value.
-
-    Returns
-    -------
-    None.
 
     Raises
     ------
