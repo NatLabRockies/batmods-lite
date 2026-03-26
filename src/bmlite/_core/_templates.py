@@ -18,10 +18,6 @@ def templates(model: str, file: str | int = None) -> None:
     file : str | int, optional
         File name or index. The default is None.
 
-    Returns
-    -------
-    None.
-
     Raises
     ------
     AttributeError

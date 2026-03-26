@@ -189,10 +189,6 @@ def potentials(soln: Solution) -> None:
     soln : P2D Solution object
         A pseudo-2D model solution object.
 
-    Returns
-    -------
-    None.
-
     """
     import matplotlib.colors as clrs
 
@@ -272,10 +268,6 @@ def electrolyte(soln: Solution) -> None:
     soln : P2D Solution object
         A pseudo-2D model solution object.
 
-    Returns
-    -------
-    None.
-
     """
     import matplotlib.colors as clrs
 
@@ -327,10 +319,6 @@ def intercalation(soln: Solution) -> None:
     ----------
     soln : P2D Solution object
         A pseudo-2D model solution object.
-
-    Returns
-    -------
-    None.
 
     """
     import matplotlib.colors as clrs
@@ -396,10 +384,6 @@ def pixels(soln: Solution) -> None:
     ----------
     soln : P2D Solution object
         A pseudo-2D model solution object.
-
-    Returns
-    -------
-    None.
 
     """
     from ..plotutils import pixel

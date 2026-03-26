@@ -71,10 +71,6 @@ class Hysteresis:
             A shifted index to use for the pointer to account for the fact that
             domains are stacked into a single 1D array, by default 0.
 
-        Returns
-        -------
-        None.
-
         """
         domain = self.domain
         if domain._name == 'anode':
@@ -94,10 +90,6 @@ class Hysteresis:
         sv0 : 1D array
             An array instance with pre-allocated memory for the initial state
             vector.
-
-        Returns
-        -------
-        None.
 
         """
         domain = self.domain

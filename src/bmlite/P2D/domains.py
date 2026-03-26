@@ -42,10 +42,6 @@ class Battery:
         Updates any secondary/dependent parameters. At present, this method
         does not do anything for the `Battery` class.
 
-        Returns
-        -------
-        None.
-
         """
         pass
 
@@ -85,10 +81,6 @@ class Electrolyte:
         """
         Updates any secondary/dependent parameters. For the `Electrolyte`
         class, this only initializes the material class.
-
-        Returns
-        -------
-        None.
 
         """
         from .. import materials
@@ -265,10 +257,6 @@ class Electrode:
         * Specific particle surface area [m2/m3]:
             `A_s = 3 * eps_AM / R_s`
 
-        Returns
-        -------
-        None.
-
         """
         from .. import materials
 
@@ -395,10 +383,6 @@ class Electrode:
         ----------
         xshift : float, optional
         pshift : int, optional
-
-        Returns
-        -------
-        None.
 
         See Also
         --------
@@ -612,10 +596,6 @@ class Separator:
         * Solid-phase volume fraction [-]:
             `eps_s = 1 - eps_el`
 
-        Returns
-        -------
-        None.
-
         """
         self.eps_s = 1 - self.eps_el
 
@@ -630,10 +610,6 @@ class Separator:
         ----------
         xshift : float, optional
         pshift : int, optional
-
-        Returns
-        -------
-        None.
 
         See Also
         --------

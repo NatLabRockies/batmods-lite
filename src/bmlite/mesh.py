@@ -41,10 +41,6 @@ def x_ptr(domain: object, keys: list[str]) -> dict:
         A list of the variable names defined in the `x` direction. This
         list should be a subset of the domain's existing `ptr` keys.
 
-    Returns
-    -------
-    None.
-
     """
     from numpy import array
 
@@ -77,10 +73,6 @@ def r_ptr(domain: object, keys: list[str]) -> None:
     keys : list[str]
         A list of the variable names defined in the `r` direction. This
         list should be a subset of the domain's existing `ptr` keys.
-
-    Returns
-    -------
-    None.
 
     """
     from numpy import array
@@ -115,10 +107,6 @@ def xr_ptr(domain: object, keys: list[str]) -> None:
         A list of the variable names defined in both the `x` and `r`
         directions. This list should be a subset of the domain's existing
         `ptr` keys.
-
-    Returns
-    -------
-    None.
 
     """
     from numpy import array, tile

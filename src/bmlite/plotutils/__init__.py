@@ -20,10 +20,6 @@ def format_ticks(ax: object) -> None:
     ax : object
         An `axis` instance from a `matplotlib` figure.
 
-    Returns
-    -------
-    None.
-
     """
     from matplotlib.ticker import AutoMinorLocator
 
@@ -56,10 +52,6 @@ def pixel(ax: object, xlims: list[float], ylims: list[float], z: np.ndarray,
 
     cblabel : str
         The colorbar label.
-
-    Returns
-    -------
-    None.
 
     """
     import matplotlib.pyplot as plt

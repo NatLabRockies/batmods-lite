@@ -103,7 +103,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     Js_an = np.concat([[0.], Ds_an*grad_r(an.r, Li_an), [-sdot_an]])
 
     res[an.r_ptr['xs']] = an.Li_max*svdot[an.r_ptr['xs']] \
-                           - div_r(an.rm, an.rp, Js_an)
+                        - div_r(an.rm, an.rp, Js_an)
 
     # Solid-phase COC (algebraic)
     res[an.ptr['phis']] = phi_an - 0.
@@ -132,7 +132,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     Js_ca = np.concat([[0.], Ds_ca*grad_r(ca.r, Li_ca), [-sdot_ca]])
 
     res[ca.r_ptr['xs']] = ca.Li_max*svdot[ca.r_ptr['xs']] \
-                           - np.flip(div_r(ca.rm, ca.rp, Js_ca))
+                        - np.flip(div_r(ca.rm, ca.rp, Js_ca))
 
     # Hysteresis (differential)
     if 'Hysteresis' in ca._submodels:
@@ -156,20 +156,20 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     # Electrolyte - potential (algebraic)
     if mode == 'current' and units == 'A':
         res[ca.ptr['phis']] = sdot_ca*ca.A_s*ca.thick*c.F \
-                              + value(t) / bat.area
+                            + value(t) / bat.area
         res[el.ptr['phie']] = sdot_an*an.A_s*an.thick*c.F \
-                              - value(t) / bat.area
+                            - value(t) / bat.area
 
     elif mode == 'current' and units == 'C':
         res[ca.ptr['phis']] = sdot_ca*ca.A_s*ca.thick*c.F \
-                              + value(t)*bat.cap / bat.area
+                            + value(t)*bat.cap / bat.area
         res[el.ptr['phie']] = sdot_an*an.A_s*an.thick*c.F \
-                              - value(t)*bat.cap / bat.area
+                            - value(t)*bat.cap / bat.area
 
     elif mode == 'voltage':
         res[ca.ptr['phis']] = voltage_V - value(t)
         res[el.ptr['phie']] = sdot_an*an.A_s*an.thick \
-                              + sdot_ca*ca.A_s*ca.thick
+                            + sdot_ca*ca.A_s*ca.thick
 
     elif mode == 'power':
         res[ca.ptr['phis']] = power_W - value(t)
