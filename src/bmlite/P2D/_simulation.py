@@ -275,9 +275,9 @@ class Simulation:
 
         solver = IDASolver(residuals, **options)
 
-        start = time.time()
+        start = time.perf_counter()
         idasoln = solver.solve(step['tspan'], self._sv0, self._svdot0)
-        timer = time.time() - start
+        timer = time.perf_counter() - start
 
         soln = StepSolution(self, idasoln, timer)
 
