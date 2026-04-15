@@ -219,10 +219,10 @@ class GraphiteSlow(GraphiteFast):
 
     def __init__(self, alpha_a: float, alpha_c: float, Li_max: float) -> None:
         """
-        Computationally fast Graphite kinetic and transport properties.
+        Computationally slow Graphite kinetic and transport properties.
 
-        Differs from `GraphiteSlow` because the equilibrium potential is
-        not piecewise here, making it less accurate, but faster to evaluate.
+        Differs from `GraphiteFast` because the equilibrium potential is
+        piecewise here, making it more accurate, but slower to evaluate.
 
         Parameters
         ----------
@@ -281,7 +281,7 @@ class GraphiteSlowExtrap(GraphiteFast):
 
     def __init__(self, alpha_a: float, alpha_c: float, Li_max: float) -> None:
         """
-        Computationally fast Graphite kinetic and transport properties.
+        Computationally slow Graphite kinetic and transport properties.
 
         Differs from `GraphiteSlow` because the piecewise equilibrium
         potential is extrapolated to be valid on the full [0, 1] range.
