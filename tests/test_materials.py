@@ -4,7 +4,6 @@ import pytest
 import numpy as np
 import bmlite as bm
 import pandas as pd
-import tempfile
 
 
 @pytest.fixture(scope='module')
@@ -150,7 +149,7 @@ def test_nmc_811(args):
     data.close()
 
 
-def test_nmc_811_slow(args):
+def test_nmc_811_slow(args, tmp_path):
 
     # Make sure we get a FileNotFoundError if we don't
     # pass a csvfile
@@ -168,28 +167,25 @@ def test_nmc_811_slow(args):
         'V': [4.2, 4.0,  3.7, 3.5,  2.5]
     }
 
-    with tempfile.NamedTemporaryFile(
-        mode='w', suffix=".csv", newline=''
-    ) as temp_fd:
-        # Write fake csv file that contains the fake OCV
-        save_path = temp_fd.name
-        df = pd.DataFrame(data_ocv)
-        df.to_csv(save_path)
+    # Write fake csv file that contains the fake OCV
+    save_path = os.path.join(tmp_path, "dummy_ocv.csv")
+    df = pd.DataFrame(data_ocv)
+    df.to_csv(save_path)
 
-        nmc = bm.materials.NMC811Slow(args[0], args[1], args[2],
-                                      csvfile=save_path)
+    nmc = bm.materials.NMC811Slow(args[0], args[1], args[2],
+                                  csvfile=save_path)
 
-        # Should be unchanged compared to the non slow version
-        Ds = nmc.get_Ds(x, T, fluxdir=0)
-        assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
+    # Should be unchanged compared to the non slow version
+    Ds = nmc.get_Ds(x, T, fluxdir=0)
+    assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
 
-        # Should be unchanged compared to the non slow version
-        i0 = nmc.get_i0(x, C_Li, T, fluxdir=0)
-        assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
+    # Should be unchanged compared to the non slow version
+    i0 = nmc.get_i0(x, C_Li, T, fluxdir=0)
+    assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
 
-        Eeq = nmc.get_Eeq(x)
-        is_within = (Eeq >= 2).all() and (Eeq <= 5).all()
-        assert is_within
+    Eeq = nmc.get_Eeq(x)
+    is_within = (Eeq >= 2).all() and (Eeq <= 5).all()
+    assert is_within
 
     data.close()
 
@@ -214,7 +210,7 @@ def test_graphite_siox(args):
     data.close()
 
 
-def test_graphite_siox_slow(args):
+def test_graphite_siox_slow(args, tmp_path):
 
     # Make sure we get a FileNotFoundError if we don't
     # pass a csvfile
@@ -232,27 +228,24 @@ def test_graphite_siox_slow(args):
         'V': [1.2, 1.0,  0.7, 0.5,  0.0]
     }
 
-    with tempfile.NamedTemporaryFile(
-        mode='w', suffix=".csv", newline=''
-    ) as temp_fd:
-        # Write fake csv file that contains the fake OCV
-        save_path = temp_fd.name
-        df = pd.DataFrame(data_ocv)
-        df.to_csv(save_path)
+    # Write fake csv file that contains the fake OCV
+    save_path = os.path.join(tmp_path, "dummy_ocv.csv")
+    df = pd.DataFrame(data_ocv)
+    df.to_csv(save_path)
 
-        grsiox = bm.materials.GraphiteSiOxSlow(args[0], args[1], args[2],
-                                               csvfile=save_path)
+    grsiox = bm.materials.GraphiteSiOxSlow(args[0], args[1], args[2],
+                                           csvfile=save_path)
 
-        # Should be unchanged compared to the non slow version
-        Ds = grsiox.get_Ds(x, T, fluxdir=0)
-        assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
+    # Should be unchanged compared to the non slow version
+    Ds = grsiox.get_Ds(x, T, fluxdir=0)
+    assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
 
-        # Should be unchanged compared to the non slow version
-        i0 = grsiox.get_i0(x, C_Li, T, fluxdir=0)
-        assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
+    # Should be unchanged compared to the non slow version
+    i0 = grsiox.get_i0(x, C_Li, T, fluxdir=0)
+    assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
 
-        Eeq = grsiox.get_Eeq(x)
-        is_within = (Eeq >= -0.1).all() and (Eeq <= 1.5).all()
-        assert is_within
+    Eeq = grsiox.get_Eeq(x)
+    is_within = (Eeq >= -0.1).all() and (Eeq <= 1.5).all()
+    assert is_within
 
     data.close()
