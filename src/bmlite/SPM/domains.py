@@ -130,6 +130,7 @@ class Electrode:
             i0_deg     `i0` degradation factor [-] (*float*)
             Ds_deg     `Ds` degradation factor [-] (*float*)
             material   class name from `bmlite.materials` [-] (*str*)
+            csvfile    path to CSV file with OCV data (optional) (*str*)
             submodels  `submodels` classes to include (*dict[dict]*)
             ========== ======================================================
 
@@ -154,7 +155,7 @@ class Electrode:
         self.i0_deg = kwargs.get('i0_deg')
         self.Ds_deg = kwargs.get('Ds_deg')
         self.material = kwargs.get('material')
-        self.csvfile = kwargs.setdefault('csvfile', None)
+        self.csvfile = kwargs.get('csvfile', None)
 
         self.update()
 
