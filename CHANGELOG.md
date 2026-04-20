@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/NatLabRockies/batmods-lite)
 
 ### New Features
+- Add slow NMC811 and GraphiteSiOx with the ability to pass OCV data as an input ([#27](https://github.com/NatLabRockies/batmods-lite/pull/27))
 - Remove `linspace` option for `tspan`, add auto timesteps as an option ([#26](https://github.com/NatLabRockies/batmods-lite/pull/26))
 - Adding NMC811 and GraphiteSiOx material for BatFIT calibrations ([#22](https://github.com/NatLabRockies/batmods-lite/pull/22))
 - Check bounds of intercalation fraction before calculating exchange current density ([#19](https://github.com/NatLabRockies/batmods-lite/pull/19))

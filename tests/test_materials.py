@@ -3,6 +3,7 @@ import os
 import pytest
 import numpy as np
 import bmlite as bm
+import pandas as pd
 
 
 @pytest.fixture(scope='module')
@@ -148,21 +149,101 @@ def test_nmc_811(args):
     data.close()
 
 
+def test_nmc_811_slow(args, tmp_path):
+
+    # Make sure we get a FileNotFoundError if we don't pass a csvfile
+    try:
+        nmc = bm.materials.NMC811Slow(args[0], args[1], args[2])
+    except FileNotFoundError:
+        pass
+
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/nmc811.npz')
+    x, C_Li, T = data['x'], data['C_Li'], data['T']
+
+    data_ocv = {
+        'x': [0.0, 0.25, 0.5, 0.75, 1.0],
+        'V': [4.2, 4.0,  3.7, 3.5,  2.5]
+    }
+
+    # Write fake csv file that contains the fake OCV
+    save_path = os.path.join(tmp_path, "dummy_ocv.csv")
+    df = pd.DataFrame(data_ocv)
+    df.to_csv(save_path)
+
+    nmc = bm.materials.NMC811Slow(args[0], args[1], args[2],
+                                  csvfile=save_path)
+
+    # Should be unchanged compared to the non slow version
+    Ds = nmc.get_Ds(x, T, fluxdir=0)
+    assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
+
+    # Should be unchanged compared to the non slow version
+    i0 = nmc.get_i0(x, C_Li, T, fluxdir=0)
+    assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
+
+    Eeq = nmc.get_Eeq(x)
+    is_within = (Eeq >= 2).all() and (Eeq <= 5).all()
+    assert is_within
+
+    data.close()
+
+
 def test_graphite_siox(args):
-    nmc = bm.materials.GraphiteSiOx(args[0], args[1], args[2])
+    grsiox = bm.materials.GraphiteSiOx(args[0], args[1], args[2])
 
     directory = os.path.dirname(__file__)
     data = np.load(directory + '/materials_data/graphite_SiOx.npz')
 
     x, C_Li, T = data['x'], data['C_Li'], data['T']
 
-    Ds = nmc.get_Ds(x, T, fluxdir=0)
+    Ds = grsiox.get_Ds(x, T, fluxdir=0)
     assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
 
-    i0 = nmc.get_i0(x, C_Li, T, fluxdir=0)
+    i0 = grsiox.get_i0(x, C_Li, T, fluxdir=0)
     assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
 
-    Eeq = nmc.get_Eeq(x)
+    Eeq = grsiox.get_Eeq(x)
     assert np.allclose(Eeq / max(Eeq), data['Eeq'] / max(Eeq))
+
+    data.close()
+
+
+def test_graphite_siox_slow(args, tmp_path):
+
+    # Make sure we get a FileNotFoundError if we don't pass a csvfile
+    try:
+        grsiox = bm.materials.GraphiteSiOxSlow(args[0], args[1], args[2])
+    except FileNotFoundError:
+        pass
+
+    directory = os.path.dirname(__file__)
+    data = np.load(directory + '/materials_data/graphite_SiOx.npz')
+    x, C_Li, T = data['x'], data['C_Li'], data['T']
+
+    data_ocv = {
+        'x': [0.0, 0.25, 0.5, 0.75, 1.0],
+        'V': [1.2, 1.0,  0.7, 0.5,  0.0]
+    }
+
+    # Write fake csv file that contains the fake OCV
+    save_path = os.path.join(tmp_path, "dummy_ocv.csv")
+    df = pd.DataFrame(data_ocv)
+    df.to_csv(save_path)
+
+    grsiox = bm.materials.GraphiteSiOxSlow(args[0], args[1], args[2],
+                                           csvfile=save_path)
+
+    # Should be unchanged compared to the non slow version
+    Ds = grsiox.get_Ds(x, T, fluxdir=0)
+    assert np.allclose(Ds / max(Ds), data['Ds'] / max(Ds))
+
+    # Should be unchanged compared to the non slow version
+    i0 = grsiox.get_i0(x, C_Li, T, fluxdir=0)
+    assert np.allclose(i0 / max(i0), data['i0'] / max(i0))
+
+    Eeq = grsiox.get_Eeq(x)
+    is_within = (Eeq >= -0.1).all() and (Eeq <= 1.5).all()
+    assert is_within
 
     data.close()

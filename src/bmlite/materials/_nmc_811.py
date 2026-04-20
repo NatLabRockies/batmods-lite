@@ -173,3 +173,100 @@ class NMC811:
             M_hyst *= np.ones_like(x)
 
         return M_hyst
+
+
+class NMC811Slow(NMC811):
+
+    def __init__(
+        self,
+        alpha_a: float,
+        alpha_c: float,
+        Li_max: float,
+        csvfile: str | None = None
+    ) -> None:
+        """
+        Computationally slow NMC811 kinetic and transport properties.
+
+        Differs from `NMC811` because the equilibrium potential is
+        piecewise here, making it more accurate, but slower to evaluate.
+
+        Parameters
+        ----------
+        alpha_a : float
+            Anodic symmetry factor in Butler-Volmer expression [-].
+        alpha_c : float
+            Cathodic symmetry factor in Butler-Volmer expression [-].
+        Li_max : float
+            Maximum lithium concentration in solid phase [kmol/m3].
+        csv_file: str | None
+            Path to open circuit potential data containing 2 columns: x and V.
+            If None, reads an internal `data/nmc811_ocv.csv`.
+
+        """
+        import os
+        import pandas as pd
+        from scipy.interpolate import PchipInterpolator
+
+        super().__init__(alpha_a, alpha_c, Li_max)
+
+        if csvfile is None:
+            csvfile = os.path.dirname(__file__) + '/data/nmc811_ocv.csv'
+
+        self.check_ocv_data(csvfile)
+
+        df = pd.read_csv(csvfile).sort_values(by='x')
+
+        self.x_min = df['x'].min()
+        self.x_max = df['x'].max()
+        self._Eeq_spline = PchipInterpolator(df['x'], df['V'])
+
+    def check_ocv_data(self, csvfile: str) -> None:
+        """
+        Check that the open circuit potential data has the right format
+
+        Parameters
+        ----------
+        csvfile: str
+            Path to open circuit potential data containing 2 columns: x and V.
+
+        """
+        import pandas as pd
+
+        # Basic pandas reading checks
+        df = pd.read_csv(csvfile)
+
+        # Check if x and V are in the OCV data
+        if not {'x', 'V'}.issubset(df.columns):
+            raise ValueError(
+                f"Expected 'x' and 'V', but found: {list(df.columns)}"
+            )
+
+        # Check if the intercalation fraction x is between 0 and 1
+        if not df['x'].between(0, 1).all():
+            raise ValueError(
+                "Not all values in column 'x' are between 0 and 1."
+            )
+
+        # Check if the potential V is positive (>= 0)
+        if not (df['V'] >= 0).all():
+            raise ValueError(
+                "Not all values in column 'V' are positive."
+            )
+
+    def get_Eeq(self, x: float | np.ndarray) -> float | np.ndarray:
+        """
+        Calculate the equilibrium potential given the surface intercalation
+        fraction `x` at the particle surface.
+
+        Parameters
+        ----------
+        x : float
+            Lithium intercalation fraction at `r = R_s` [-].
+
+        Returns
+        -------
+        Eeq : float
+            Equilibrium potential [V].
+
+        """
+        return self._Eeq_spline(x)
