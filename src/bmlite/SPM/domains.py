@@ -154,6 +154,7 @@ class Electrode:
         self.i0_deg = kwargs.get('i0_deg')
         self.Ds_deg = kwargs.get('Ds_deg')
         self.material = kwargs.get('material')
+        self.csvfile = kwargs.setdefault('csvfile', None)
 
         self.update()
 
@@ -176,6 +177,7 @@ class Electrode:
             `A_s = 3 * eps_AM / R_s`
 
         """
+        import inspect
         from .. import materials
 
         self.eps_void = 1. - self.eps_s - self.eps_el
@@ -191,7 +193,12 @@ class Electrode:
             raise ValueError('eps_s <= eps_CBD')
 
         Material = getattr(materials, self.material)
-        self._material = Material(self.alpha_a, self.alpha_c, self.Li_max)
+
+        if 'csvfile' in inspect.signature(Material).parameters:
+            self._material = Material(self.alpha_a, self.alpha_c, self.Li_max,
+                                      csvfile=self.csvfile)
+        else:
+            self._material = Material(self.alpha_a, self.alpha_c, self.Li_max)
 
     def get_Ds(self, x: float | np.ndarray, T: float,
                fluxdir: float) -> float | np.ndarray:

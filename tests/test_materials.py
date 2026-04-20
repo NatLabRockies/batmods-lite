@@ -151,8 +151,7 @@ def test_nmc_811(args):
 
 def test_nmc_811_slow(args, tmp_path):
 
-    # Make sure we get a FileNotFoundError if we don't
-    # pass a csvfile
+    # Make sure we get a FileNotFoundError if we don't pass a csvfile
     try:
         nmc = bm.materials.NMC811Slow(args[0], args[1], args[2])
     except FileNotFoundError:
@@ -212,8 +211,7 @@ def test_graphite_siox(args):
 
 def test_graphite_siox_slow(args, tmp_path):
 
-    # Make sure we get a FileNotFoundError if we don't
-    # pass a csvfile
+    # Make sure we get a FileNotFoundError if we don't pass a csvfile
     try:
         grsiox = bm.materials.GraphiteSiOxSlow(args[0], args[1], args[2])
     except FileNotFoundError:

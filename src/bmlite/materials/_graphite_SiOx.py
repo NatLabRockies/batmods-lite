@@ -201,8 +201,9 @@ class GraphiteSiOxSlow(GraphiteSiOx):
         Li_max : float
             Maximum lithium concentration in solid phase [kmol/m3].
         csv_file: str | None
-            Path to open circuit potential data. Contains 2 column x, V
-            If None, reads data/graphite_SiOx_ocv.csv
+            Path to open circuit potential data containing 2 columns: x and V.
+            If None, reads an internal `data/graphite_SiOx_ocv.csv`.
+
         """
         import os
         import pandas as pd
@@ -228,7 +229,8 @@ class GraphiteSiOxSlow(GraphiteSiOx):
         Parameters
         ----------
         csvfile: str
-            Path to open circuit potential data. Contains 2 column x,V
+            Path to open circuit potential data containing 2 columns: x and V.
+
         """
         import pandas as pd
 

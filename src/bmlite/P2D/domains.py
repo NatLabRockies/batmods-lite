@@ -234,9 +234,7 @@ class Electrode:
         self.i0_deg = kwargs.get('i0_deg')
         self.Ds_deg = kwargs.get('Ds_deg')
         self.material = kwargs.get('material')
-        self.csvfile = None
-        if "csvfile" in kwargs:
-            self.csvfile = kwargs.get('csvfile')
+        self.csvfile = kwargs.setdefault('csvfile', None)
 
         self.update()
 
@@ -261,6 +259,7 @@ class Electrode:
             `A_s = 3 * eps_AM / R_s`
 
         """
+        import inspect
         from .. import materials
 
         self.eps_void = 1. - self.eps_s - self.eps_el
@@ -278,7 +277,6 @@ class Electrode:
 
         Material = getattr(materials, self.material)
 
-        import inspect
         if 'csvfile' in inspect.signature(Material).parameters:
             self._material = Material(self.alpha_a, self.alpha_c, self.Li_max,
                                       csvfile=self.csvfile)
