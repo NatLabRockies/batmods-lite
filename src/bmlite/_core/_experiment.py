@@ -271,6 +271,7 @@ def _check_limits(limits: tuple[str, float]) -> None:
         'time_s',
         'time_min',
         'time_h',
+        'capacity_Ah',
     ]
 
     if limits is None:

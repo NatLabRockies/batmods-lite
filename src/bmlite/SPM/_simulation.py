@@ -130,13 +130,14 @@ class Simulation:
                       - self.an.get_Eeq(self.an.x_0)
 
         # Initialize sv and svdot
+        # The last index is for tracking capacity
         self._t0 = 0.
-        self._sv0 = np.hstack([self.an.sv0(), self.el.sv0(), self.ca.sv0()])
+        self._sv0 = np.hstack([self.an.sv0(), self.el.sv0(), self.ca.sv0(), [0.0]])
         self._svdot0 = np.zeros_like(self._sv0)
 
         # Algebraic indices
         self._algidx = self.an.algidx().tolist() + self.el.algidx().tolist() \
-                     + self.ca.algidx().tolist()
+                     + self.ca.algidx().tolist() + [0]
 
         # Determine the bandwidth
         # self._lband, self._uband, _ = bandwidth(self)
@@ -267,6 +268,11 @@ class Simulation:
             _setup_eventsfn(step['limits'], options)
 
         solver = IDASolver(residuals, **options)
+
+        # Zero the capacity state so that we compute capacity used
+        # during the current step only
+        self._sv0[-1] = 0.0
+        self._svdot0[-1] = 0.0
 
         start = time.perf_counter()
         idasoln = solver.solve(step['tspan'], self._sv0, self._svdot0)
