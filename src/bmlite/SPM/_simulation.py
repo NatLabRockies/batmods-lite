@@ -132,7 +132,8 @@ class Simulation:
         # Initialize sv and svdot
         # The last index is for tracking capacity
         self._t0 = 0.
-        self._sv0 = np.hstack([self.an.sv0(), self.el.sv0(), self.ca.sv0(), [0.0]])
+        self._sv0 = np.hstack([self.an.sv0(), self.el.sv0(), self.ca.sv0(),
+                               [0.0]])
         self._svdot0 = np.zeros_like(self._sv0)
 
         # Algebraic indices

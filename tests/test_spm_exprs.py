@@ -26,6 +26,7 @@ def soln(sim):
 
     return soln
 
+
 def test_constant_current(soln):
     ccsoln = soln.get_steps(0)
     assert ccsoln.success
@@ -65,7 +66,8 @@ def test_event_switches(soln):
 def test_capacity_limit(sim):
     # Voltage limit experiment
     expr = bm.Experiment()
-    expr.add_step('current_C', 2., (3600., 10.), limits=('voltage_V', 3.8))
+    expr.add_step('current_C', 2., (3600., 10.),
+                  limits=('voltage_V', 3.8))
     soln_volt = sim.run(expr)
     iA_v = soln_volt.vars["current_A"]
     ts_v = soln_volt.vars["time_s"]
@@ -78,7 +80,8 @@ def test_capacity_limit(sim):
 
     # Capacity limit experiment
     expr = bm.Experiment()
-    expr.add_step('current_C', 2., (3600., 10.), limits=('capacity_Ah', capacity_lim))
+    expr.add_step('current_C', 2., (3600., 10.),
+                  limits=('capacity_Ah', capacity_lim))
     soln_cap = sim.run(expr)
     ts_cap = soln_cap.vars["time_s"]
     phiV_cap = soln_cap.vars["voltage_V"]
@@ -87,16 +90,18 @@ def test_capacity_limit(sim):
     end_t_v = ts_v[-1]
     end_t_cap = ts_cap[-1]
     assert abs(end_t_v - end_t_cap)/end_t_v < 1e-12
- 
+
     # Make sure gave the same output
-    t_interp = np.linspace(max(ts_v.min(), ts_cap.min()), min(ts_v.max(), ts_cap.max()), 100)
+    t_interp = np.linspace(max(ts_v.min(), ts_cap.min()),
+                           min(ts_v.max(), ts_cap.max()), 100)
     phiV_v_int = np.interp(t_interp, ts_v, phiV_v)
     phiV_cap_int = np.interp(t_interp, ts_cap, phiV_cap)
     assert np.mean(abs(phiV_v_int - phiV_cap_int)) < 1e-12
 
     # Wrong capacity limit experiment
     expr = bm.Experiment()
-    expr.add_step('current_C', 2., (3600., 10.), limits=('capacity_Ah', capacity_lim/2))
+    expr.add_step('current_C', 2., (3600., 10.),
+                  limits=('capacity_Ah', capacity_lim/2))
     soln_cap = sim.run(expr)
     ts_cap = soln_cap.vars["time_s"]
 
@@ -104,6 +109,4 @@ def test_capacity_limit(sim):
     end_t_cap = ts_cap[-1]
     assert abs(end_t_v - end_t_cap)/end_t_v > 1e-12
 
-
     return soln
-
