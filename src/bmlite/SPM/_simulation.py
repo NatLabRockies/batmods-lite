@@ -138,7 +138,7 @@ class Simulation:
 
         # Algebraic indices
         self._algidx = self.an.algidx().tolist() + self.el.algidx().tolist() \
-                     + self.ca.algidx().tolist() + [0]
+                     + self.ca.algidx().tolist()
 
         # Determine the bandwidth
         # self._lband, self._uband, _ = bandwidth(self)
