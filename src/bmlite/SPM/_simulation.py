@@ -264,6 +264,8 @@ class Simulation:
         options['linsolver'] = 'band'
         options['lband'] = self._lband
         options['uband'] = self._uband
+        # Enable not zeroing out capacity at the beginning of step
+        reset_cap = options.pop('reset_capacity', True)
 
         if step['limits'] is not None:
             _setup_eventsfn(step['limits'], options)
@@ -272,8 +274,9 @@ class Simulation:
 
         # Zero the capacity state so that we compute capacity used
         # during the current step only
-        self._sv0[-1] = 0.0
-        self._svdot0[-1] = 0.0
+        if reset_cap:
+            self._sv0[-1] = 0.0
+            self._svdot0[-1] = 0.0
 
         start = time.perf_counter()
         idasoln = solver.solve(step['tspan'], self._sv0, self._svdot0)
@@ -416,8 +419,10 @@ class _EventsFunction:
         inputs = inputs[1]
 
         for i, (key, value) in enumerate(zip(self.keys, self.values)):
-            events[i] = inputs['events'][key] - value
-
+            if key == 'capacity_Ah':
+                events[i] = abs(sv[-1]) - value
+            else:
+                events[i] = inputs['events'][key] - value
 
 def _setup_eventsfn(limits: tuple[str, float], kwargs: dict) -> None:
     """
