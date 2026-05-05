@@ -424,6 +424,7 @@ class _EventsFunction:
             else:
                 events[i] = inputs['events'][key] - value
 
+
 def _setup_eventsfn(limits: tuple[str, float], kwargs: dict) -> None:
     """
     Set up an events function for the IDASolver.

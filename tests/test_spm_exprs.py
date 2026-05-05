@@ -119,7 +119,7 @@ def test_capacity_limit(sim):
                   limits=('capacity_Ah', capacity_lim/2.0))
     soln_cap = sim.run(expr)
     ts_cap = soln_cap.vars["time_s"]
-    
+
     # Failed to reset cap
     expr = bm.Experiment()
     expr.add_step('current_C', 2., (3600., 10.),
@@ -128,7 +128,6 @@ def test_capacity_limit(sim):
                   limits=('capacity_Ah', capacity_lim))
     soln_cap_r = sim.run(expr)
     ts_cap_r = soln_cap_r.vars["time_s"]
-
 
     # Make sure sim ran for different time
     end_t_cap = ts_cap[-1]
