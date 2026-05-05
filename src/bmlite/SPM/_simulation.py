@@ -420,7 +420,7 @@ class _EventsFunction:
 
         for i, (key, value) in enumerate(zip(self.keys, self.values)):
             if key == 'capacity_Ah':
-                events[i] = abs(sv[-1]) - value
+                events[i] = sv[-1] - value
             else:
                 events[i] = inputs['events'][key] - value
 

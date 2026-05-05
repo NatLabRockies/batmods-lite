@@ -154,7 +154,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
 
     # Track current for capacity limit event
     capacity_Ah = sv[-1]
-    res[-1] = svdot[-1] - np.abs(current_A) / 3600.0
+    res[-1] = svdot[-1] - current_A / 3600.0
 
     # Cathode - Solid-phase COC (algebraic)
     # Electrolyte - potential (algebraic)
