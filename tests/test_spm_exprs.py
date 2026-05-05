@@ -66,7 +66,7 @@ def test_event_switches(soln):
 def test_capacity_limit(sim):
     # Voltage limit experiment
     expr = bm.Experiment()
-    expr.add_step('current_C', 2., (3600., 10.),
+    expr.add_step('current_C', 2., (3600., 10),
                   limits=('voltage_V', 3.8))
     soln_volt = sim.run(expr)
     iA_v = soln_volt.vars["current_A"]
@@ -110,6 +110,7 @@ def test_capacity_limit(sim):
     phiV_v_int = np.interp(t_interp, ts_v, phiV_v)
     phiV_cap_int = np.interp(t_interp, ts_cap, phiV_cap)
     phiV_cap_r_int = np.interp(t_interp, ts_cap_r, phiV_cap_r)
+
     assert np.mean(abs(phiV_v_int - phiV_cap_int)) < 1e-4
     assert np.mean(abs(phiV_v_int - phiV_cap_r_int)) < 1e-4
 

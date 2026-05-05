@@ -20,7 +20,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class Simulation:
 
     __slots__ = ['_yamlfile', '_yamlpath', '_t0', '_sv0', '_svdot0', '_lband',
-                 '_uband', '_algidx', 'c', 'bat', 'el', 'an', 'ca']
+                 '_uband', '_algidx', 'c', 'bat', 'el', 'an', 'ca', 'ptr_cap']
 
     def __init__(self, yamlfile: str = 'graphite_nmc532') -> None:
         """
@@ -118,8 +118,10 @@ class Simulation:
 
         # Make meshes/pointers
         self.an.make_mesh()
-        self.el.make_mesh(pshift=self.an.ptr['shift'])
-        self.ca.make_mesh(pshift=self.an.ptr['shift'] + self.el.ptr['shift'])
+        self.ptr_cap = self.an.ptr['shift']
+        self.el.make_mesh(pshift=self.an.ptr['shift'] + 1)
+        self.ca.make_mesh(pshift=self.an.ptr['shift'] + 1
+                          + self.el.ptr['shift'])
 
         # Initialize potentials [V]
         self.an.phi_0 = 0.
@@ -132,8 +134,8 @@ class Simulation:
         # Initialize sv and svdot
         # The last index is for tracking capacity
         self._t0 = 0.
-        self._sv0 = np.hstack([self.an.sv0(), self.el.sv0(), self.ca.sv0(),
-                               [0.0]])
+        self._sv0 = np.hstack([self.an.sv0(), [0.0],
+                               self.el.sv0(), self.ca.sv0()])
         self._svdot0 = np.zeros_like(self._sv0)
 
         # Algebraic indices
@@ -175,7 +177,7 @@ class Simulation:
         from bmlite.plotutils import format_ticks
 
         t0 = 0.
-        y0 = np.hstack([self.an.sv0(), self.el.sv0(), self.ca.sv0()])
+        y0 = np.hstack([self.an.sv0(), [0.0], self.el.sv0(), self.ca.sv0()])
         yp0 = np.zeros_like(y0)
 
         step = {
@@ -275,8 +277,8 @@ class Simulation:
         # Zero the capacity state so that we compute capacity used
         # during the current step only
         if reset_cap:
-            self._sv0[-1] = 0.0
-            self._svdot0[-1] = 0.0
+            self._sv0[self.ptr_cap] = 0.0
+            self._svdot0[self.ptr_cap] = 0.0
 
         start = time.perf_counter()
         idasoln = solver.solve(step['tspan'], self._sv0, self._svdot0)
@@ -416,11 +418,12 @@ class _EventsFunction:
             added and filled within the `rhs_funcs()' method.
 
         """
+        sim = inputs[0]
         inputs = inputs[1]
 
         for i, (key, value) in enumerate(zip(self.keys, self.values)):
             if key == 'capacity_Ah':
-                events[i] = sv[-1] - value
+                events[i] = sv[sim.ptr_cap] - value
             else:
                 events[i] = inputs['events'][key] - value
 
