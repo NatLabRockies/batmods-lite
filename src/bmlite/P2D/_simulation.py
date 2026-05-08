@@ -20,7 +20,8 @@ if TYPE_CHECKING:  # pragma: no cover
 class Simulation:
 
     __slots__ = ['_yamlfile', '_yamlpath', '_t0', '_sv0', '_svdot0', '_lband',
-                 '_uband', '_algidx', 'c', 'bat', 'el', 'an', 'sep', 'ca']
+                 '_uband', '_algidx', 'c', 'bat', 'el', 'an', 'sep', 'ca',
+                 'ptr_cap', '_phase_clock']
 
     def __init__(self, yamlfile: str = 'graphite_nmc532') -> None:
         """
@@ -120,9 +121,11 @@ class Simulation:
 
         # Make meshes/pointers
         self.an.make_mesh()
-        self.sep.make_mesh(xshift=self.an.thick, pshift=self.an.ptr['shift'])
+        self.ptr_cap = self.an.ptr['shift']
+        self.sep.make_mesh(xshift=self.an.thick, pshift=self.an.ptr['shift']+1)
         self.ca.make_mesh(xshift=self.an.thick + self.sep.thick,
-                          pshift=self.an.ptr['shift'] + self.sep.ptr['shift'])
+                          pshift=self.an.ptr['shift'] + 1
+                          + self.sep.ptr['shift'])
 
         # Initialize potentials [V]
         self.an.phi_0 = 0.
@@ -134,7 +137,9 @@ class Simulation:
 
         # Initialize sv and svdot
         self._t0 = 0.
-        self._sv0 = np.hstack([self.an.sv0(self.el), self.sep.sv0(self.el),
+        self._phase_clock = 0.0
+        self._sv0 = np.hstack([self.an.sv0(self.el), [0.0],
+                               self.sep.sv0(self.el),
                                self.ca.sv0(self.el)])
 
         self._svdot0 = np.zeros_like(self._sv0)
@@ -178,7 +183,7 @@ class Simulation:
         from bmlite.plotutils import format_ticks
 
         t0 = 0.
-        y0 = np.hstack([self.an.sv0(self.el), self.sep.sv0(self.el),
+        y0 = np.hstack([self.an.sv0(self.el), [0.0], self.sep.sv0(self.el),
                         self.ca.sv0(self.el)])
 
         yp0 = np.zeros_like(y0)
@@ -269,9 +274,37 @@ class Simulation:
         options['linsolver'] = 'band'
         options['lband'] = self._lband
         options['uband'] = self._uband
+        reset_cap = options.pop('reset_capacity', True)
+        reset_timer = options.pop('reset_timer', True)
+
+        if reset_cap:
+            self._sv0[self.ptr_cap] = 0.0
+            self._svdot0[self.ptr_cap] = 0.0
+
+        if reset_timer:
+            self._phase_clock = 0.0
 
         if step['limits'] is not None:
-            _setup_eventsfn(step['limits'], options)
+            limits_list = list(step['limits'])
+            filtered_limits = []
+
+            for i in range(0, len(limits_list), 2):
+                if limits_list[i] == 'phase_time_s':
+                    time_remaining = limits_list[i+1] - self._phase_clock
+                    original_tspan = step['tspan']
+
+                    if time_remaining <= 0.0:
+                        step['tspan'] = np.array(
+                            [original_tspan[0], original_tspan[0] + 1e-6])
+                    else:
+                        mask = original_tspan < time_remaining
+                        valid_t = original_tspan[mask]
+                        step['tspan'] = np.append(valid_t, time_remaining)
+                else:
+                    filtered_limits.extend([limits_list[i], limits_list[i+1]])
+
+            if len(filtered_limits) > 0:
+                _setup_eventsfn(tuple(filtered_limits), options)
 
         solver = IDASolver(residuals, **options)
 
@@ -284,6 +317,7 @@ class Simulation:
         self._t0 = soln.t[-1]
         self._sv0 = soln.y[-1].copy()
         self._svdot0 = soln.yp[-1].copy()
+        self._phase_clock += soln.t[-1]
 
         return soln
 
@@ -413,10 +447,15 @@ class _EventsFunction:
             added and filled within the `rhs_funcs()' method.
 
         """
-        inputs = inputs[1]
+        sim = inputs[0]
+        step_dict = inputs[1]
 
         for i, (key, value) in enumerate(zip(self.keys, self.values)):
-            events[i] = inputs['events'][key] - value
+            if key == 'capacity_Ah':
+                # Use the pointer to evaluate the exact interpolated state
+                events[i] = abs(sv[sim.ptr_cap]) - value
+            else:
+                events[i] = step_dict['events'][key] - value
 
 
 def _setup_eventsfn(limits: tuple[str, float], kwargs: dict) -> None:

@@ -177,6 +177,9 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     current_A = i_ext*bat.area
     power_W = current_A*voltage_V
 
+    capacity_Ah = sv[sim.ptr_cap]
+    res[sim.ptr_cap] = svdot[sim.ptr_cap] - np.abs(current_A) / 3600.0
+
     # Anode -------------------------------------------------------------------
 
     # Transference numbers for all anode cell boundaries
@@ -340,10 +343,12 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
         'time_s': total_time,
         'time_min': total_time / 60.,
         'time_h': total_time / 3600.,
+        'phase_time_s': sim._phase_clock + t,
         'current_A': current_A,
         'current_C': current_A / bat.cap,
         'voltage_V': voltage_V,
         'power_W': power_W,
+        'capacity_Ah': capacity_Ah,
     }
 
     # Returns -----------------------------------------------------------------
