@@ -137,3 +137,25 @@ def test_capacity_limit(sim):
     assert abs(end_t_v - end_t_cap_r)/end_t_v > 1e-4
 
     return soln
+
+def test_phase_clock_limit(sim):
+    expr = bm.Experiment()
+    expr.add_step('current_C', 2., (3600, 0.1), limits=('voltage_V', 3.9))
+    expr.add_step('voltage_V', 3.9, (3600, 0.1), limits=('phase_time_s', 100.), reset_timer=True)
+    soln = sim.run(expr)
+    assert soln.vars["time_s"][-1] > 300
+
+    expr = bm.Experiment()
+    expr.add_step('current_C', 2., (3600, 0.1), limits=('voltage_V', 3.9))
+    expr.add_step('voltage_V', 3.9, (3600, 0.1), limits=('phase_time_s', 100.), reset_timer=False)
+    soln = sim.run(expr)
+    assert soln.vars["time_s"][-1] < 300
+
+
+    expr = bm.Experiment()
+    expr.add_step('current_C', 2., (3600, 0.1), limits=('voltage_V', 3.9))
+    expr.add_step('voltage_V', 3.9, (3600, 0.1), limits=('phase_time_s', 500.), reset_timer=False)
+    soln = sim.run(expr)
+    assert abs(soln.vars["time_s"][-1] - 500) < 1e-2
+
+    return soln

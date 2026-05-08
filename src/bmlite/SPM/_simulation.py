@@ -20,7 +20,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class Simulation:
 
     __slots__ = ['_yamlfile', '_yamlpath', '_t0', '_sv0', '_svdot0', '_lband',
-                 '_uband', '_algidx', 'c', 'bat', 'el', 'an', 'ca', 'ptr_cap']
+                 '_uband', '_algidx', 'c', 'bat', 'el', 'an', 'ca', 'ptr_cap', '_phase_clock']
 
     def __init__(self, yamlfile: str = 'graphite_nmc532') -> None:
         """
@@ -134,6 +134,7 @@ class Simulation:
         # Initialize sv and svdot
         # The last index is for tracking capacity
         self._t0 = 0.
+        self._phase_clock = 0.
         self._sv0 = np.hstack([self.an.sv0(), [0.0],
                                self.el.sv0(), self.ca.sv0()])
         self._svdot0 = np.zeros_like(self._sv0)
@@ -268,17 +269,38 @@ class Simulation:
         options['uband'] = self._uband
         # Enable not zeroing out capacity at the beginning of step
         reset_cap = options.pop('reset_capacity', True)
+        reset_timer = options.pop('reset_timer', True)
+
+        if reset_timer:
+            self._phase_clock = 0.0
 
         if step['limits'] is not None:
-            _setup_eventsfn(step['limits'], options)
+            limits_list = list(step['limits'])
+            filtered_limits = []
+            for i in range(0, len(limits_list), 2):
+                if limits_list[i] == 'phase_time_s':
+                    time_remaining = limits_list[i+1] - self._phase_clock
+                    original_tspan = step['tspan']
+                    if time_remaining <= 1e-6:
+                        step['tspan'] = np.array([original_tspan[0], original_tspan[0] + 1e-6])
+                    else:
+                        valid_t = original_tspan[original_tspan < time_remaining]
+                        step['tspan'] = np.append(valid_t, time_remaining)
+                else:
+                    filtered_limits.extend([limits_list[i], limits_list[i+1]])
+
+            if len(filtered_limits) > 0:
+                _setup_eventsfn(tuple(filtered_limits), options)
 
         solver = IDASolver(residuals, **options)
+
 
         # Zero the capacity state so that we compute capacity used
         # during the current step only
         if reset_cap:
             self._sv0[self.ptr_cap] = 0.0
             self._svdot0[self.ptr_cap] = 0.0
+
 
         start = time.perf_counter()
         idasoln = solver.solve(step['tspan'], self._sv0, self._svdot0)
@@ -289,7 +311,7 @@ class Simulation:
         self._t0 = soln.t[-1]
         self._sv0 = soln.y[-1].copy()
         self._svdot0 = soln.yp[-1].copy()
-
+        self._phase_clock += soln.t[-1]
         return soln
 
     def run(self, expr: Experiment, reset_state: bool = True,
@@ -347,8 +369,9 @@ class Simulation:
 
         solns = []
         for i in iterator:
-            solns.append(self.run_step(expr, i))
-
+            step_soln = self.run_step(expr, i)
+            if step_soln.t[-1] > 1e-5 or i == 0:
+                solns.append(step_soln)
         self._t0 = 0.
         if reset_state:
             self.pre()
