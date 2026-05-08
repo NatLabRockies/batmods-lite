@@ -121,10 +121,9 @@ class Simulation:
 
         # Make meshes/pointers
         self.an.make_mesh()
-        self.ptr_cap = self.an.ptr['shift']
-        self.sep.make_mesh(xshift=self.an.thick, pshift=self.an.ptr['shift']+1)
+        self.sep.make_mesh(xshift=self.an.thick, pshift=self.an.ptr['shift'])
         self.ca.make_mesh(xshift=self.an.thick + self.sep.thick,
-                          pshift=self.an.ptr['shift'] + 1
+                          pshift=self.an.ptr['shift']
                           + self.sep.ptr['shift'])
 
         # Initialize potentials [V]
@@ -138,11 +137,12 @@ class Simulation:
         # Initialize sv and svdot
         self._t0 = 0.
         self._phase_clock = 0.0
-        self._sv0 = np.hstack([self.an.sv0(self.el), [0.0],
+        self._sv0 = np.hstack([self.an.sv0(self.el),
                                self.sep.sv0(self.el),
-                               self.ca.sv0(self.el)])
+                               self.ca.sv0(self.el),0.0])
 
         self._svdot0 = np.zeros_like(self._sv0)
+        self.ptr_cap = len(self._sv0) - 1
 
         # Algebraic indices
         self._algidx = self.an.algidx().tolist() + self.sep.algidx().tolist() \
