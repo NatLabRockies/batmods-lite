@@ -6,8 +6,10 @@
 # BATMODS-lite
 
 [![ci](https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml/badge.svg)](https://github.com/NatLabRockies/batmods-lite/actions/workflows/ci.yml) &nbsp;
-[![codecov](https://codecov.io/gh/NatLabRockies/batmods-lite/graph/badge.svg?token=MPuSOeIurf)](https://codecov.io/gh/NatLabRockies/batmods-lite) &nbsp;
 [![license](https://img.shields.io/badge/license-BSD--3-blue.svg)](https://github.com/NatLabRockies/batmods-lite/blob/main/LICENSE) &nbsp;
+[![codecov](https://codecov.io/gh/NatLabRockies/batmods-lite/graph/badge.svg?token=MPuSOeIurf)](https://codecov.io/gh/NatLabRockies/batmods-lite) &nbsp;
+[![pypi](https://img.shields.io/pypi/v/batmods-lite)](https://pypi.org/project/batmods-lite) &nbsp;
+<!-- [![downloads](https://static.pepy.tech/personalized-badge/batmods-lite?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BRIGHTGREEN&left_text=pypi|downloads)](https://pepy.tech/projects/batmods-lite)  -->
 
 ## Summary
 Battery Analysis and Training Models for Optimization and Design Studies (BATMODS) is a Python package with an API for pre-built battery models. The original purpose of the package was to quickly generate synthetic data for machine learning models to train with. However, the models are generally useful for any battery simulations or analysis. `BATMODS-lite` includes the following: 
@@ -18,21 +20,18 @@ Battery Analysis and Training Models for Optimization and Design Studies (BATMOD
 Note that the package focuses on phsics-based models like the single-particle (SPM) and pseudo-2D (P2D) model. If you enjoy the interface but are looking to run equivalent circuit models (ECMs), you should check out [thevenin](https://github.com/NatLabRockies/thevenin), which is distributed separately, but is developed and maintained by the same team. Consequently, the interface to `thevenin` models is intentionally similar, allowing for a smooth transition between physics-based and ECM approaches.
 
 ## Installation
-`BATMODS-lite` is only available via GitHub. Please clone the repo or download the files. Also, make sure you have a Python installation with a version >=3.10. If you are new to Python, we recommend using [Anaconda](https://anaconda.com/download) to set up your installation. 
-
-Once the files are available on your machine, use your terminal to navigate into the folder and execute one of the following depending on your installation preference.
+`BATMODS-lite` can be installed from [PyPI](https://pypi.org/project/batmods-lite) using the following command:
 
 ```
-pip install .             (basic installation)
-pip install -e .[dev]     (editable installation with developer options)
+pip install batmods-lite
 ```
-
-The editable installation is useful if you plan to make changes to your local package. It ensures that any changes are immediately available each time the package is imported, without needing to reinstall. The developer options will likely be helpful if you are modifying the package.
 
 If you run into issues with installation due to the [scikit-sundae](https://github.com/NatLabRockies/scikit-sundae) dependency, please submit an issue [here](https://github.com/NatLabRockies/scikit-sundae/issues). We also manage this solver package, but distribute it separately since it is not developed in pure Python.
 
+For those interested in setting up a developer and/or editable version of this software, please see the directions available in the "Development" section of our [documentation](https://batmods-lite.readthedocs.io/en/latest/development).
+
 ## Get Started
-The API is organized around three main classes that allow you to construct simulations, define experiments, and interact with solutions. Two basic examples are given below. These demonstrate a 2C discharge for both the single particle model (SPM) and pseudo-2D (P2D) model. Note that the experiment class interfaces with all simulations. The simulations and their respective solutions, however, will depend on the model subpackage they are loaded from. For a more detailed tutorial, please check `docs/source/examples`. If you installed the editable version with developer options, you can also build the documentation locally using `nox -s docs`.
+The API is organized around three main classes that allow you to construct simulations, define experiments, and interact with solutions. Two basic examples are given below. These demonstrate a 2C discharge for both the single particle model (SPM) and pseudo-2D (P2D) model. Note that the experiment class interfaces with all simulations. The simulations and their respective solutions, however, will depend on the model subpackage they are loaded from. For more detailed examples, check out the [documentation](https://batmods-lite.readthedocs.io) on Read the Docs. Note that while the full name of the package is `batmods-lite`, the installed module is imported using `bmlite`.
 
 ```python
 # Single particle model example

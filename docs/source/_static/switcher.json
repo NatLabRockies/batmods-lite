@@ -2,17 +2,17 @@
     {
         "name": "latest",
         "version": "0.1.0.dev0",
-        "url": "https://batmods-lite.readthedocs.io/latest/"
+        "url": "https://batmods-lite.readthedocs.io/en/latest/"
     },
     {
         "name": "stable",
         "version": "0.0.2",
-        "url": "https://batmods-lite.readthedocs.io/stable/",
+        "url": "https://batmods-lite.readthedocs.io/en/stable/",
         "preferred": true
     },
     {
         "name": "0.0.x",
         "version": "0.0.2",
-        "url": "https://batmods-lite.readthedocs.io/v0.0.x/"
+        "url": "https://batmods-lite.readthedocs.io/en/v0.0.x/"
     }
 ]

@@ -103,6 +103,6 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/NatLabRockies/batmods-lite"
-Documentation = "https://batmods-lite.readthedocs.io/"
+Documentation = "https://batmods-lite.readthedocs.io"
 Repository = "https://github.com/NatLabRockies/batmods-lite"
 Issues = "https://github.com/NatLabRockies/batmods-lite/issues"
