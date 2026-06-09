@@ -15,7 +15,7 @@ copyright = 'Alliance for Energy Innovation, LLC'
 version = bm.__version__
 release = bm.__version__
 
-# json_url = 'https://batmods-lite.readthedocs.io/en/latest/_static/switcher.json'
+json_url = 'https://batmods-lite.readthedocs.io/en/latest/_static/switcher.json'
 
 
 # -- General configuration ---------------------------------------------------
@@ -23,6 +23,7 @@ release = bm.__version__
 
 extensions = [
     'sphinx.ext.todo',
+    'autoapi.extension', 
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon', 
     'sphinx.ext.viewcode',
@@ -30,7 +31,6 @@ extensions = [
     'sphinx_design',
     # 'sphinx_favicon',
     'sphinx_copybutton',
-    'autoapi.extension', 
 ]
 
 templates_path = ['_templates']
@@ -39,8 +39,7 @@ exclude_patterns = [
     'build', 
     'Thumbs.db', 
     '.DS_Store', 
-    '__pycache__',
-    '*.ipynb_checkpoints',
+    '.ipynb_checkpoints',
 ]
 
 source_suffix = {
@@ -63,7 +62,6 @@ html_theme = 'pydata_sphinx_theme'
 html_context = {'default_mode': 'dark'}
 
 html_static_path = ['_static']
-
 html_js_files = ['custom.js']
 html_css_files = ['custom.css']
 
@@ -80,11 +78,11 @@ html_theme_options = {
             'url': 'https://github.com/NatLabRockies/batmods-lite',
             'icon': 'fa-brands fa-github',
         },
-        # {
-        #     'name': 'PyPI',
-        #     'url': 'https://pypi.org/project/batmods-lite',
-        #     'icon': 'fa-solid fa-box',
-        # },
+        {
+            'name': 'PyPI',
+            'url': 'https://pypi.org/project/batmods-lite',
+            'icon': 'fa-solid fa-box',
+        },
     ],
     'navbar_start': ['navbar-logo'],
     'navbar_align': 'content',
@@ -99,11 +97,11 @@ html_theme_options = {
     'collapse_navigation': True,
     'show_toc_level': 0,
     'pygments_light_style': 'tango',
-    # 'show_version_warning_banner': True,
-    # 'switcher': {
-    #     'json_url': json_url,
-    #     'version_match': version,
-    # }
+    'show_version_warning_banner': True,
+    'switcher': {
+        'json_url': json_url,
+        'version_match': version,
+    }
 }
 
 
@@ -132,7 +130,7 @@ autoapi_dirs = ['../../src/bmlite']
 autoapi_options = [
     'members',
     'imported-members',
-    'inerited-members',
+    'inherited-members',
     'show-module-summary',
 ]
 
