@@ -54,28 +54,12 @@ class Experiment:
 
     @property
     def steps(self) -> list[dict]:
-        """
-        Return steps list.
-
-        Returns
-        -------
-        steps : list[dict]
-            List of the step dictionaries.
-
-        """
+        """List of the experimental steps as dictionaries."""
         return self._steps
 
     @property
     def num_steps(self) -> int:
-        """
-        Return number of steps.
-
-        Returns
-        -------
-        num_steps : int
-            Number of steps.
-
-        """
+        """The number of steps in the experiment."""
         return len(self._steps)
 
     def print_steps(self) -> None:

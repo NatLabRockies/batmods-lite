@@ -1,10 +1,23 @@
 import atexit
 import warnings
 import textwrap
+import copy as _copy
+import types as _types
 
 from typing import Any, Callable, Iterable
 
 from tqdm import tqdm
+
+# As of scipy 1.18, interpolants (e.g. scipy.interpolate.CubicSpline, used by
+# the intercalation materials as '_Eeq_spline') cache the array-API namespace
+# as a *module* object on attributes like '_xp' and '_xp_internal'. Python's
+# deepcopy cannot copy module objects ("TypeError: cannot pickle 'module'
+# object"), which breaks deepcopy of any object graph containing such an
+# interpolant, including Simulation instances. Modules are process-wide
+# singletons, so the correct behavior is to treat them as atomic and return
+# them unchanged rather than attempt a copy.
+if _types.ModuleType not in _copy._deepcopy_dispatch:
+    _copy._deepcopy_dispatch[_types.ModuleType] = lambda x, memo: x
 
 
 class ExitHandler:
