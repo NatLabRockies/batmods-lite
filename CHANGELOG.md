@@ -23,7 +23,7 @@
 - Use a generic `bandwidth` function instead of having one per model subpackage
 
 ### Bug Fixes
-None.
+- `scipy >= 1.18` splines store modules and had issues pickling, this is now fixed ([#28](https://github.com/NatLabRockies/batmods-lite/pull/28)) 
 
 ### Breaking Changes
 - Remove `linspace` option for `tspan`, add auto timesteps as an option ([#26](https://github.com/NatLabRockies/batmods-lite/pull/26))
