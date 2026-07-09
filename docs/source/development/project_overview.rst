@@ -28,7 +28,7 @@ Target Audience
 `BATMODS-lite` is intended for researchers and engineers who require physically meaningful battery models:
 
 * Electrochemical model development
-* Battery diagnostics and degradation studies
+* Battery diagnostics and design studies
 
 Technology Stack
 ----------------
