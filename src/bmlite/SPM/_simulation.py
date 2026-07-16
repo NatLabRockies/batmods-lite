@@ -449,7 +449,7 @@ class _EventsFunction:
 
         for i, (key, value) in enumerate(zip(self.keys, self.values)):
             if key == 'capacity_Ah':
-                events[i] = sv[sim.ptr_cap] - value
+                events[i] = abs(sv[sim.ptr_cap]) - value
             else:
                 events[i] = inputs['events'][key] - value
 

@@ -178,7 +178,7 @@ def residuals(t: float, sv: np.ndarray, svdot: np.ndarray, res: np.ndarray,
     power_W = current_A*voltage_V
 
     capacity_Ah = sv[sim.ptr_cap]
-    res[sim.ptr_cap] = svdot[sim.ptr_cap] - np.abs(current_A) / 3600.0
+    res[sim.ptr_cap] = svdot[sim.ptr_cap] - current_A / 3600.0
 
     # Anode -------------------------------------------------------------------
 
